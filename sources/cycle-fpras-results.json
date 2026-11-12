@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-12",
+  "oracle": "exponential exact / bounded-error test oracle",
+  "external_fpras_implemented": false,
+  "cases": [
+    {
+      "case": "acyclic",
+      "truth": "0",
+      "estimate": "0",
+      "relative_error": "0",
+      "stats": {
+        "oracle_calls": 0,
+        "samples": 0,
+        "exact_zero": true
+      }
+    },
+    {
+      "case": "self_loop",
+      "truth": "1/7",
+      "estimate": "1/7",
+      "relative_error": "0",
+      "stats": {
+        "alpha": "1/400",
+        "samples": 3200,
+        "max_oracle_calls": 6401,
+        "oracle_delta": "1/102416",
+        "random_bits_per_choice": 18,
+        "oracle_calls": 0,
+        "exact_zero": false
+      }
+    },
+    {
+      "case": "rare_cycle",
+      "truth": "1/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "estimate": "1/10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "relative_error": "0",
+      "stats": {
+        "alpha": "1/1200",
+        "samples": 12800,
+        "max_oracle_calls": 51202,
+        "oracle_delta": "1/819232",
+        "random_bits_per_choice": 21,
+        "oracle_calls": 12802,
+        "exact_zero": false
+      }
+    },
+    {
+      "case": "overlap",
+      "truth": "29/105",
+      "estimate": "625127/2268000",
+      "relative_error": "1273/626400",
+      "stats": {
+        "alpha": "1/2400",
+        "samples": 28800,
+        "max_oracle_calls": 172803,
+        "oracle_delta": "1/2764848",
+        "random_bits_per_choice": 22,
+        "oracle_calls": 42557,
+        "exact_zero": false
+      }
+    },
+    {
+      "case": "perturbed_overlap",
+      "truth": "29/105",
+      "estimate": "16670491/60480000",
+      "relative_error": "33509/16704000",
+      "stats": {
+        "alpha": "1/2400",
+        "samples": 28800,
+        "max_oracle_calls": 172803,
+        "oracle_delta": "1/2764848",
+        "random_bits_per_choice": 22,
+        "oracle_calls": 42530,
+        "exact_zero": false
+      }
+    }
+  ],
+  "bad_oracle_fallback_checked": true,
+  "large_precision_budget_checked": true
+}
