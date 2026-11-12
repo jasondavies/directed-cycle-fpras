@@ -14,14 +14,16 @@ model, so polynomial running time is assembled from these verified bounds by a
 written argument, and the reliability FPRAS itself is a hypothesis. See the exact boundary in
 [FORMALIZATION.md](FORMALIZATION.md).
 
-**Open caveat:** the cited reliability theorem is stated in a unit-cost model
-with real uniform random draws, with no bit-complexity bound. A bit-model
-FPRAS for cycle probability therefore needs an additional discretisation
-argument for the oracle; see the caveat at the top of [SOLUTION.md](SOLUTION.md).
+**Cost model:** the cited reliability theorem is stated in a unit-cost model
+with real uniform random draws. [DISCRETISATION.md](DISCRETISATION.md) argues
+that the paper's simple algorithm can be run on fair random bits with
+polynomial bit complexity, which is what the bit-model claim needs. That
+argument is written, with its generic step checked in Lean.
 
 - [Problem and public status](PROBLEM.md)
 - [Written solution and external theorem](SOLUTION.md)
 - [Formalisation map and remaining obligations](FORMALIZATION.md)
+- [Running the reliability oracle on random bits](DISCRETISATION.md)
 - [The algorithm and the reduction theorems](DirectedCycleFPRAS/Reduction.lean)
 - [Graph-specific estimator theorem](DirectedCycleFPRAS/CycleEstimator.lean)
 - [Reduction of witness weights to reliability](DirectedCycleFPRAS/ReliabilityIdentity.lean)

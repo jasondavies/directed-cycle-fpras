@@ -33,6 +33,7 @@ a hypothesis.
 | `Confidence` | The median of `k` independent runs of a real-valued program fails with probability at most `(7/8)^k`; the reduction at confidence `1 - delta`. |
 | `Resources` | Charged local-operation count, the invariant that every query is a feasible residual instance, a size calculus for fractions, the output size bound, and division-free selection. |
 | `PositiveOracle` | Removing deterministic coordinates of a product law; deleting zero-probability edges preserves reliability; the reduction from an estimator for multigraphs with probabilities in `(0,1]`. |
+| `Discretise` | Replacing every exact choice of an adaptive program by a `b`-bit draw changes any `[0,1]` expectation by at most `N/2^b`, `N` the total number of alternatives on a path. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
 The entry point `DirectedCycleFPRAS.lean` imports all modules. `AxiomAudit.lean`
@@ -154,17 +155,17 @@ differences are deliberate and do not affect polynomiality.
    allows parallel arcs and self-loops and takes rational probabilities in
    `(0,1]`. Its existence and its cost are outside this repository.
 
-   **Model mismatch, confirmed against the PDF.** The paper's running times
-   count unit-cost arithmetic operations and draws of uniform real variables
-   on (0,1); it gives no bit-complexity bound and no bound on output length
-   for the directed algorithm. The formal hypothesis here asks for more in
-   two respects: an `Oracle` or `RandReal` has a finite seed space, and
-   `cycleAlgorithm_sat` assumes a size bound `Ho` on answers. So the paper's
-   algorithm as literally stated, with real-valued randomness, is not an
-   instance of `ReliabilityEstimator`; a version using finitely many random
-   bits and bounded-precision arithmetic would be, and showing that such a
-   version keeps the guarantee is an open obligation. See the caveat at the
-   top of [SOLUTION.md](SOLUTION.md).
+   **Cost model.** The paper's running times count unit-cost arithmetic
+   operations and draws of uniform real variables; it gives no bit-complexity
+   bound. The formal hypothesis asks for a finite seed space, and
+   `cycleAlgorithm_sat` for a size bound `Ho` on answers.
+   [DISCRETISATION.md](DISCRETISATION.md) argues that the paper's Algorithm S,
+   run on `b`-bit choices, is such an estimator. Of that argument Lean checks
+   the generic step, `Prog.exp_discretise_le`: replacing every exact choice of
+   an adaptive program by a `b`-bit draw changes any probability by at most
+   the total number of alternatives over `2^b`. That Algorithm S is a finite
+   tree of rational choices, and the bit lengths of its numbers, are written
+   steps.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding

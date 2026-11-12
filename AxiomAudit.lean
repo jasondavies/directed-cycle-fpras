@@ -43,3 +43,5 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.eventMass_restrict
 #print axioms DirectedCycleFPRAS.Digraph.reliability_positivePart
 #print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator
+#print axioms DirectedCycleFPRAS.Prog.discretise_bitBound
+#print axioms DirectedCycleFPRAS.Prog.exp_discretise_le

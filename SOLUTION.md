@@ -31,18 +31,16 @@ the length of the output for the directed algorithm.
 
 The theorem below is stated for binary input length, and Section 4 assumes
 "an oracle with polynomial worst-case bit complexity" returning
-polynomial-length numbers. The cited theorem does not supply that as stated.
-Until this is settled, the result established here is an FPRAS **in the same
-unit-cost model with real uniform draws**. A bit-model FPRAS needs one more
-argument: that the oracle can be run with finitely many random bits and
-bounded-precision arithmetic while keeping its guarantee. That is plausible,
-since its coins are comparisons of a uniform variable with a known bias, but
-it is not proved in the paper or here.
+polynomial-length numbers. The cited Theorem 1 does not supply that as stated.
 
-The Lean development is unaffected in what it proves, but note that its
-oracle model uses a finite seed space per call and its size theorems assume a
-bound on the oracle's answers. Both correspond to the discretised oracle, not
-to the paper's algorithm as literally stated.
+[DISCRETISATION.md](DISCRETISATION.md) supplies it. The paper's simple
+algorithm (Algorithm S, Theorem 9) uses only finite choices with rational
+weights. Running each choice on `O(log(nm/epsilon))` fair random bits changes
+every probability by at most 1/8, and all numbers it handles have polynomial
+length. The result is an oracle of exactly the kind Section 4 assumes, at the
+cost of a higher-degree polynomial than the paper's unit-cost bounds. The
+bit-model claim below therefore rests on Theorem 9 of the paper together with
+that note, not on Theorem 1.
 
 ## Theorem
 
