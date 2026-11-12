@@ -48,3 +48,7 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.Digraph.algS_choiceBound
 #print axioms DirectedCycleFPRAS.Digraph.algS_sat
 #print axioms DirectedCycleFPRAS.Digraph.algS_discretised
+#print axioms DirectedCycleFPRAS.Prog.exp_eq_toRand
+#print axioms DirectedCycleFPRAS.algSEstimator_correct
+#print axioms DirectedCycleFPRAS.algSEstimator_height
+#print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS

@@ -46,7 +46,11 @@
     "DirectedCycleFPRAS.Prog.exp_discretise_le",
     "DirectedCycleFPRAS.Digraph.algS_choiceBound",
     "DirectedCycleFPRAS.Digraph.algS_sat",
-    "DirectedCycleFPRAS.Digraph.algS_discretised"
+    "DirectedCycleFPRAS.Digraph.algS_discretised",
+    "DirectedCycleFPRAS.Prog.exp_eq_toRand",
+    "DirectedCycleFPRAS.algSEstimator_correct",
+    "DirectedCycleFPRAS.algSEstimator_height",
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -273,8 +277,28 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.exp_eq_toRand": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.algSEstimator_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.algSEstimator_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the reliability FPRAS is a hypothesis."
+  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis."
 }

@@ -78,6 +78,10 @@ including loops and parallel arcs, and 0<epsilon<=1:
   reliability estimator that is accurate with probability 3/4 on finite
   directed multigraphs with probabilities in (0,1], which is the input class
   of the cited theorem. Zero-probability edges are deleted before each call.
+- `Digraph.cycle_fpras_of_algS`: the same with a concrete oracle, the cited
+  paper's Algorithm S run on fair random bits. Its only hypothesis is that the
+  exact Algorithm S, as transcribed here, is accurate with probability 7/8,
+  which is the paper's Theorem 9.
 - `Digraph.cycleAlgorithm_of_cycleMass_eq_zero`: if Z=0 the algorithm makes no
   oracle call and returns exactly 0.
 - `Digraph.cycleAlgorithm_failure`: the same for a general per-call failure

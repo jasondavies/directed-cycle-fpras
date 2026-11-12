@@ -7,3 +7,4 @@ public import DirectedCycleFPRAS.Resources
 public import DirectedCycleFPRAS.PositiveOracle
 public import DirectedCycleFPRAS.Discretise
 public import DirectedCycleFPRAS.AlgorithmS
+public import DirectedCycleFPRAS.AlgorithmSEstimator

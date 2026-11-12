@@ -35,6 +35,7 @@ a hypothesis.
 | `PositiveOracle` | Removing deterministic coordinates of a product law; deleting zero-probability edges preserves reliability; the reduction from an estimator for multigraphs with probabilities in `(0,1]`. |
 | `Discretise` | Replacing every exact choice of an adaptive program by a `b`-bit draw changes any `[0,1]` expectation by at most `N/2^b`, `N` the total number of alternatives on a path. |
 | `AlgorithmS` | A transcription of the cited paper's Algorithm S as a program; its count of random alternatives, a common-denominator bound on its output size, and the guarantee of its `b`-bit version given the paper's Theorem 9. |
+| `AlgorithmSEstimator` | A call-free program as a randomized real with a finite seed space; the `b`-bit Algorithm S as a `ReliabilityEstimator`, its correctness and answer size; the end-to-end theorem `cycle_fpras_of_algS`. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
 The entry point `DirectedCycleFPRAS.lean` imports all modules. `AxiomAudit.lean`
@@ -76,6 +77,7 @@ alternative.
 | `Digraph.cycle_fpras_of_constant_confidence` | If each call on a valid query is accurate with probability at least 3/4, then the algorithm run against the median of `6 * ceil(log2(8 T))` independent calls, `T = m + 2*m*n`, fails with probability at most 1/4. |
 | `Digraph.cycle_fpras_confidence` | Under the same contract, the median of `6 * ceil(log2(ceil(1/delta)))` independent runs fails with probability at most `delta`, for every `delta > 0`. |
 | `Digraph.cycle_fpras_of_estimator` | The same conclusion from a single hypothesis: a randomized estimator that, on every finite directed multigraph with probabilities in `(0,1]` and positive reliability, has relative error at most `eps/(128 m (m+1))` with probability at least 3/4. Each query is answered by deleting its zero-probability edges and calling the estimator. |
+| `Digraph.cycle_fpras_of_algS` | The same conclusion with a concrete oracle, the `b`-bit Algorithm S, and a single hypothesis `AlgSAccurate`: the exact Algorithm S is accurate with probability 7/8. All randomness, of the reduction and of the oracle, is fair bits. |
 | `Digraph.cycleAlgorithm_weightSat` | The algorithm consists of oracle calls and weighted draws only, and every weight handed to a draw is a fraction with numerator and denominator at most `2*Hp*Ho`; by `height_partialSum` the partial sums compared in selection are at most `(4*Hp*Ho)^(m+1)`. |
 | `Digraph.cycleAlgorithm_of_cycleMass_eq_zero` | If `Z = 0` the algorithm is literally `ret 0`: no oracle call, no randomness, output exactly 0. |
 | `Digraph.cycleAlgorithm_exactOracle` | The exact oracle meets the contract, so the hypotheses are satisfiable. |
@@ -161,13 +163,13 @@ differences are deliberate and do not affect polynomiality.
    bound. The formal hypothesis asks for a finite seed space, and
    `cycleAlgorithm_sat` for a size bound `Ho` on answers.
    [DISCRETISATION.md](DISCRETISATION.md) shows that the paper's Algorithm S,
-   run on `b`-bit choices, is such an estimator. Lean checks this for a
-   transcription of Algorithm S (`Digraph.algS_discretised`): the count of
-   alternatives, the discretisation error, and the output size. The paper's
-   Theorem 9 is a hypothesis there, and the fidelity of the transcription to
-   the paper's pseudocode is checked by reading only. The discretised
-   algorithm is not packaged as a `ReliabilityEstimator`, so the link to
-   `cycle_fpras_of_estimator` is a written step.
+   run on `b`-bit choices, is such an estimator, and Lean checks it for a
+   transcription of Algorithm S. `Digraph.cycle_fpras_of_algS` is the
+   resulting end-to-end theorem. Its only hypothesis is `AlgSAccurate`: the
+   exact Algorithm S, as transcribed, has relative error more than the stated
+   accuracy with probability at most 1/8. That is the paper's Theorem 9, in a
+   slightly stronger form explained in that note. The fidelity of the
+   transcription to the paper's pseudocode is checked by reading only.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding

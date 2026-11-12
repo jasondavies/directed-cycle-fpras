@@ -140,6 +140,7 @@ oracle calls, and proves:
 | 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
 | 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
 | 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
+| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate` as its only hypothesis. `algSEstimator_height` gives the size of its answers. |
 | all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
 
 The Lean constants are cruder than the ones above: the DFS is charged `2m`
@@ -153,9 +154,12 @@ change the law of the output:
 - the DFS stops when `v` is popped, since the record is determined then;
 - loops are bounded by fuel: `n + 1` pops per DFS and `n` rounds;
 - the pool draw is indexed by `Fin (M+1)` with weight on the valid indices;
-- it covers Algorithm S proper; the preliminary steps (return 1 if `s = t`,
-  delete vertices unreachable from `s`, return 0 if `t` is deleted) are
-  deterministic and not transcribed.
+- it covers Algorithm S proper. The paper first returns 1 if `s = t`,
+  deletes the vertices unreachable from `s`, and returns 0 if `t` is deleted.
+  The transcription returns 1 when `s = t` by itself, and the reduction only
+  calls the oracle on instances of positive reliability, so `t` is never
+  deleted. The deletion of unreachable vertices is not transcribed; see the
+  next section.
 
 Size bounds are proved for the estimates and the output. That each
 arithmetic operation on such numbers takes polynomial time is not formalised,
@@ -163,9 +167,16 @@ as there is no machine model.
 
 ## What this rests on
 
-1. **Theorem 9 of the paper**, as a statement about the transcription. I read
-   its statement, the algorithm, and the outline of the martingale proof; I
-   did not verify the proof.
+1. **Theorem 9 of the paper**, as the hypothesis `AlgSAccurate` about the
+   transcription. I read its statement, the algorithm, and the outline of the
+   martingale proof; I did not verify the proof. `AlgSAccurate` is slightly
+   stronger than Theorem 9 as stated: it is asserted for every instance with
+   probabilities in `(0,1]` and positive reliability, without first deleting
+   the vertices unreachable from `s`, and with `M` computed from the
+   unreduced `n` and `m`. Algorithm S never resolves or discovers an
+   unreachable vertex, so its run on the unreduced graph is its run on the
+   reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
+   lower bound on `M`. This justification is written, not formalised.
 2. **Fidelity of the transcription** to the paper's pseudocode, checked by
    reading. This is the point most worth a second pair of eyes.
 3. **Polynomial cost of rational arithmetic** on numbers of the proved size.

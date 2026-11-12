@@ -36,7 +36,8 @@ report = {
               "oracle-call, random-bit and charged local-operation counts, residual-instance queries "
               "and output bit-size bounds; no machine model, so polynomial running time is "
               "assembled from these counts by a written argument, local-operation charges are "
-              "trusted annotations, and the reliability FPRAS is a hypothesis."),
+              "trusted annotations, and the accuracy of the cited paper's Algorithm S, as "
+              "transcribed, is a hypothesis."),
 }
 (ROOT / "sources").mkdir(exist_ok=True)
 (ROOT / "sources/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")
