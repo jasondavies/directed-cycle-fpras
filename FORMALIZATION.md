@@ -34,6 +34,7 @@ a hypothesis.
 | `Resources` | Charged local-operation count, the invariant that every query is a feasible residual instance, a size calculus for fractions, the output size bound, and division-free selection. |
 | `PositiveOracle` | Removing deterministic coordinates of a product law; deleting zero-probability edges preserves reliability; the reduction from an estimator for multigraphs with probabilities in `(0,1]`. |
 | `Discretise` | Replacing every exact choice of an adaptive program by a `b`-bit draw changes any `[0,1]` expectation by at most `N/2^b`, `N` the total number of alternatives on a path. |
+| `AlgorithmS` | A transcription of the cited paper's Algorithm S as a program; its count of random alternatives, a common-denominator bound on its output size, and the guarantee of its `b`-bit version given the paper's Theorem 9. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
 The entry point `DirectedCycleFPRAS.lean` imports all modules. `AxiomAudit.lean`
@@ -159,13 +160,14 @@ differences are deliberate and do not affect polynomiality.
    operations and draws of uniform real variables; it gives no bit-complexity
    bound. The formal hypothesis asks for a finite seed space, and
    `cycleAlgorithm_sat` for a size bound `Ho` on answers.
-   [DISCRETISATION.md](DISCRETISATION.md) argues that the paper's Algorithm S,
-   run on `b`-bit choices, is such an estimator. Of that argument Lean checks
-   the generic step, `Prog.exp_discretise_le`: replacing every exact choice of
-   an adaptive program by a `b`-bit draw changes any probability by at most
-   the total number of alternatives over `2^b`. That Algorithm S is a finite
-   tree of rational choices, and the bit lengths of its numbers, are written
-   steps.
+   [DISCRETISATION.md](DISCRETISATION.md) shows that the paper's Algorithm S,
+   run on `b`-bit choices, is such an estimator. Lean checks this for a
+   transcription of Algorithm S (`Digraph.algS_discretised`): the count of
+   alternatives, the discretisation error, and the output size. The paper's
+   Theorem 9 is a hypothesis there, and the fidelity of the transcription to
+   the paper's pseudocode is checked by reading only. The discretised
+   algorithm is not packaged as a `ReliabilityEstimator`, so the link to
+   `cycle_fpras_of_estimator` is a written step.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding

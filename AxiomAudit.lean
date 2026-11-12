@@ -45,3 +45,6 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator
 #print axioms DirectedCycleFPRAS.Prog.discretise_bitBound
 #print axioms DirectedCycleFPRAS.Prog.exp_discretise_le
+#print axioms DirectedCycleFPRAS.Digraph.algS_choiceBound
+#print axioms DirectedCycleFPRAS.Digraph.algS_sat
+#print axioms DirectedCycleFPRAS.Digraph.algS_discretised

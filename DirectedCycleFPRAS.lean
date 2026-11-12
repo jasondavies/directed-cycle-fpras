@@ -6,3 +6,4 @@ public import DirectedCycleFPRAS.Confidence
 public import DirectedCycleFPRAS.Resources
 public import DirectedCycleFPRAS.PositiveOracle
 public import DirectedCycleFPRAS.Discretise
+public import DirectedCycleFPRAS.AlgorithmS

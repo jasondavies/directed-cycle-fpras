@@ -17,8 +17,9 @@ written argument, and the reliability FPRAS itself is a hypothesis. See the exac
 **Cost model:** the cited reliability theorem is stated in a unit-cost model
 with real uniform random draws. [DISCRETISATION.md](DISCRETISATION.md) argues
 that the paper's simple algorithm can be run on fair random bits with
-polynomial bit complexity, which is what the bit-model claim needs. That
-argument is written, with its generic step checked in Lean.
+polynomial bit complexity, which is what the bit-model claim needs. Lean
+checks this for a transcription of that algorithm, taking the paper's
+Theorem 9 as a hypothesis.
 
 - [Problem and public status](PROBLEM.md)
 - [Written solution and external theorem](SOLUTION.md)

@@ -1,10 +1,11 @@
 # Running the reliability oracle on random bits
 
 This note closes the gap between the cost model of the cited reliability
-theorem and the bit model used in [SOLUTION.md](SOLUTION.md). It is a written
-argument. Its generic step is checked in Lean
-(`Prog.exp_discretise_le`); its paper-specific steps are by inspection of the
-algorithm and are not formalised.
+theorem and the bit model used in [SOLUTION.md](SOLUTION.md). All three steps
+below are checked in Lean for a transcription of the paper's Algorithm S
+(`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
+What Lean does not check is that the transcription matches the paper's
+pseudocode, and the paper's Theorem 9, which is a hypothesis.
 
 ## The gap
 
@@ -128,16 +129,46 @@ This is exactly the hypothesis of the Lean reduction: S' is a
 `Digraph.cycle_fpras_of_estimator`, the reduction then gives an FPRAS for
 directed-cycle probability in the bit model.
 
+## What is formalised
+
+`DirectedCycleFPRAS/AlgorithmS.lean` defines `Digraph.algS`, a transcription
+of Algorithm S and Generate as a program with exact discrete choices and no
+oracle calls, and proves:
+
+| Step | Lean theorem | Statement |
+| --- | --- | --- |
+| 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
+| 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
+| 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
+| all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
+
+The Lean constants are cruder than the ones above: the DFS is charged `2m`
+alternatives per popped vertex instead of using that each arc is examined
+once, each weighted choice has one extra null alternative, and the numerator
+bound does not use `gamma_u <= 1`. All remain polynomial.
+
+The transcription differs from the paper's pseudocode in ways that do not
+change the law of the output:
+
+- the DFS stops when `v` is popped, since the record is determined then;
+- loops are bounded by fuel: `n + 1` pops per DFS and `n` rounds;
+- the pool draw is indexed by `Fin (M+1)` with weight on the valid indices;
+- it covers Algorithm S proper; the preliminary steps (return 1 if `s = t`,
+  delete vertices unreachable from `s`, return 0 if `t` is deleted) are
+  deterministic and not transcribed.
+
+Size bounds are proved for the estimates and the output. That each
+arithmetic operation on such numbers takes polynomial time is not formalised,
+as there is no machine model.
+
 ## What this rests on
 
-1. **Theorem 9 of the paper.** I read its statement, the algorithm, and the
-   outline of the martingale proof; I did not verify the proof.
-2. **Step 1** is by inspection of the pseudocode. It is the step most worth a
-   second pair of eyes: the claim is that Algorithm S has no source of
-   randomness beyond the four listed actions.
-3. **Step 3** is elementary but unformalised.
-4. **Step 2** is formalised for the abstract program model. Identifying
-   Algorithm S with such a program is part of Step 1.
+1. **Theorem 9 of the paper**, as a statement about the transcription. I read
+   its statement, the algorithm, and the outline of the martingale proof; I
+   did not verify the proof.
+2. **Fidelity of the transcription** to the paper's pseudocode, checked by
+   reading. This is the point most worth a second pair of eyes.
+3. **Polynomial cost of rational arithmetic** on numbers of the proved size.
 
 Not covered: the fast algorithm of Theorem 1. Its bit-model cost is not
 analysed here, so the resulting running time for the cycle FPRAS is a

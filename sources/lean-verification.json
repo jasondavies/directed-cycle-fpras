@@ -43,7 +43,10 @@
     "DirectedCycleFPRAS.Digraph.reliability_positivePart",
     "DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator",
     "DirectedCycleFPRAS.Prog.discretise_bitBound",
-    "DirectedCycleFPRAS.Prog.exp_discretise_le"
+    "DirectedCycleFPRAS.Prog.exp_discretise_le",
+    "DirectedCycleFPRAS.Digraph.algS_choiceBound",
+    "DirectedCycleFPRAS.Digraph.algS_sat",
+    "DirectedCycleFPRAS.Digraph.algS_discretised"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -252,6 +255,21 @@
       "Quot.sound"
     ],
     "DirectedCycleFPRAS.Prog.exp_discretise_le": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_choiceBound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_sat": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_discretised": [
       "propext",
       "Classical.choice",
       "Quot.sound"
