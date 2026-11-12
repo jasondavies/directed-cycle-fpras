@@ -18,6 +18,32 @@ method. The proposed contribution is its application to directed cycles via
 edge-return-path witnesses and a reliability-oracle self-reduction. We do not
 claim that the general union-estimation technique is new.
 
+## Caveat on the computational model
+
+Read against the PDF of arXiv:2608.02523v2 on 2026-11-12. Its FPRAS
+definition takes rational open probabilities in (0,1] on directed graphs with
+parallel arcs and self-loops allowed, and success probability 3/4 (Remark 16
+raises this by a median). But its running-time bounds, including Theorem 1,
+"count unit-cost arithmetic operations and independent draws of uniform
+random variables on (0, 1)", with taking the integer part of a number as a
+unit-cost operation. The paper states no bit-complexity bound and no bound on
+the length of the output for the directed algorithm.
+
+The theorem below is stated for binary input length, and Section 4 assumes
+"an oracle with polynomial worst-case bit complexity" returning
+polynomial-length numbers. The cited theorem does not supply that as stated.
+Until this is settled, the result established here is an FPRAS **in the same
+unit-cost model with real uniform draws**. A bit-model FPRAS needs one more
+argument: that the oracle can be run with finitely many random bits and
+bounded-precision arithmetic while keeping its guarantee. That is plausible,
+since its coins are comparisons of a uniform variable with a known bias, but
+it is not proved in the paper or here.
+
+The Lean development is unaffected in what it proves, but note that its
+oracle model uses a finite seed space per call and its size theorems assume a
+bound on the oracle's answers. Both correspond to the discretised oracle, not
+to the paper's algorithm as literally stated.
+
 ## Theorem
 
 Given a finite directed graph G with m edges, independent rational retention

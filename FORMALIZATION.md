@@ -152,12 +152,19 @@ differences are deliberate and do not affect polynomiality.
    in `(0,1]`, at the single accuracy level the theorem names. This matches
    the input class of their Theorem 1 as stated in arXiv:2608.02523v2, which
    allows parallel arcs and self-loops and takes rational probabilities in
-   `(0,1]`. Its existence and its cost are outside this repository. Note that
-   their running time is stated in a unit-cost arithmetic model with uniform
-   real draws; a bit-complexity bound for the oracle, and a bound `Ho` on the
-   size of its answers as assumed in `cycleAlgorithm_sat`, are therefore
-   additional requirements on the oracle and not consequences of that
-   statement.
+   `(0,1]`. Its existence and its cost are outside this repository.
+
+   **Model mismatch, confirmed against the PDF.** The paper's running times
+   count unit-cost arithmetic operations and draws of uniform real variables
+   on (0,1); it gives no bit-complexity bound and no bound on output length
+   for the directed algorithm. The formal hypothesis here asks for more in
+   two respects: an `Oracle` or `RandReal` has a finite seed space, and
+   `cycleAlgorithm_sat` assumes a size bound `Ho` on answers. So the paper's
+   algorithm as literally stated, with real-valued randomness, is not an
+   instance of `ReliabilityEstimator`; a version using finitely many random
+   bits and bounded-precision arithmetic would be, and showing that such a
+   version keeps the guarantee is an open obligation. See the caveat at the
+   top of [SOLUTION.md](SOLUTION.md).
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding
