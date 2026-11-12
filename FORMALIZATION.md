@@ -77,7 +77,7 @@ alternative.
 | `Digraph.cycle_fpras_of_constant_confidence` | If each call on a valid query is accurate with probability at least 3/4, then the algorithm run against the median of `6 * ceil(log2(8 T))` independent calls, `T = m + 2*m*n`, fails with probability at most 1/4. |
 | `Digraph.cycle_fpras_confidence` | Under the same contract, the median of `6 * ceil(log2(ceil(1/delta)))` independent runs fails with probability at most `delta`, for every `delta > 0`. |
 | `Digraph.cycle_fpras_of_estimator` | The same conclusion from a single hypothesis: a randomized estimator that, on every finite directed multigraph with probabilities in `(0,1]` and positive reliability, has relative error at most `eps/(128 m (m+1))` with probability at least 3/4. Each query is answered by deleting its zero-probability edges and calling the estimator. |
-| `Digraph.cycle_fpras_of_algS` | The same conclusion with a concrete oracle, the `b`-bit Algorithm S, and a single hypothesis `AlgSAccurate`: the exact Algorithm S is accurate with probability 7/8. All randomness, of the reduction and of the oracle, is fair bits. |
+| `Digraph.cycle_fpras_of_algS` | The same conclusion with a concrete oracle, the `b`-bit Algorithm S, and a single hypothesis, `AlgSAccurate alpha` for every `alpha` in `(0,1)`: the exact Algorithm S is accurate with probability 7/8. All randomness, of the reduction and of the oracle, is fair bits. |
 | `Digraph.cycleAlgorithm_weightSat` | The algorithm consists of oracle calls and weighted draws only, and every weight handed to a draw is a fraction with numerator and denominator at most `2*Hp*Ho`; by `height_partialSum` the partial sums compared in selection are at most `(4*Hp*Ho)^(m+1)`. |
 | `Digraph.cycleAlgorithm_of_cycleMass_eq_zero` | If `Z = 0` the algorithm is literally `ret 0`: no oracle call, no randomness, output exactly 0. |
 | `Digraph.cycleAlgorithm_exactOracle` | The exact oracle meets the contract, so the hypotheses are satisfiable. |
@@ -165,11 +165,13 @@ differences are deliberate and do not affect polynomiality.
    [DISCRETISATION.md](DISCRETISATION.md) shows that the paper's Algorithm S,
    run on `b`-bit choices, is such an estimator, and Lean checks it for a
    transcription of Algorithm S. `Digraph.cycle_fpras_of_algS` is the
-   resulting end-to-end theorem. Its only hypothesis is `AlgSAccurate`: the
-   exact Algorithm S, as transcribed, has relative error more than the stated
-   accuracy with probability at most 1/8. That is the paper's Theorem 9, in a
-   slightly stronger form explained in that note. The fidelity of the
-   transcription to the paper's pseudocode is checked by reading only.
+   resulting end-to-end theorem. Its only hypothesis is `AlgSAccurate alpha`
+   for every `alpha` in `(0,1)`: the exact Algorithm S, as transcribed, has
+   relative error more than `alpha` with probability at most 1/8. That is the
+   paper's Theorem 9, in a slightly stronger form explained in that note. The
+   fidelity of the transcription to the paper's pseudocode is not checked in
+   Lean; it was reviewed independently and tested by exact enumeration on
+   small instances, as recorded in that note.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding

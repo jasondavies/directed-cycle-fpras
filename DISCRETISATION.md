@@ -140,7 +140,7 @@ oracle calls, and proves:
 | 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
 | 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
 | 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
-| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate` as its only hypothesis. `algSEstimator_height` gives the size of its answers. |
+| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate alpha` for all `alpha` in `(0,1)` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height` gives the size of its answers. |
 | all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
 
 The Lean constants are cruder than the ones above: the DFS is charged `2m`
@@ -176,9 +176,31 @@ as there is no machine model.
    unreduced `n` and `m`. Algorithm S never resolves or discovers an
    unreachable vertex, so its run on the unreduced graph is its run on the
    reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
-   lower bound on `M`. This justification is written, not formalised.
-2. **Fidelity of the transcription** to the paper's pseudocode, checked by
-   reading. This is the point most worth a second pair of eyes.
+   lower bound on `M`: its last step is `Var <= (2 n^3 m / M) q_t^2`. This
+   justification is written, not formalised. `AlgSAccurate alpha` is false
+   for `alpha <= 0` (then `M = 0` and the output is 0), so the end-to-end
+   theorem assumes it only for `alpha` in `(0,1)`, the paper's range.
+   `AlgSAccurate` also includes `s = t` and `n = 1`, where the output is
+   exactly 1.
+2. **Fidelity of the transcription** to the paper's pseudocode. This is not
+   checked in Lean. It was checked twice by reading (once by the author of
+   the transcription, once by an independent reviewer who first wrote down
+   the paper's algorithm without seeing the Lean), and by the test below.
+   The independent review found no difference that changes the law of the
+   output.
+
+   *Test.* `scripts/algs_transcription/` holds a Python port of the Lean
+   definitions (`lean_port.py`) and a separately written port of the paper's
+   pseudocode (`paper_port.py`). `python3 run.py 1,2,3` computes, in exact
+   rational arithmetic, the full output distribution of each for `M = 1, 2,
+   3` on eleven graphs with at most 5 vertices and 8 arcs (parallel arcs,
+   self-loops, arcs into `s`, unreachable vertices, probabilities equal to
+   1, `s = t`, unreachable `t`). On every instance the two distributions are
+   equal and the mean equals the reliability computed by brute force, as the
+   paper's unbiasedness claim requires. `run2.py` repeats this under random
+   arc orders and adds a Monte Carlo run at `M = 40`. The ports are faithful
+   to their sources by reading only, and the test says nothing about
+   concentration at the real `M`.
 3. **Polynomial cost of rational arithmetic** on numbers of the proved size.
 
 Not covered: the fast algorithm of Theorem 1. Its bit-model cost is not
