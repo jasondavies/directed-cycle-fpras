@@ -31,7 +31,12 @@ report = {
     "axioms": {name: [s.strip() for s in axioms.split(",") if s.strip()]
                for name, axioms in entries} | {name: [] for name in empty},
     "build_passed": True,
-    "scope": "Graph/witness/reliability identities and robust statistical core; not full oracle bit complexity.",
+    "scope": ("Probabilistic correctness of the oracle reduction, including the conditional sampler, "
+              "adaptive good-oracle coupling, median amplification, random-bit rounding, and "
+              "oracle-call, random-bit and charged local-operation counts, residual-instance queries "
+              "and output bit-size bounds; no machine model, so polynomial running time is "
+              "assembled from these counts by a written argument, local-operation charges are "
+              "trusted annotations, and the reliability FPRAS is a hypothesis."),
 }
 (ROOT / "sources").mkdir(exist_ok=True)
 (ROOT / "sources/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")

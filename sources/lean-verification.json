@@ -12,7 +12,31 @@
     "DirectedCycleFPRAS.Law.average_tail",
     "DirectedCycleFPRAS.approximate_mixture_success",
     "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_reliability",
-    "DirectedCycleFPRAS.Digraph.cycle_estimator_success"
+    "DirectedCycleFPRAS.Digraph.cycle_estimator_success",
+    "DirectedCycleFPRAS.eventMass_pos_iff",
+    "DirectedCycleFPRAS.condWeight_split",
+    "DirectedCycleFPRAS.Prog.exp_replicate",
+    "DirectedCycleFPRAS.Prog.exp_le_repair",
+    "DirectedCycleFPRAS.bitLaw_l1",
+    "DirectedCycleFPRAS.expose_l1",
+    "DirectedCycleFPRAS.Oracle.amplify_failure",
+    "DirectedCycleFPRAS.Digraph.eventMass_returnEvent",
+    "DirectedCycleFPRAS.Digraph.cycleMass_pos_iff",
+    "DirectedCycleFPRAS.Digraph.deletedReliability_eq_exact",
+    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_exact",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_queryBound",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_bitBound",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_ideal",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_failure",
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_reduction",
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_constant_confidence",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_exactOracle",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_of_cycleMass_eq_zero",
+    "DirectedCycleFPRAS.Prog.medianOf_failure",
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_confidence",
+    "DirectedCycleFPRAS.hit_normLaw_iff",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -69,8 +93,128 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.eventMass_pos_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.condWeight_split": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.exp_replicate": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.exp_le_repair": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.bitLaw_l1": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.expose_l1": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Oracle.amplify_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.eventMass_returnEvent": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleMass_pos_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.deletedReliability_eq_exact": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_exact": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_queryBound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_bitBound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_ideal": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_reduction": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_constant_confidence": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_exactOracle": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_of_cycleMass_eq_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.medianOf_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_confidence": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.hit_normLaw_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Graph/witness/reliability identities and robust statistical core; not full oracle bit complexity."
+  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the reliability FPRAS is a hypothesis."
 }

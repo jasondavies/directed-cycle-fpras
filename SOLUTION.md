@@ -1,9 +1,10 @@
 # An FPRAS reduction for directed-cycle probability
 
-This is the written mathematical solution. The Lean development checks a
-substantial part of the reduction, with the exact boundary in
-[FORMALIZATION.md](FORMALIZATION.md). This document is not a claim that the
-entire algorithm has been formalised.
+This is the written mathematical solution. The Lean development checks the
+probabilistic correctness of the reduction at constant confidence, with the
+exact boundary in [FORMALIZATION.md](FORMALIZATION.md), together with the
+resource counts and size bounds behind Section 4. A machine-level running
+time is a written argument only.
 
 The external ingredient is the general directed two-terminal reliability FPRAS
 of Weiming Feng, Yucheng Fu, and Heng Guo,
@@ -186,13 +187,35 @@ Applying the reliability theorem proves the stated FPRAS. **QED.**
 
 ## Formalisation and executable model
 
-The formalised statistical argument uses a simpler Chebyshev bound rather
-than the Hoeffding argument above. With m witnesses and relative error epsilon,
-N = ceil(1024*m^2/epsilon^2) independent samples suffice for failure probability
-at most 1/4 under the explicit mixture and weight approximation contracts.
-This is polynomial and matches the usual constant-success FPRAS requirement.
-The logarithmic-confidence amplification and finite-bit oracle implementation
-above are still written arguments, not end-to-end Lean theorems.
+Lean verifies a constant-confidence version of Sections 1 to 3 and the
+rounding estimate of Section 4, as one theorem about an explicit oracle
+program (`Digraph.cycle_fpras_of_constant_confidence`). Its constants differ
+from those above: Chebyshev replaces Hoeffding, with
+`N = ceil(2048*m^2/epsilon^2)` samples; the oracle accuracy is
+`alpha = epsilon/(128*m*(m+1))`; the rounding error of the `b`-bit choices is
+added to the total-variation budget of the sampling law instead of being
+charged to a separate failure event; and each query is answered by the median
+of `6*ceil(log2(8T))` oracle calls that are individually accurate with
+probability 3/4. The coupling with the fictitious oracle is formalised exactly
+as described: no conditioning on the success of all calls.
+
+Confidence `1-delta` is obtained in Lean by a median of `O(log(1/delta))`
+independent runs (`Digraph.cycle_fpras_confidence`), not by the Hoeffding
+argument above. The sampler exposes every edge, including the already fixed
+witness edge, which costs nothing in the bound `T`.
+
+For Section 4, Lean proves the counts of oracle calls, random bits and
+charged local operations, that every query is a residual instance, and that
+the output has numerator and denominator at most `(2*Hp*Ho)^m * N * m!` when
+the input probabilities and oracle answers have them at most `Hp` and `Ho`.
+There is no machine model: that each charged operation costs polynomial time
+is not formalised, and the charges themselves are annotations.
+
+Not formalised: a machine-level running time, the Hoeffding argument, and the
+conversion to a simple-graph oracle. The
+reliability theorem of Feng, Fu, and Guo enters only as a hypothesis on the
+oracle. [FORMALIZATION.md](FORMALIZATION.md) maps each step to its Lean
+statement.
 
 The executable model is in `scripts/cycle_fpras_reduction.py`. Its tests use
 an exponential exact reliability oracle and bounded-error variants. Those

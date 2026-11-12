@@ -1,19 +1,23 @@
 # Directed-cycle probability via reliability
 
 An approximation-preserving reduction from directed-cycle probability to directed
-two-terminal reliability, with a Lean 4 formalisation of the graph, sampling,
-and statistical core.
+two-terminal reliability, with a Lean 4 formalisation of the reduction's
+probabilistic correctness.
 
-**Status:** the written reduction is complete; the Lean formalisation is partial.
-Lean verifies the witness identity, its reliability factorisation, and a robust
-estimator with failure probability at most 1/4 under explicit weight-estimation
-and sampling-law contracts. The complete randomized-oracle implementation and
-polynomial bit-cost theorem are **not yet formalised**. See the exact boundary
-in [FORMALIZATION.md](FORMALIZATION.md).
+**Status:** the written reduction is complete. Lean verifies the correctness of
+the whole oracle algorithm: given a randomized reliability oracle that is
+accurate with probability at least 3/4 per call, the algorithm's output has
+relative error at most epsilon with probability at least 3/4, using explicit
+numbers of samples, oracle calls, random bits and charged local operations,
+and bounds on the size of every query and of the output. There is no machine
+model, so polynomial running time is assembled from these verified bounds by a
+written argument, and the reliability FPRAS itself is a hypothesis. See the exact boundary in
+[FORMALIZATION.md](FORMALIZATION.md).
 
 - [Problem and public status](PROBLEM.md)
 - [Written solution and external theorem](SOLUTION.md)
 - [Formalisation map and remaining obligations](FORMALIZATION.md)
+- [The algorithm and the reduction theorems](DirectedCycleFPRAS/Reduction.lean)
 - [Graph-specific estimator theorem](DirectedCycleFPRAS/CycleEstimator.lean)
 - [Reduction of witness weights to reliability](DirectedCycleFPRAS/ReliabilityIdentity.lean)
 
@@ -22,7 +26,8 @@ Its probability is `p_e * Rel_(G-e)(v,u)`. These events cover exactly the cyclic
 subgraphs. Selecting a witness proportionally to its probability and sampling
 conditionally gives an outcome with probability proportional to its number of
 witnesses. Correcting by the inverse of that count yields an unbiased union
-estimator. The Lean development also controls approximate versions of this law.
+estimator. Conditional sampling exposes one edge at a time, using two residual
+reliability estimates per edge.
 
 ## Build
 
@@ -47,21 +52,48 @@ and are not the justification for the Lean theorems.
 
 ## What is verified
 
-The main statistical theorem, `Digraph.cycle_estimator_success`, concerns
-independent edge retention with probabilities in [0,1], including loops and
-parallel arcs. Write W for total witness mass, Z for cycle probability, and
-q for the ideal size-biased mixture. For W>0 and 0<epsilon<=1, it proves that
-`ceil(1024*m^2/epsilon^2)` independent samples give relative error at most
-epsilon except with probability at most 1/4, provided:
+The algorithm is `Digraph.cycleAlgorithm`, a randomized program whose only
+oracle queries are reliability instances on the input graph with some edge
+probabilities replaced by 0 or 1. Write m for the number of edges and Z for the
+cycle probability. For independent edge retention with probabilities in [0,1],
+including loops and parallel arcs, and 0<epsilon<=1:
 
-- the supplied estimate w satisfies `|w-W| <= epsilon*W/4`;
-- the supplied sampling law p satisfies `sum_x |p(x)-q(x)| <= epsilon/(16*m)`.
+- `Digraph.cycle_fpras_of_constant_confidence`: if every oracle call on such an
+  instance of positive reliability has relative error at most
+  `epsilon/(128*m*(m+1))` with probability at least 3/4, using fresh randomness,
+  then with `n = ceil(2048*m^2/epsilon^2)` samples and each query answered by
+  the median of `6*ceil(log2(8*T))` calls, `T = m + 2*m*n`, the output is
+  within relative error epsilon of Z except with probability at most 1/4.
+- `Digraph.cycle_fpras_confidence`: the median of `O(log(1/delta))` such runs
+  fails with probability at most delta.
+- `Digraph.cycleAlgorithm_of_cycleMass_eq_zero`: if Z=0 the algorithm makes no
+  oracle call and returns exactly 0.
+- `Digraph.cycleAlgorithm_failure`: the same for a general per-call failure
+  probability gamma, with failure at most the Chebyshev term plus `T*gamma`.
+  Queries are adaptive; the proof couples the oracle with a repaired one and
+  never conditions on all calls succeeding.
+- `Digraph.cycleAlgorithm_queryBound` and `Digraph.cycleAlgorithm_bitBound`:
+  at most T oracle calls, and all internal randomness is at most `n*(m+1)`
+  uniform draws of `bitBudget m epsilon` bits.
+- `Digraph.cycleAlgorithm_workBound`: at most `2*m + n*(6*m+2)` charged local
+  operations (reachability tests and steps of discrete choices). The charges
+  are annotations in the program, trusted like cslib's `TimeM` ticks.
+- `Digraph.cycleAlgorithm_sat`: every query is a residual instance of the
+  input, and if input probabilities and oracle answers are fractions with
+  numerator and denominator at most `Hp` and `Ho`, the output is a fraction
+  with numerator and denominator at most `(2*Hp*Ho)^m * n * m!`.
 
-These contracts are explicit hypotheses, not hidden axioms. Additional checked
-lemmas establish stability of normalised weights and sequential sampling, and
-identify every witness weight with a deleted-edge reliability probability.
-Instantiating all these pieces with the randomized oracle and finite-bit sampler
-is the remaining formalisation work.
+The oracle contract is an explicit hypothesis, not a hidden axiom, and
+`Digraph.cycleAlgorithm_exactOracle` shows it is satisfiable. Supporting
+results include the witness identity, the weight/reliability identity, exact
+and approximate sequential conditional sampling, the support test for the zero
+case, the rounding error of fixed-bit choices, and median amplification. The
+earlier statistical theorem `Digraph.cycle_estimator_success`, which takes the
+sampling law as an input, remains and is what the reduction instantiates.
+
+What is still only a written argument: turning these counts and size bounds
+into a machine-level running time, the Hoeffding route to confidence `1-delta`, and the conversion to
+a simple-graph oracle. Details are in [FORMALIZATION.md](FORMALIZATION.md).
 
 ## Provenance
 

@@ -1,3 +1,6 @@
+module
+
+public import DirectedCycleFPRAS.ReliabilityIdentity
 import DirectedCycleFPRAS
 
 #print axioms DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness
@@ -11,3 +14,27 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.approximate_mixture_success
 #print axioms DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_reliability
 #print axioms DirectedCycleFPRAS.Digraph.cycle_estimator_success
+#print axioms DirectedCycleFPRAS.eventMass_pos_iff
+#print axioms DirectedCycleFPRAS.condWeight_split
+#print axioms DirectedCycleFPRAS.Prog.exp_replicate
+#print axioms DirectedCycleFPRAS.Prog.exp_le_repair
+#print axioms DirectedCycleFPRAS.bitLaw_l1
+#print axioms DirectedCycleFPRAS.expose_l1
+#print axioms DirectedCycleFPRAS.Oracle.amplify_failure
+#print axioms DirectedCycleFPRAS.Digraph.eventMass_returnEvent
+#print axioms DirectedCycleFPRAS.Digraph.cycleMass_pos_iff
+#print axioms DirectedCycleFPRAS.Digraph.deletedReliability_eq_exact
+#print axioms DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_exact
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_queryBound
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_bitBound
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_ideal
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_failure
+#print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_reduction
+#print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_of_constant_confidence
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_exactOracle
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_of_cycleMass_eq_zero
+#print axioms DirectedCycleFPRAS.Prog.medianOf_failure
+#print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_confidence
+#print axioms DirectedCycleFPRAS.hit_normLaw_iff
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat

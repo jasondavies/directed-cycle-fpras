@@ -1,3 +1,6 @@
 module
 
 public import DirectedCycleFPRAS.ReliabilityIdentity
+public import DirectedCycleFPRAS.Reduction
+public import DirectedCycleFPRAS.Confidence
+public import DirectedCycleFPRAS.Resources
