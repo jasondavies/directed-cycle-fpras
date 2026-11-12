@@ -411,5 +411,145 @@ theorem cycleAlgorithm_sat {Hp Ho : ℕ} (hHp : 1 ≤ Hp) (hHo : 1 ≤ Ho)
   · exact .ret _ (height_zero hbig)
 
 end Digraph
+
+/-! ## Every weight used in a discrete choice has bounded size -/
+
+namespace Prog
+
+variable {Q α β : Type}
+
+/-- The program is built from oracle calls and weighted `b`-bit draws only,
+and on every path whose oracle answers satisfy `A`, every weight handed to a
+draw satisfies `Hw` and the result satisfies `R`. A derivation exhibits the
+weight vector of each draw. -/
+inductive WeightSat (A Hw : ℝ → Prop) (R : α → Prop) : Prog Q α → Prop
+  | ret (a : α) : R a → WeightSat A Hw R (.ret a)
+  | query (x : Q) (k : ℝ → Prog Q α) :
+      (∀ r, A r → WeightSat A Hw R (k r)) → WeightSat A Hw R (.query x k)
+  | draw {ι : Type} [Fintype ι] (b : ℕ) (w : ι → ℝ) (d : ι) (k : ι → Prog Q α) :
+      (∀ i, Hw (w i)) → (∀ i, WeightSat A Hw R (k i)) →
+      WeightSat A Hw R (Prog.draw b (normLaw w d) k)
+  | work (c : ℕ) (m : Prog Q α) : WeightSat A Hw R m → WeightSat A Hw R (.work c m)
+
+variable {A Hw : ℝ → Prop}
+
+theorem WeightSat.bind {R' : α → Prop} {R : β → Prop} {m : Prog Q α} {g : α → Prog Q β}
+    (hm : WeightSat A Hw R' m) (hg : ∀ a, R' a → WeightSat A Hw R (g a)) :
+    WeightSat A Hw R (m.bind g) := by
+  induction hm with
+  | ret a ha => exact hg a ha
+  | query x k _ ih => exact .query x _ ih
+  | draw b w d k hw _ ih => exact .draw b w d (fun i => (k i).bind g) hw ih
+  | work c m _ ih => exact .work c _ ih
+
+theorem WeightSat.guarded {R : α → Prop} {c : Prop} {x : Q} {k : ℝ → Prog Q α}
+    (h0 : A 0) (h : ∀ r, A r → WeightSat A Hw R (k r)) :
+    WeightSat A Hw R (Prog.guarded c x k) := by
+  unfold Prog.guarded
+  refine .work _ _ ?_
+  split_ifs
+  · exact .query x k h
+  · exact h 0 h0
+
+theorem WeightSat.replicate {Ω : Type} {m : Prog Q Ω} (h : WeightSat A Hw (fun _ => True) m)
+    (n : ℕ) : WeightSat A Hw (fun _ => True) (m.replicate n) := by
+  induction n with
+  | zero => exact .ret _ trivial
+  | succ n ih => exact h.bind fun x _ => ih.bind fun xs _ => .ret _ trivial
+
+end Prog
+
+/-- Partial sums of weights of size `H`, as used by the selection rule
+`hit_normLaw_iff`, have size at most `(2H)^k` for `k` alternatives. -/
+theorem height_partialSum {ι : Type} [Fintype ι] (w : ι → ℝ) {H : ℕ} (hH : 1 ≤ H)
+    (hw : ∀ i, Height H (w i)) (n : ℕ) :
+    Height ((2 * H) ^ Fintype.card ι) (∑ j, if position j < n then w j else 0) := by
+  rw [← Finset.sum_filter]
+  refine (height_sum _ w fun i _ => hw i).mono ?_
+  exact Nat.pow_le_pow_right (by omega)
+    ((Finset.card_filter_le _ _).trans (le_of_eq Finset.card_univ))
+
+namespace Digraph
+
+variable {V E : Type} [Fintype E] [DecidableEq E] (G : Digraph V E) (p : E → ℝ)
+
+omit [Fintype E] in
+theorem expose_weightSat {Q : Type} {Hp Ho : ℕ} (hHp : 1 ≤ Hp) (hHo : 1 ≤ Ho) (bits : ℕ)
+    (mk : (E → ℝ) → Q) (feas : (E → ℝ) → Prop) (l : List E) (q : E → ℝ)
+    (hq : ∀ e, Height Hp (q e)) :
+    Prog.WeightSat (Height Ho) (Height (2 * (Hp * Ho))) (fun _ => True)
+      (expose bits mk feas l q) := by
+  induction l generalizing q with
+  | nil => exact .ret _ trivial
+  | cons f l ih =>
+    refine Prog.WeightSat.guarded (height_zero hHo) fun r₁ hr₁ =>
+      Prog.WeightSat.guarded (height_zero hHo) fun r₀ hr₀ => ?_
+    refine .draw bits _ true _ ?_ fun b => ih (pin q f b) ?_
+    · intro b
+      cases b
+      · exact ((hq f).one_sub.mul hr₀).mono (le_of_eq (by ring))
+      · exact ((hq f).mul hr₁).mono (by omega)
+    · intro e
+      by_cases he : e = f
+      · subst he
+        rw [pin_self]
+        cases b
+        · simpa using height_zero hHp
+        · simpa using height_one hHp
+      · rw [pin_of_ne q b he]
+        exact hq e
+
+/-- **Size of the selection weights.** Under the size hypotheses of
+`cycleAlgorithm_sat`, the algorithm consists of oracle calls and weighted
+draws only, and every weight handed to a draw is a fraction of size at most
+`2 * Hp * Ho`. By `height_partialSum` the partial sums compared by the
+selection rule then have size at most `(4 * Hp * Ho)^(m + 1)`. -/
+theorem cycleAlgorithm_weightSat {Hp Ho : ℕ} (hHp : 1 ≤ Hp) (hHo : 1 ≤ Ho)
+    (hp : ∀ e, Height Hp (p e)) (bits n : ℕ) :
+    Prog.WeightSat (Height Ho) (Height (2 * (Hp * Ho))) (fun _ => True)
+      (G.cycleAlgorithm p bits n) := by
+  have hprod : 1 ≤ Hp * Ho := Nat.mul_pos hHp hHo
+  have h0 : Height Ho 0 := height_zero hHo
+  unfold cycleAlgorithm
+  split_ifs
+  · have hinit : ∀ (l : List E) (acc : E → ℝ), (∀ e, Height (Hp * Ho) (acc e)) →
+        Prog.WeightSat (Height Ho) (Height (2 * (Hp * Ho)))
+          (fun w : E → ℝ => ∀ e, Height (Hp * Ho) (w e)) (G.initWeights p l acc) := by
+      intro l
+      induction l with
+      | nil => exact fun acc hacc => .ret _ hacc
+      | cons e l ih =>
+        intro acc hacc
+        refine Prog.WeightSat.guarded h0 fun r hr => ?_
+        apply ih
+        intro e'
+        by_cases hee : e' = e
+        · subst hee
+          rw [Function.update_self]
+          exact (hp e').mul hr
+        · rw [Function.update_of_ne hee]
+          exact hacc e'
+    refine (hinit _ _ fun _ => height_zero hprod).bind fun w hw => ?_
+    have hsampler : Prog.WeightSat (Height Ho) (Height (2 * (Hp * Ho))) (fun _ => True)
+        (G.sampler p bits w) := by
+      refine .draw bits _ none _ ?_ fun o => ?_
+      · intro o
+        cases o with
+        | none => exact height_zero (by omega)
+        | some e => exact (hw e).mono (by omega)
+      · cases o with
+        | none => exact .ret _ trivial
+        | some e =>
+          refine expose_weightSat hHp hHo bits _ _ _ _ fun e' => ?_
+          by_cases he : e' = e
+          · subst he
+            rw [pin_self]
+            simpa using height_one hHp
+          · rw [pin_of_ne p true he]
+            exact hp e'
+    exact (hsampler.replicate n).bind fun xs _ => .work _ _ (.ret _ trivial)
+  · exact .ret _ trivial
+
+end Digraph
 end
 end DirectedCycleFPRAS

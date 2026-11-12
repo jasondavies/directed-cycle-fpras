@@ -66,6 +66,10 @@ including loops and parallel arcs, and 0<epsilon<=1:
   within relative error epsilon of Z except with probability at most 1/4.
 - `Digraph.cycle_fpras_confidence`: the median of `O(log(1/delta))` such runs
   fails with probability at most delta.
+- `Digraph.cycle_fpras_of_estimator`: the same from one hypothesis, a
+  reliability estimator that is accurate with probability 3/4 on finite
+  directed multigraphs with probabilities in (0,1], which is the input class
+  of the cited theorem. Zero-probability edges are deleted before each call.
 - `Digraph.cycleAlgorithm_of_cycleMass_eq_zero`: if Z=0 the algorithm makes no
   oracle call and returns exactly 0.
 - `Digraph.cycleAlgorithm_failure`: the same for a general per-call failure
@@ -82,6 +86,8 @@ including loops and parallel arcs, and 0<epsilon<=1:
   input, and if input probabilities and oracle answers are fractions with
   numerator and denominator at most `Hp` and `Ho`, the output is a fraction
   with numerator and denominator at most `(2*Hp*Ho)^m * n * m!`.
+- `Digraph.cycleAlgorithm_weightSat`: every weight used in a discrete choice
+  has numerator and denominator at most `2*Hp*Ho`.
 
 The oracle contract is an explicit hypothesis, not a hidden axiom, and
 `Digraph.cycleAlgorithm_exactOracle` shows it is satisfiable. Supporting
@@ -92,8 +98,7 @@ earlier statistical theorem `Digraph.cycle_estimator_success`, which takes the
 sampling law as an input, remains and is what the reduction instantiates.
 
 What is still only a written argument: turning these counts and size bounds
-into a machine-level running time, the Hoeffding route to confidence `1-delta`, and the conversion to
-a simple-graph oracle. Details are in [FORMALIZATION.md](FORMALIZATION.md).
+into a machine-level running time, and the Hoeffding route to confidence `1-delta`. Details are in [FORMALIZATION.md](FORMALIZATION.md).
 
 ## Provenance
 

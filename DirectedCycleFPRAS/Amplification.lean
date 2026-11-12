@@ -136,8 +136,8 @@ theorem median_good {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) {P : ℝ → Prop
 
 /-- Answer with the median of `k` independent runs of the oracle. -/
 def Oracle.amplify {Q : Type} (O : Oracle Q) (k : ℕ) : Oracle Q where
-  Seed := Fin k → O.Seed
-  fintype := inferInstance
+  Seed x := Fin k → O.Seed x
+  fintype := fun _ => inferInstance
   law x := (O.law x).pow k
   answer x s := median fun i => O.answer x (s i)
 
@@ -148,23 +148,23 @@ theorem Oracle.amplify_failure {Q : Type} (O : Oracle Q) (k : ℕ) (x : Q) {P : 
     (hfail : (∑ s, if P (O.answer x s) then 0 else (O.law x).value s) ≤ 1 / 4) :
     (∑ s, if P ((O.amplify k).answer x s) then 0 else ((O.amplify k).law x).value s) ≤
       (7 / 8 : ℝ) ^ k := by
-  change (∑ s : Fin k → O.Seed, if P (median fun i => O.answer x (s i)) then 0
+  change (∑ s : Fin k → O.Seed x, if P (median fun i => O.answer x (s i)) then 0
     else ((O.law x).pow k).value s) ≤ _
   rcases Nat.eq_zero_or_pos k with hk0 | hk
   · subst hk0
-    calc _ ≤ ∑ s : Fin 0 → O.Seed, ((O.law x).pow 0).value s :=
+    calc _ ≤ ∑ s : Fin 0 → O.Seed x, ((O.law x).pow 0).value s :=
           Finset.sum_le_sum fun s _ => by
             split_ifs
             · exact ((O.law x).pow 0).nonneg s
             · exact le_refl _
       _ = 1 := ((O.law x).pow 0).sum_one
       _ = (7 / 8 : ℝ) ^ 0 := (pow_zero _).symm
-  let h : O.Seed → ℝ := fun t => if P (O.answer x t) then 1 / 2 else 2
+  let h : O.Seed x → ℝ := fun t => if P (O.answer x t) then 1 / 2 else 2
   have hh0 : ∀ t, 0 ≤ h t := by
     intro t
     simp only [h]
     split_ifs <;> norm_num
-  have hterm : ∀ s : Fin k → O.Seed,
+  have hterm : ∀ s : Fin k → O.Seed x,
       (if P (median fun i => O.answer x (s i)) then 0 else ((O.law x).pow k).value s) ≤
         ((O.law x).pow k).value s * ∏ i, h (s i) := by
     intro s
@@ -188,7 +188,7 @@ theorem Oracle.amplify_failure {Q : Type} (O : Oracle Q) (k : ℕ) (x : Q) {P : 
         exact one_le_pow₀ (by norm_num)
       calc ((O.law x).pow k).value s = ((O.law x).pow k).value s * 1 := (mul_one _).symm
         _ ≤ _ := mul_le_mul_of_nonneg_left hone hv
-  calc _ ≤ ∑ s : Fin k → O.Seed, ((O.law x).pow k).value s * ∏ i, h (s i) :=
+  calc _ ≤ ∑ s : Fin k → O.Seed x, ((O.law x).pow k).value s * ∏ i, h (s i) :=
         Finset.sum_le_sum fun s _ => hterm s
     _ = (∑ t, (O.law x).value t * h t) ^ k := Law.pow_prod _ _ _
     _ ≤ (7 / 8 : ℝ) ^ k := by

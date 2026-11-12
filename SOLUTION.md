@@ -211,8 +211,16 @@ the input probabilities and oracle answers have them at most `Hp` and `Ho`.
 There is no machine model: that each charged operation costs polynomial time
 is not formalised, and the charges themselves are annotations.
 
-Not formalised: a machine-level running time, the Hoeffding argument, and the
-conversion to a simple-graph oracle. The
+Lean also proves that deleting zero-probability edges preserves reliability,
+and states the final theorem for an estimator on multigraphs with
+probabilities in `(0,1]` (`Digraph.cycle_fpras_of_estimator`). That is the
+input class of the cited Theorem 1 in v2, which allows parallel arcs and
+self-loops, so the subdivision step of Section 4 is not needed for it. The
+cited running time is in a unit-cost arithmetic model; the bit-complexity
+assumption on the oracle at the start of Section 4's last part is an extra
+requirement, not something that statement provides.
+
+Not formalised: a machine-level running time and the Hoeffding argument. The
 reliability theorem of Feng, Fu, and Guo enters only as a hypothesis on the
 oracle. [FORMALIZATION.md](FORMALIZATION.md) maps each step to its Lean
 statement.

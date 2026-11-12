@@ -44,13 +44,14 @@ theorem normLaw_value {ι : Type} [Fintype ι] (w : ι → ℝ) (d : ι)
     (normLaw w d).value i = w i / ∑ j, w j := by
   rw [normLaw, dite_eq_left ⟨h0, hpos⟩]
 
-/-- A randomized oracle: each call draws a fresh seed from a finite law that
-may depend on the query, and returns a real answer. -/
+/-- A randomized oracle: each call draws a fresh seed from a finite law and
+returns a real answer. The seed space and its law may depend on the query, so
+larger instances may consume more randomness. -/
 structure Oracle (Q : Type) where
-  Seed : Type
-  [fintype : Fintype Seed]
-  law : Q → Law Seed
-  answer : Q → Seed → ℝ
+  Seed : Q → Type
+  [fintype : ∀ x, Fintype (Seed x)]
+  law : (x : Q) → Law (Seed x)
+  answer : (x : Q) → Seed x → ℝ
 
 attribute [instance] Oracle.fintype
 
@@ -267,7 +268,7 @@ def Oracle.repair {Q : Type} (O : Oracle Q) (good : Q → ℝ → Prop) (fix : Q
   answer x s := if good x (O.answer x s) then O.answer x s else fix x
 
 theorem Oracle.repair_good {Q : Type} (O : Oracle Q) (good : Q → ℝ → Prop) (fix : Q → ℝ)
-    (hfix : ∀ x, good x (fix x)) (x : Q) (s : O.Seed) :
+    (hfix : ∀ x, good x (fix x)) (x : Q) (s : O.Seed x) :
     good x ((O.repair good fix).answer x s) := by
   change good x (if good x (O.answer x s) then O.answer x s else fix x)
   split_ifs with h
@@ -296,7 +297,7 @@ theorem exp_le_repair (O : Oracle Q) (good : Q → ℝ → Prop) (fix : Q → �
     linarith
   | query x k n _ ih =>
     have hnγ : 0 ≤ (n : ℝ) * γ := mul_nonneg (Nat.cast_nonneg n) hγ0
-    have hterm : ∀ s : O.Seed, (O.law x).value s * (k (O.answer x s)).exp O f ≤
+    have hterm : ∀ s : O.Seed x, (O.law x).value s * (k (O.answer x s)).exp O f ≤
         (O.law x).value s *
           ((k ((O.repair good fix).answer x s)).exp (O.repair good fix) f + n * γ) +
         (if good x (O.answer x s) then 0 else (O.law x).value s) := by
@@ -316,13 +317,13 @@ theorem exp_le_repair (O : Oracle Q) (good : Q → ℝ → Prop) (fix : Q → �
         have hrest := mul_nonneg hρ (add_nonneg h0 hnγ)
         linarith
     calc (Prog.query x k).exp O f
-        = ∑ s : O.Seed, (O.law x).value s * (k (O.answer x s)).exp O f := rfl
-      _ ≤ ∑ s : O.Seed, ((O.law x).value s *
+        = ∑ s : O.Seed x, (O.law x).value s * (k (O.answer x s)).exp O f := rfl
+      _ ≤ ∑ s : O.Seed x, ((O.law x).value s *
             ((k ((O.repair good fix).answer x s)).exp (O.repair good fix) f + n * γ) +
           (if good x (O.answer x s) then 0 else (O.law x).value s)) :=
         Finset.sum_le_sum fun s _ => hterm s
       _ = (Prog.query x k).exp (O.repair good fix) f + n * γ +
-          ∑ s : O.Seed, (if good x (O.answer x s) then 0 else (O.law x).value s) := by
+          ∑ s : O.Seed x, (if good x (O.answer x s) then 0 else (O.law x).value s) := by
         rw [Finset.sum_add_distrib]
         simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, Law.sum_one, one_mul]
         rfl

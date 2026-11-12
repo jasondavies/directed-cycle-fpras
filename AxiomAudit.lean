@@ -38,3 +38,8 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.hit_normLaw_iff
 #print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound
 #print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat
+#print axioms DirectedCycleFPRAS.Digraph.cycleAlgorithm_weightSat
+#print axioms DirectedCycleFPRAS.height_partialSum
+#print axioms DirectedCycleFPRAS.eventMass_restrict
+#print axioms DirectedCycleFPRAS.Digraph.reliability_positivePart
+#print axioms DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator

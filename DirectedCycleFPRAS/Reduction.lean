@@ -264,7 +264,7 @@ def Good (α : ℝ) (x : Query V E) (r : ℝ) : Prop := G.Valid p x → G.Accura
 /-- A guarded answer is accurate, including the exact zero of an infeasible query. -/
 theorem guarded_accurate (hp : Prob01 p) (O : Oracle (Query V E)) {α : ℝ}
     (hO : ∀ x s, G.Good p α x (O.answer x s)) (x : Query V E) (hx : Derived p x.1)
-    (s : O.Seed) :
+    (s : O.Seed x) :
     |(if G.Feasible x then O.answer x s else 0) - G.exact x| ≤ α * G.exact x := by
   have hx01 : Prob01 x.1 := derived_prob01 hp hx
   by_cases hf : G.Feasible x
@@ -419,7 +419,7 @@ theorem exp_initWeights_le (hO : ∀ x s, G.Good p α x (O.answer x s))
   | cons e l ih =>
     change (Prog.guarded _ _ _).exp O g ≤ c
     rw [Prog.exp_guarded]
-    have hbound : ∀ s : O.Seed,
+    have hbound : ∀ s : O.Seed (G.returnQuery p e),
         (G.initWeights p l (Function.update acc e (p e *
           (if G.Feasible (G.returnQuery p e) then O.answer (G.returnQuery p e) s else 0)))).exp
           O g ≤ c := by
@@ -860,7 +860,7 @@ theorem cycle_fpras_of_constant_confidence (hp0 : ∀ e, 0 ≤ p e)
 
 /-- The deterministic oracle returning the exact reliability. -/
 def exactOracle : Oracle (Query V E) where
-  Seed := Unit
+  Seed _ := Unit
   law _ := { value := fun _ => 1, nonneg := fun _ => zero_le_one, sum_one := by simp }
   answer x _ := G.exact x
 
@@ -876,7 +876,7 @@ theorem cycleAlgorithm_exactOracle (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e �
   apply G.cycle_fpras_reduction p hp0 hp1 G.exactOracle hε hε1 (γ := 0) (le_refl _)
     (by norm_num)
   intro x hx
-  have hacc : ∀ s : G.exactOracle.Seed, G.Accurate
+  have hacc : ∀ s : G.exactOracle.Seed x, G.Accurate
       (ε / (128 * Fintype.card E * (Fintype.card E + 1))) x (G.exactOracle.answer x s) := by
     intro s
     change |G.exact x - G.exact x| ≤ _

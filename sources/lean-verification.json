@@ -36,7 +36,12 @@
     "DirectedCycleFPRAS.Digraph.cycle_fpras_confidence",
     "DirectedCycleFPRAS.hit_normLaw_iff",
     "DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat"
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat",
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_weightSat",
+    "DirectedCycleFPRAS.height_partialSum",
+    "DirectedCycleFPRAS.eventMass_restrict",
+    "DirectedCycleFPRAS.Digraph.reliability_positivePart",
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -210,6 +215,31 @@
       "Quot.sound"
     ],
     "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_weightSat": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.height_partialSum": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.eventMass_restrict": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reliability_positivePart": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator": [
       "propext",
       "Classical.choice",
       "Quot.sound"

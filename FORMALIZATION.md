@@ -32,6 +32,7 @@ a hypothesis.
 | `Amplification` | The law of `k` independent seeds, a median defined by its characterising property, and `Oracle.amplify_failure`: per-call failure at most 1/4 becomes at most `(7/8)^k`. |
 | `Confidence` | The median of `k` independent runs of a real-valued program fails with probability at most `(7/8)^k`; the reduction at confidence `1 - delta`. |
 | `Resources` | Charged local-operation count, the invariant that every query is a feasible residual instance, a size calculus for fractions, the output size bound, and division-free selection. |
+| `PositiveOracle` | Removing deterministic coordinates of a product law; deleting zero-probability edges preserves reliability; the reduction from an estimator for multigraphs with probabilities in `(0,1]`. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
 The entry point `DirectedCycleFPRAS.lean` imports all modules. `AxiomAudit.lean`
@@ -72,6 +73,8 @@ alternative.
 | `Digraph.cycle_fpras_reduction` | With `n = ceil(2048 m^2/eps^2)`, `bits = bitBudget m eps` and `(m + 2*m*n) * gamma <= 1/8`: failure probability at most 1/4. |
 | `Digraph.cycle_fpras_of_constant_confidence` | If each call on a valid query is accurate with probability at least 3/4, then the algorithm run against the median of `6 * ceil(log2(8 T))` independent calls, `T = m + 2*m*n`, fails with probability at most 1/4. |
 | `Digraph.cycle_fpras_confidence` | Under the same contract, the median of `6 * ceil(log2(ceil(1/delta)))` independent runs fails with probability at most `delta`, for every `delta > 0`. |
+| `Digraph.cycle_fpras_of_estimator` | The same conclusion from a single hypothesis: a randomized estimator that, on every finite directed multigraph with probabilities in `(0,1]` and positive reliability, has relative error at most `eps/(128 m (m+1))` with probability at least 3/4. Each query is answered by deleting its zero-probability edges and calling the estimator. |
+| `Digraph.cycleAlgorithm_weightSat` | The algorithm consists of oracle calls and weighted draws only, and every weight handed to a draw is a fraction with numerator and denominator at most `2*Hp*Ho`; by `height_partialSum` the partial sums compared in selection are at most `(4*Hp*Ho)^(m+1)`. |
 | `Digraph.cycleAlgorithm_of_cycleMass_eq_zero` | If `Z = 0` the algorithm is literally `ret 0`: no oracle call, no randomness, output exactly 0. |
 | `Digraph.cycleAlgorithm_exactOracle` | The exact oracle meets the contract, so the hypotheses are satisfiable. |
 
@@ -99,7 +102,8 @@ answer arbitrarily.
 | Section 4, `k/2^b` per `b`-bit choice | `bitLaw_error`, `bitLaw_l1`, `Prog.exp_draw` |
 | Section 4, residual instances do not grow | `Derived`, `derived_pin`, `cycleAlgorithm_sat`; the oracle contract is restricted to them |
 | Section 4, output bit length `O(m log m) + O(log N)` beyond the weights | `score_eq_div_factorial`, `sampleSum_common_denominator`, `cycleAlgorithm_sat` |
-| Section 4, choices need only rational comparisons | `hit_normLaw_iff` |
+| Section 4, choices need only rational comparisons | `hit_normLaw_iff`, `cycleAlgorithm_weightSat`, `height_partialSum` |
+| Section 4, delete zero-probability edges before calling the oracle | `eventMass_restrict`, `reliability_positivePart`, `oracleOfEstimator` |
 
 ### Differences from the written parameters
 
@@ -134,28 +138,36 @@ differences are deliberate and do not affect polynomiality.
    - Each charged operation is a reachability test on the input graph or
      `O(1)` arithmetic operations and comparisons on fractions. That these
      take polynomial time in the operand sizes is standard and not formalised.
-   - Size bounds are proved for the queries and the output. The intermediate
-     branch weights and partial sums are sums and products of at most `m + 1`
-     input probabilities and oracle answers, so the `Height` lemmas bound them
-     the same way, but no theorem enumerates them.
+   - Size bounds are proved for the queries, the output, every weight handed
+     to a discrete choice (`cycleAlgorithm_weightSat`) and the partial sums
+     the selection rule compares (`height_partialSum`). `WeightSat` asserts
+     that the program can be presented as draws on weights of that size; it
+     does not inspect a concrete data representation.
    cslib has multi-tape Turing machines with time bounds; compiling this
    algorithm to one, with randomness and oracle access, would be a separate
    and much larger project.
 2. **The external theorem.** The reliability FPRAS of Feng, Fu and Guo is a
-   hypothesis: an `Oracle` that is accurate on valid queries with probability
-   at least 3/4 at the single accuracy level the theorem names. Its existence,
-   its cost as a function of that accuracy, and its internal randomness are
-   outside this repository.
+   hypothesis: `ReliabilityEstimator.Correct`, an estimator accurate with
+   probability at least 3/4 on finite directed multigraphs with probabilities
+   in `(0,1]`, at the single accuracy level the theorem names. This matches
+   the input class of their Theorem 1 as stated in arXiv:2608.02523v2, which
+   allows parallel arcs and self-loops and takes rational probabilities in
+   `(0,1]`. Its existence and its cost are outside this repository. Note that
+   their running time is stated in a unit-cost arithmetic model with uniform
+   real draws; a bit-complexity bound for the oracle, and a bound `Ho` on the
+   size of its answers as assumed in `cycleAlgorithm_sat`, are therefore
+   additional requirements on the oracle and not consequences of that
+   statement.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding
    inside a single run; that argument is not formalised. Counts of base oracle
    calls after amplification (queries times repetitions) are not stated as a
    theorem.
-4. **Simple-graph oracles.** Queries are posed on the input multigraph with
-   some probabilities set to 0 or 1. Deleting zero-probability edges,
-   discarding loops and subdividing parallel arcs for an oracle that requires
-   simple graphs (end of Section 4) are not formalised.
+4. **Simple-graph oracles.** Not needed for the cited theorem, which accepts
+   multigraphs. The subdivision of parallel arcs described at the end of
+   Section 4, for a hypothetical oracle restricted to simple graphs, is not
+   formalised.
 5. **Link to the Python model.** `scripts/cycle_fpras_reduction.py` follows the
    same algorithm but has not been proved equivalent to `cycleAlgorithm`.
 
