@@ -1,7 +1,12 @@
-# An FPRAS reduction for directed-cycle probability
+# Original edge-witness reduction for directed-cycle probability
 
-These supporting notes give the reduction in detail. The
-[paper](../paper/directed-cycle-fpras.pdf) is the main exposition; the
+These notes preserve the original edge-witness estimator and its conservative
+parameters, which underpin the current Lean development. The revised
+[paper](../paper/directed-cycle-fpras.pdf) uses vertex witnesses and corrected
+rejection for stronger counting and conditional-sampling results, and includes
+a hardness proposition for acyclicity. Those additions are written proofs,
+not yet Lean theorems. Its Appendix A also sharpens the old estimator's analysis.
+The
 [formalization map](../validation/FORMALIZATION.md) records the Lean statements
 and their hypotheses. Lean checks arbitrary confidence by median amplification,
 as well as resource counts and output-size bounds. Machine-level runtime is a

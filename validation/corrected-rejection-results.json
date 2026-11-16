@@ -1,0 +1,53 @@
+{
+  "scope": "Exact finite transcript checks; no polynomial oracle or Lean refinement proof",
+  "cases": [
+    {
+      "case": "loop",
+      "cycle_probability": "1/7",
+      "initial_transcripts": 2,
+      "weight_vectors": 2,
+      "proposal_transcripts": 8
+    },
+    {
+      "case": "rare_cycle_fvs1",
+      "cycle_probability": "1/1000000000000000000000000000000000000000000000000000000000000",
+      "initial_transcripts": 2,
+      "weight_vectors": 2,
+      "proposal_transcripts": 16
+    },
+    {
+      "case": "overlapping_cycles",
+      "cycle_probability": "29/105",
+      "initial_transcripts": 4,
+      "weight_vectors": 4,
+      "proposal_transcripts": 2432
+    },
+    {
+      "case": "parallel_edges",
+      "cycle_probability": "4/9",
+      "initial_transcripts": 4,
+      "weight_vectors": 4,
+      "proposal_transcripts": 1280
+    },
+    {
+      "case": "zero_one_unreachable",
+      "cycle_probability": "1/2",
+      "initial_transcripts": 4,
+      "weight_vectors": 4,
+      "proposal_transcripts": 32
+    },
+    {
+      "case": "deterministic",
+      "cycle_probability": "1",
+      "initial_transcripts": 2,
+      "weight_vectors": 2,
+      "proposal_transcripts": 4
+    }
+  ],
+  "hardness_gadgets_checked": 76,
+  "fixed_bit_estimate": "4563/16384",
+  "truth": "29/105",
+  "fallbacks_and_invalid_feedback_set_checked": true,
+  "precision_independent_of_proposal_count": true,
+  "exact_fixed_grid_coupling_checked": true
+}

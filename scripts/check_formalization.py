@@ -41,7 +41,9 @@ report = {
               "no machine model, so polynomial running time is "
               "assembled from these counts by a written argument, local-operation charges are "
               "trusted annotations, and the accuracy of the cited paper's Algorithm S, as "
-              "transcribed, is a hypothesis."),
+              "transcribed, is a hypothesis. This audit concerns the original edge-witness "
+              "estimator; the revised vertex-witness corrected rejection estimator, conditional "
+              "sampler, and acyclicity-hardness proposition are not formalized."),
 }
 (ROOT / "validation").mkdir(exist_ok=True)
 (ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")

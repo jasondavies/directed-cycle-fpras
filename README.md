@@ -1,4 +1,4 @@
-# Directed-cycle probability via reliability
+# An FPRAS for directed-cycle probability
 
 An approximation-preserving reduction from directed-cycle probability to
 directed two-terminal reliability. Combined with the reliability theorem of
@@ -7,40 +7,48 @@ an FPRAS for independent rational edge retention, including parallel edges
 and self-loops. The running time is polynomial in the binary input length,
 `1/epsilon`, and `log(1/delta)`, even when the cycle probability is
 exponentially small. Zero-probability instances are detected exactly.
+The revised manuscript also gives conditional sampling in time polynomial
+in `log(1/eta)` and proves hardness of approximating acyclicity probability.
 
 Read the [paper](paper/directed-cycle-fpras.pdf)
 ([LaTeX source](paper/directed-cycle-fpras.tex)). It presents the reduction,
 its error analysis, the bit-cost argument, and the verification boundary.
 
-**Verification status.** Lean checks the probabilistic reduction and explicit
-resource bounds. The final theorem, `Digraph.cycleFPRAS_spec`, combines
-accuracy, total fair-bit usage, and rational output size for one program
-with every oracle call expanded and both amplification stages included.
-Accuracy assumes the stated guarantee for the transcribed Algorithm S.
-Lean also proves whole-program output-law equivalence for induced vertex/edge
-subtypes with inherited arc order and for an explicit parent-pointer traversal.
-The external accuracy proof, its larger-budget variance argument, and
-machine-level runtime remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
+**Verification status.** Lean verifies the original edge-witness estimator,
+including its composed fair-bit and output-size bounds and the subtype and
+parent-pointer correspondences. Accuracy assumes `AlgSAccurate`. The revised
+vertex witnesses, corrected estimator, conditional sampler, sharper bounds,
+and hardness proposition have written proofs and finite checks; they are not
+yet formalized. The external accuracy proof and machine-level runtime also
+remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
 
 This is a research draft. Independent expert review and novelty assessment
-remain pending. The union estimator is classical; the proposed contribution
-is its application through reliability queries, with adaptive-error and
-finite-bit analysis. The work was developed with AI assistance.
+remain pending. The union-estimation framework is classical. The revision
+develops a reliability cover and recorded-probability correction from review suggestions;
+novelty of the correction principle is not claimed. The work was developed
+with AI assistance.
 
 ## The reduction
 
-For each edge `e=(u,v)`, use the event that `e` is present and `v` reaches `u`
-without `e`. Its probability is `p_e * Rel_(G-e)(v,u)`. These `m` events cover
-exactly the cyclic outcomes, although the graph may have exponentially many
-cycles.
+Split a vertex into incoming and outgoing terminals. The event that it lies
+on a retained cycle is exactly a two-terminal reliability event. Any supplied
+feedback vertex set of the support gives a cover of all cyclic outcomes;
+all vertices are always a valid choice. Write `k` for its size and `m` for
+the number of edge variables.
 
-Choose an event proportionally to its probability and sample conditionally
-on it. If the sampled graph belongs to `t` witness events, give it score
-`1/t`. The expected score is the cycle probability divided by the sum of
-witness probabilities, and is at least `1/m`. Reliability estimates provide
-both the weights and conditional samples. The proof controls approximate
-choices and adaptive oracle failures without conditioning on all calls
-succeeding.
+Choose a witness using approximate weights, expose a conditional proposal,
+and record the nominal branch-probability product `g`. For a proposal `X`
+through witness `i`, accept with probability
+`mu(X) / (2 * t(X) * weight[i] * g)`, where `t` counts compatible witnesses.
+The recorded factors cancel in the accurate-oracle, exact-choice reference
+process. Acceptance has probability `Z/(2*W_hat) >= 1/(4k)` and accepted
+configurations have exactly the product law conditioned on cyclicity.
+
+Counting uses `O(k/epsilon^2)` proposals per constant-confidence run, followed
+by median amplification. The oracle accuracy is `1/(16*(m+1))`, independent
+of `epsilon`. Adaptive-oracle and finite-bit coupling transfer the guarantees
+to a bounded implementation. The paper separates these written results from
+the older Lean program.
 
 ## Repository layout
 
@@ -56,8 +64,9 @@ The main Lean statements are
 [`cycle_fpras_of_estimator`](DirectedCycleFPRAS/PositiveOracle.lean) for the
 oracle reduction and [`cycleFPRAS_spec`](DirectedCycleFPRAS/ConcreteResources.lean)
 for the expanded program. The
-[written proof](research/SOLUTION.md) and
-[discretization note](research/DISCRETISATION.md) give supporting details;
+[original edge-witness proof](research/SOLUTION.md) and
+[discretization note](research/DISCRETISATION.md) document the earlier estimator
+and the shared oracle construction;
 the [problem note](research/PROBLEM.md) records the original question and sources.
 
 ## Reproduce
@@ -78,15 +87,19 @@ project-defined axioms. Reports are written to `validation/`.
 Python checks use exact enumeration or test oracles on small graphs. They
 are finite regression evidence, not a polynomial-time reliability
 implementation or a proof of equivalence with Lean. The default checks
+enumerate randomized oracle transcripts for the corrected rejection model,
+check its counting and conditional-sampling identities, and check the hardness
+gadget on all simple undirected graphs with at most four vertices. They also
 compare the two Algorithm S ports at `M=1`; run
 `python3 scripts/algs_transcription/run.py 1,2,3` for the larger exact suite.
 
 ## Next steps
 
 1. Obtain expert review of the reduction, finite-bit adaptation, and novelty.
-2. Review the transfer of the cited accuracy theorem, especially the
-   larger-budget variance argument, against the verified correspondence laws.
-3. Prepare a reviewed release with confirmed authorship and publication metadata.
+2. Formalize vertex splitting, the adaptive-transcript cancellation, and the
+   corrected estimator and sampler, retaining the existing correspondence laws.
+3. Review the external accuracy transfer and prepare a release with confirmed
+   authorship and publication metadata.
 
 The external accuracy proof and a machine-level runtime formalization are
 separate, substantially larger projects. Neither is claimed in this draft.

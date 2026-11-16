@@ -13,6 +13,14 @@ the resource bounds do not. Whole-program subtype and parent-pointer
 correspondences are proved. The external accuracy proof, its larger-budget
 variance argument, and machine-level runtime are outside Lean.
 
+**Revision boundary.** The manuscript now leads with vertex/feedback-set
+witnesses and corrected rejection. The existing Lean program still uses the
+original edge-witness inverse-multiplicity estimator and its original budgets.
+Vertex splitting, adaptive-transcript cancellation, the new conditional
+sampler, sharpened concentration, and acyclicity hardness are not formalized.
+`scripts/check_corrected_rejection.py` provides exact finite evidence for the
+new model, not a Lean proof or an implementation of the reliability FPRAS.
+
 This file is the detailed reference. Start with the
 [paper](../paper/directed-cycle-fpras.pdf) for the mathematical argument.
 
@@ -143,7 +151,7 @@ values. Empty samples return zero. The total height statements also cover
 `M = 0`, an edgeless positive part, and equal terminals; they do not assume
 that a feasible residual query has a positive Algorithm S sample budget.
 
-### How the written argument maps to Lean
+### How the original edge-witness argument maps to Lean
 
 | Written step (research/SOLUTION.md) | Lean |
 | --- | --- |
@@ -163,12 +171,12 @@ that a feasible residual query has a positive Algorithm S sample budget.
 | Section 4, choices need only rational comparisons | `hit_normLaw_iff`, `cycleAlgorithm_weightSat`, `height_partialSum` |
 | Section 4, delete zero-probability edges before calling the oracle | `eventMass_restrict`, `reliability_positivePart`, `oracleOfEstimator` |
 
-### Differences from the written parameters
+### Original parameters and the revised manuscript
 
-The formal proof is a constant-confidence version with its own constants. The
-differences are deliberate and do not affect polynomiality.
+The following table compares the preserved original argument in
+`research/SOLUTION.md` with Lean. It is not the revised paper's algorithm.
 
-| Quantity | Written | Formal |
+| Quantity | Original written proof | Formal |
 | --- | --- | --- |
 | Concentration | Hoeffding, `log(1/delta)` | Chebyshev, failure 1/8, then a median of runs |
 | Samples | `ceil(200 m^2 eps^-2 ceil(log2(4/delta)))` | `ceil(2048 m^2/eps^2)` |
@@ -176,6 +184,13 @@ differences are deliberate and do not affect polynomiality.
 | Rounding of choices | separate failure budget `delta/4` by coupling | L1 error `(3m+1)/2^bits`, absorbed into the sampling-law budget |
 | Oracle failure budget | `delta/(4T)` per call | `T * gamma <= 1/8`, with `gamma = (7/8)^k` after amplification |
 | Range of `eps` | `(0, 1/2]` | `(0, 1]` |
+
+The revised manuscript instead uses `k` vertex witnesses, oracle accuracy
+`1/(16*(m+1))`, and `ceil(64*k/eps^2)` Bernoulli proposals per complete run.
+It uses Chebyshev and a median of independent complete runs, with separate
+whole-run coupling budgets for oracle failure and rounding. A second theorem
+uses a capped rejection sampler. None of these new algorithm-specific bounds
+is supplied by `cycleFPRAS_spec`.
 
 ## What is not formalised
 
@@ -238,12 +253,13 @@ differences are deliberate and do not affect polynomiality.
    martingale/concentration proof and the larger-budget variance argument
    transferring Theorem 9 to the unreduced budget are not formalized.
    Exact enumeration supplies separate finite evidence, as recorded in the note.
-3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
+3. **The revised estimator and confidence proof.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
-   runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding
-   inside a single run; that argument is not formalised. The composed
-   fair-bit bound includes both repetitions: `r*T*k` base oracle runs
-   are accounted for in `concreteCycle_bitCost`.
+   runs (`cycle_fpras_confidence`). The revised paper uses the same architecture
+   for a different, corrected rejection estimator. Its cancellation identity,
+   Bernoulli mean bound, and conditional sampler are not formalized. The
+   original composed fair-bit bound includes both repetitions: `r*T*k` base
+   oracle runs are accounted for in `concreteCycle_bitCost`.
 4. **Simple-graph oracles.** Not needed for the cited theorem, which accepts
    multigraphs. The subdivision of parallel arcs described at the end of
    Section 4, for a hypothetical oracle restricted to simple graphs, is not

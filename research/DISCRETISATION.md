@@ -9,6 +9,11 @@ subtype reindexing and an explicit parent-pointer program. The paper's
 Theorem 9 and its larger-budget variance argument remain outside Lean;
 accuracy is an explicit hypothesis.
 
+The revised manuscript uses this same oracle construction at accuracy
+`1/(16*(m+1))`, independent of the final counting or sampling error. The
+vertex-witness corrected estimator itself is not yet formalized. The Lean
+reduction referenced below is the original edge-witness program.
+
 ## The gap
 
 Feng, Fu and Guo, *Approximating two-terminal network reliability*

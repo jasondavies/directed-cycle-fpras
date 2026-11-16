@@ -1,10 +1,13 @@
-"""Polynomial-time cycle-probability estimator given a reliability FPRAS.
+"""Original edge-witness estimator, retained as a model of the earlier reduction.
 
 The oracle signature is (n, arcs, probabilities, s, t, alpha, delta, rng).
 It must return a rational alpha-relative approximation with failure <= delta,
 in time polynomial in the input length, 1/alpha, and log(1/delta).
-Feng--Fu--Guo, arXiv:2608.02523v1, Theorem 1 supplies such an oracle.
-This module implements the reduction, not that external Markov-chain oracle.
+The bit-model contract uses Algorithm S / Theorem 9 of Feng--Fu--Guo,
+arXiv:2608.02523v2, together with research/DISCRETISATION.md; their unit-cost
+arithmetic theorem alone does not provide it. This module implements only
+the original reduction. corrected_rejection.py implements the revised model;
+neither module implements the external reliability oracle.
 """
 from fractions import Fraction as Q
 import random

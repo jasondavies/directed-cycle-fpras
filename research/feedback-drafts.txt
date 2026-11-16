@@ -13,24 +13,22 @@ the probability that an independently edge-retained directed graph contains
 a cycle. I would appreciate your view on whether this consequence is already
 known and whether the reduction answers the question as intended.
 
-For each edge e=(u,v), the witness event is that e is present and v reaches u
-without e. These m events cover cyclic outcomes and have probabilities
-p_e Rel_{G-e}(v,u). Reliability estimates also provide conditional samples
-by sequential edge exposure. The classical inverse-multiplicity union
-estimator then gives an approximation-preserving reduction to directed
-two-terminal reliability.
+The revised draft uses vertex witnesses: splitting a vertex expresses the
+event that it lies on a cycle as two-terminal reliability. A supplied
+feedback vertex set gives a smaller cover. Recording and correcting the
+nominal probabilities of approximate conditional proposals gives a rejection
+identity for both counting and sampling conditioned on cyclicity. The draft
+also gives an independent-set reduction for acyclicity-probability hardness.
 
-The draft combines this with Feng, Fu, and Guo's Theorem 9, including a
-finite-bit implementation of their Algorithm S. A companion Lean development
-checks the probabilistic oracle reduction and resource bounds. The external
-accuracy theorem, its larger-budget variance argument, and the machine-level
-cost argument are not formalized. Whole-program subtype and parent-pointer
-correspondences and the amplified program's fair-bit and output-size bounds
-are checked. The work was developed with AI assistance.
+The bit implementation uses Feng, Fu, and Guo's Algorithm S / Theorem 9.
+The companion Lean development checks the original edge-witness estimator,
+its resource bounds, and subtype/parent-pointer correspondences. The revised
+counting and sampling results have written proofs and exact finite checks;
+they are not yet formalized. The work was developed with AI assistance.
 
-The main reduction is in Sections 2–4; the computational model and precise
-verification scope are in Sections 5–6. Any pointer to prior work or concern
-about the argument would be very helpful.
+The main results and proofs are in Sections 1–5, with the verification
+contract in Section 6 and correspondence details in the appendices. Pointers
+to prior work, especially on the correction identity, would be welcome.
 
 Best wishes,
 [Signature]
@@ -46,24 +44,22 @@ from your two-terminal reliability result. Could you advise whether this
 consequence is already known, and whether the use of Algorithm S in the
 attached draft matches your Theorem 9?
 
-The reduction uses one event per edge: the edge is present and its head
-reaches its tail without that edge. It combines reliability-based conditional
-sampling with the classical union estimator. To obtain a worst-case bit-model
-statement, Section 5 discretizes Algorithm S at failure probability 1/8,
-bounding both cumulative rounding error and rational operand lengths.
+The revised reduction uses vertex-splitting reliability witnesses and a
+corrected rejection estimator. Recording the nominal conditional branch
+probabilities lets the estimator use reliability accuracy Theta(1/m),
+independent of the final relative error. The same identity gives sampling
+conditioned on cyclicity. Section 4 and Appendix B discretize Algorithm S at
+failure probability 1/8 and control rational operand lengths.
 
-Section 6 also considers the variant retaining vertices unreachable from s.
-Its restriction lemma preserves the exact output law at fixed M, with the
-inherited arc order. It then uses your variance bound to justify computing M
-from the larger, unreduced graph. Feedback on this transfer and on the
-finite-bit adaptation would be particularly valuable.
+Appendix C considers the original Lean transcription, retaining vertices
+unreachable from s. Its subtype and parent-pointer correspondences are now
+checked. Your variance bound justifies computing M from the larger graph;
+feedback on that transfer and the finite-bit adaptation would be valuable.
 
-There is a companion Lean development, but it assumes the accuracy of the
-transcribed Algorithm S; it does not formalize your accuracy proof. The
-larger-budget variance argument and machine-level bit-cost argument remain
-written; subtype and parent-pointer output-law correspondences and composed
-resource bounds are checked. The work and
-draft were developed with AI assistance.
+Lean assumes the accuracy of transcribed Algorithm S and does not formalize
+your martingale proof. It still verifies the original edge-witness estimator;
+the revised estimator and sampler have written proofs and finite checks.
+The work and draft were developed with AI assistance.
 
 Best wishes,
 [Signature]
