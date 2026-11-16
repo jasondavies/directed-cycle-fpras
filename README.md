@@ -49,14 +49,15 @@ counting-output size, and the acyclicity/independent-set reduction.
 - [`AcyclicityReduction.edge_retention_probability`](DirectedCycleFPRAS/AcyclicityReduction.lean):
   the exact probability identity used by the complement-hardness proposition.
 
-Accuracy invokes the explicit hypothesis `AlgSAccurate` at `1/(16*(m+1))`.
-Lean checks Harris's inequality, Algorithm S's outflow and proposal laws,
-empirical-pool moments, and the quantitative martingale bound. The DFS snapshot
-identities needed to instantiate that bound remain unproved; the
-[formalization map](validation/FORMALIZATION.md#algorithm-s) states the remaining
-obligations. Whole-program induced-subtype and parent-pointer correspondences
-are checked. Independent-set complexity hardness and machine-level running
-time are external results.
+Algorithm S and its accuracy theorem are proved in Lean:
+[`Digraph.algS_accuracy`](DirectedCycleFPRAS/AlgorithmSAccuracy.lean) establishes
+Feng–Fu–Guo's Theorem 9 for the concrete program, and `algSEstimator_correct`
+transfers it to the finite-bit estimator. The counting and sampling theorems
+have no oracle-accuracy assumption. The proof includes deferred edge exposure,
+DFS snapshot splitting, conditional moments, and the complete stopped round
+process. Induced-subtype and parent-pointer correspondences are also checked.
+Independent-set complexity hardness is cited; machine-level running time is
+justified by the written bit analysis.
 
 ## Repository layout
 

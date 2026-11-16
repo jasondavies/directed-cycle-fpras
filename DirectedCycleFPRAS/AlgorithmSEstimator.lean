@@ -7,9 +7,9 @@ public import DirectedCycleFPRAS.PositiveOracle
 
 set_option linter.unusedSectionVars false
 
-/-! The discretized Algorithm S reliability estimator. Its accuracy is
-conditional on the explicit external hypothesis `AlgSAccurate`; its finite
-randomness and rational output bounds are proved here. -/
+/-! The discretized Algorithm S reliability estimator, its accuracy contract,
+finite randomness, and rational output bounds. `AlgorithmSAccuracy` proves the
+contract and the resulting estimator correctness theorem. -/
 
 namespace DirectedCycleFPRAS
 
@@ -101,7 +101,7 @@ theorem algSBits_spec (n m M : ℕ) :
   rw [div_le_iff₀ (by positivity)]
   linarith
 
-/-- **Theorem 9 of Feng, Fu and Guo, as a hypothesis about the transcription.**
+/-- The constant-confidence accuracy contract, proved by `algSAccurate`.
 On every finite directed multigraph with probabilities in `(0,1]` and positive
 reliability, the exact Algorithm S with `algSSamples` samples per round has
 relative error more than `α` with probability at most 1/8. -/
@@ -120,7 +120,7 @@ def algSEstimator (α : ℝ) : ReliabilityEstimator := fun V E _ _ _ G q s t =>
 
 /-- If the exact Algorithm S is accurate, its discretised version meets the
 estimator contract of the reduction. -/
-theorem algSEstimator_correct {α : ℝ} (h : AlgSAccurate α) : (algSEstimator α).Correct α := by
+theorem algSEstimator_correct_of_accurate {α : ℝ} (h : AlgSAccurate α) : (algSEstimator α).Correct α := by
   intro V E _ _ _ G q s t hq hpos
   set M := algSSamples (Fintype.card V) (Fintype.card E) α
   set bits := algSBits (Fintype.card V) (Fintype.card E) M

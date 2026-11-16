@@ -31,8 +31,8 @@ constant-confidence run, with reliability accuracy independent of
 $\varepsilon$. A finite-bit implementation of the reliability oracle gives
 worst-case polynomial bit complexity. In contrast, approximating acyclicity
 probability has no FPRAS unless $\mathrm{RP}=\mathrm{NP}$. The companion Lean
-development checks the vertex reduction, counting and sampling programs,
-resource bounds, and the exact complement-hardness gadget.
+development checks Algorithm S accuracy, the vertex reduction, counting and
+sampling programs, resource bounds, and the exact complement-hardness gadget.
 \end{abstract}
 
 \section{Main results}
@@ -385,11 +385,12 @@ calls, the rejection envelope, and the counting and conditional-sampling
 programs with the budgets used here. It also checks the acyclicity gadget's
 exact independent-set probability identity. Both programs have composed
 fair-bit bounds; the counting program has a rational output-size bound.
-Accuracy invokes the explicit external hypothesis \texttt{AlgSAccurate}
-at $a_0=1/(16(m+1))$. Harris's inequality, the outflow and empirical-pool
-bounds, and the quantitative martingale estimate are checked. The DFS
-probability identities needed to instantiate that estimate remain unproved.
-Independent-set complexity hardness and machine-level runtime are external.
+Algorithm S and its accuracy bound (FFG Theorem 9) are proved for the
+concrete program: deferred-edge DFS laws and snapshot splitting give the
+conditional moments, which yield the stopped-process variance bound.
+The counting and sampling guarantees therefore have no oracle-accuracy
+premise. Independent-set complexity hardness is cited; machine-level runtime
+is justified by the written arithmetic analysis.
 Appendix~\ref{app:formal} records the Algorithm S correspondence;
 \texttt{validation/FORMALIZATION.md} maps the results to declarations.
 
@@ -526,30 +527,33 @@ resolves a new vertex. The corresponding fuel lemmas are checked in Lean.
 
 Pool positivity and size, uniform indexed sampling with multiplicities,
 permutation invariance, and first-open conditional product laws are also
-checked. Identifying this mathematical model with the published pseudocode
-still requires review. Lean checks Harris's inequality, the max-cut outflow
-bound, the weighted proposal law, and the means and variances of Generate's
-empirical scores. It also checks that the prediction at a resolved vertex
-equals its stored estimate, and derives unbiasedness of the concrete round
-from the DFS splitting identity.
+checked. The probability proof begins with a general deferred-exposure law
+for adaptive read-once choices. The actual DFS satisfies its invariant;
+restarting at a recorded snapshot uses fresh edges. This identifies the
+initial prediction with reliability and proves the DFS snapshot splitting
+identity, equation (8) of~\cite{ffg}.
 
-The finite-program martingale calculation gives
-$\operatorname{Var}(\widehat q_t)\leq2n'^3m'q_t^2/M$ from the local prediction
-identities and variance bounds. Its numerical sample-budget inequalities,
-including an unreduced budget, are checked. The deferred-edge DFS law,
-last-resolved-vertex splitting identity, and full round-process instantiation
-remain unproved; thus this does not discharge \texttt{AlgSAccurate}.
-Equal-terminal output is one and is checked separately.
+The splitting identity and weighted proposal law give unbiasedness of each
+concrete update. Harris's inequality and the max-cut outflow bound give the
+two conditional variance estimates. The round process makes stopping states
+absorbing; its terminal prediction has exactly the output law of
+\texttt{algS}. The finite-program martingale calculation therefore proves
+\[
+  \operatorname{Var}(\widehat q_t)\leq 2n^3m q_t^2/M
+  \qquad\text{when }2n^2m\leq M.
+\]
+This proof works directly with the ambient graph: vertices of zero
+reliability contribute zero to the normalized prediction sum.
+Chebyshev's inequality and the checked sample-budget bounds prove
+\texttt{algSAccurate} for every $0<\alpha\leq1$. Equal-terminal output is
+one and is checked separately. The finite-bit coupling then gives
+\texttt{algSEstimator\_correct}, instantiated at $a_0=1/(16(m+1))$.
 
-Lean invokes \texttt{AlgSAccurate} at $a_0=1/(16(m+1))$: the exact
-transcription has relative-error failure at most $1/8$.
 The theorems \texttt{cycleFPRAS\_correct} and
 \texttt{cycleSampler\_cyclic\_correct} concern the programs with all
 queries expanded and the parameters fixed as in the main text.
-Theorems \texttt{concreteVertex\_bitCost},
-\texttt{concreteVertexSample\_bitCost}, and
-\texttt{concreteVertex\_height} give their resource bounds. Those bounds
-hold on every execution, including inaccurate-oracle histories.
+Their fair-bit and counting-output-size bounds hold on every execution,
+including inaccurate-oracle histories.
 The formalization map gives the exact expressions and the treatment of
 zero-budget and equal-terminal cases. Polynomial machine time follows by
 the written arithmetic analysis, rather than a formal machine semantics.

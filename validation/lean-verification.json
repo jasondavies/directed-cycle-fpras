@@ -132,7 +132,29 @@
     "DirectedCycleFPRAS.Prog.steps_relative_tail",
     "DirectedCycleFPRAS.Prog.algSSamples_bounds",
     "DirectedCycleFPRAS.Prog.prediction_update_variance_le",
-    "DirectedCycleFPRAS.Digraph.prediction_generate_unbiased_of_split"
+    "DirectedCycleFPRAS.Digraph.prediction_generate_unbiased_of_split",
+    "DirectedCycleFPRAS.EdgeTree.Once.deferred",
+    "DirectedCycleFPRAS.EdgeTree.Once.deferred_forced",
+    "DirectedCycleFPRAS.Digraph.dfsTree_run",
+    "DirectedCycleFPRAS.Digraph.sDfs_deferred",
+    "DirectedCycleFPRAS.Digraph.sDfs_restart_deferred",
+    "DirectedCycleFPRAS.Digraph.reachScore_le_reliability",
+    "DirectedCycleFPRAS.Digraph.reachScore_le_ratio",
+    "DirectedCycleFPRAS.Digraph.reachScore_initial",
+    "DirectedCycleFPRAS.Digraph.prediction_initial",
+    "DirectedCycleFPRAS.Digraph.dfsTree_split",
+    "DirectedCycleFPRAS.Digraph.reachScore_split",
+    "DirectedCycleFPRAS.Digraph.recordWeight_eq_dfs",
+    "DirectedCycleFPRAS.Digraph.prediction_generate_unbiased",
+    "DirectedCycleFPRAS.Digraph.prediction_generate_variance",
+    "DirectedCycleFPRAS.Digraph.prediction_generate_variance_bounds",
+    "DirectedCycleFPRAS.Digraph.prediction_zero_of_outflow_zero",
+    "DirectedCycleFPRAS.Digraph.roundStep_mean",
+    "DirectedCycleFPRAS.Digraph.roundStep_variance",
+    "DirectedCycleFPRAS.Digraph.sRounds_steps_law",
+    "DirectedCycleFPRAS.Digraph.algS_steps_law",
+    "DirectedCycleFPRAS.Digraph.algS_accuracy",
+    "DirectedCycleFPRAS.algSAccurate"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split": [
@@ -787,8 +809,118 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.EdgeTree.Once.deferred": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.EdgeTree.Once.deferred_forced": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.dfsTree_run": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sDfs_deferred": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sDfs_restart_deferred": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reachScore_le_reliability": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reachScore_le_ratio": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reachScore_initial": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.prediction_initial": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.dfsTree_split": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reachScore_split": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.recordWeight_eq_dfs": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.prediction_generate_unbiased": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.prediction_generate_variance": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.prediction_generate_variance_bounds": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.prediction_zero_of_outflow_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.roundStep_mean": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.roundStep_variance": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sRounds_steps_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_steps_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_accuracy": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.algSAccurate": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. The concrete DFS splitting and reachability identities and the complete round-process instantiation remain unproved; accuracy assumes AlgSAccurate at 1/(16*(m+1)). Independent-set complexity hardness and machine-level runtime are external. Python models have no Lean refinement proof."
+  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Independent-set complexity hardness and machine-level runtime are external. Python models have no Lean refinement proof."
 }

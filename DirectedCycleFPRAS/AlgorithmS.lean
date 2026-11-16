@@ -23,12 +23,11 @@ oracle calls. This file proves, about that transcription:
   1/8, the version run on `b`-bit draws fails with probability at most 1/4,
   uses only uniform `b`-bit draws, and has the same output size bound.
 
-The accuracy of the exact algorithm, Theorem 9 of the paper, is a hypothesis.
-It is a hypothesis about this transcription. Supporting fuel, pool,
-closed-set restriction, first-open sampling, and early-stop lemmas are proved
-in AlgorithmSInvariants, AlgorithmSPools, AlgorithmSRestriction, FirstOpen,
-and AlgorithmSStopping. The full equivalence to the paper's pseudocode,
-including subtype reindexing and explicit parent pointers, remains written.
+`AlgorithmSAccuracy` proves Theorem 9 for this exact transcription. The proof
+uses the deferred-edge and snapshot-splitting laws, concrete pool moments,
+and the finite-program martingale estimate. `AlgorithmSSubtypes` and
+`AlgorithmSParentProgram` check the induced-subtype and parent-pointer
+correspondences. The formalization map lists the supporting modules.
 -/
 
 namespace DirectedCycleFPRAS

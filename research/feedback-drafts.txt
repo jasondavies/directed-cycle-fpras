@@ -23,8 +23,8 @@ also gives an independent-set reduction for acyclicity-probability hardness.
 The bit implementation uses Feng, Fu, and Guo's Algorithm S / Theorem 9.
 The companion Lean development checks the vertex-witness rejection estimator,
 conditional sampler, resource bounds, and exact complement-hardness gadget.
-Algorithm S accuracy remains an explicit external hypothesis. The work was
-developed with AI assistance.
+It also proves Algorithm S's accuracy bound for the concrete program. The work
+was developed with AI assistance.
 
 The main results and proofs are in Sections 1–5, with the verification
 contract in Section 6 and correspondence details in the appendices. Was the
@@ -55,13 +55,14 @@ conditioned on cyclicity. Section 4 and Appendix B discretize Algorithm S at
 failure probability 1/8 and control rational operand lengths.
 
 The correspondence appendix considers the Algorithm S transcription, retaining vertices
-unreachable from s. Its subtype and parent-pointer correspondences are now
-checked. Your variance bound justifies computing M from the larger graph;
-feedback on that transfer and the finite-bit adaptation would be valuable.
+unreachable from s. Its subtype and parent-pointer correspondences are
+checked. The formal variance proof works directly on the ambient graph;
+feedback on the transcription and finite-bit adaptation would be valuable.
 
-Lean assumes the accuracy of transcribed Algorithm S and does not formalize
-your martingale proof. It checks the vertex-witness rejection estimator and
-conditional sampler, including their finite-bit implementations.
+Lean proves the deferred-edge and snapshot-splitting identities, the concrete
+conditional moments, and the martingale bound for the full Algorithm S program.
+The counting and conditional-sampling theorems, including their finite-bit
+implementations, therefore have no oracle-accuracy premise.
 The work and draft were developed with AI assistance.
 
 Best wishes,

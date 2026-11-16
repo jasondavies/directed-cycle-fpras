@@ -136,3 +136,26 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.Prog.algSSamples_bounds
 #print axioms DirectedCycleFPRAS.Prog.prediction_update_variance_le
 #print axioms DirectedCycleFPRAS.Digraph.prediction_generate_unbiased_of_split
+
+#print axioms DirectedCycleFPRAS.EdgeTree.Once.deferred
+#print axioms DirectedCycleFPRAS.EdgeTree.Once.deferred_forced
+#print axioms DirectedCycleFPRAS.Digraph.dfsTree_run
+#print axioms DirectedCycleFPRAS.Digraph.sDfs_deferred
+#print axioms DirectedCycleFPRAS.Digraph.sDfs_restart_deferred
+#print axioms DirectedCycleFPRAS.Digraph.reachScore_le_reliability
+#print axioms DirectedCycleFPRAS.Digraph.reachScore_le_ratio
+#print axioms DirectedCycleFPRAS.Digraph.reachScore_initial
+#print axioms DirectedCycleFPRAS.Digraph.prediction_initial
+#print axioms DirectedCycleFPRAS.Digraph.dfsTree_split
+#print axioms DirectedCycleFPRAS.Digraph.reachScore_split
+#print axioms DirectedCycleFPRAS.Digraph.recordWeight_eq_dfs
+#print axioms DirectedCycleFPRAS.Digraph.prediction_generate_unbiased
+#print axioms DirectedCycleFPRAS.Digraph.prediction_generate_variance
+#print axioms DirectedCycleFPRAS.Digraph.prediction_generate_variance_bounds
+#print axioms DirectedCycleFPRAS.Digraph.prediction_zero_of_outflow_zero
+#print axioms DirectedCycleFPRAS.Digraph.roundStep_mean
+#print axioms DirectedCycleFPRAS.Digraph.roundStep_variance
+#print axioms DirectedCycleFPRAS.Digraph.sRounds_steps_law
+#print axioms DirectedCycleFPRAS.Digraph.algS_steps_law
+#print axioms DirectedCycleFPRAS.Digraph.algS_accuracy
+#print axioms DirectedCycleFPRAS.algSAccurate

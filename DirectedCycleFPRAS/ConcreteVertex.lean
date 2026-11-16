@@ -2,6 +2,7 @@ module
 
 public import DirectedCycleFPRAS.VertexAlgorithm
 public import DirectedCycleFPRAS.AlgorithmSOracle
+public import DirectedCycleFPRAS.AlgorithmSAccuracy
 
 @[expose] public section
 namespace DirectedCycleFPRAS
@@ -75,11 +76,10 @@ theorem concreteVertex_law (p : E → ℝ) (hp : Prob01 p) (n b inner outer : �
         ((G.vertexOracle U (algSEstimator (rejectionAccuracy (Fintype.card E)))).amplify inner) f :=
   Prog.exp_inline_amplify (G.vertexAlgSQuery U (rejectionAccuracy (Fintype.card E))) inner _ f
 
-/-- Concrete counting accuracy assumes only the cited Algorithm S accuracy
-hypothesis, at a precision independent of `eps` and `δ`. -/
+/-- Concrete counting accuracy, using the proved Algorithm S bound at a
+precision independent of `eps` and `δ`. -/
 theorem concreteVertex_correct (p : E → ℝ) (hp : Prob01 p)
     (hU : G.Feedback U {e | 0 < p e})
-    (hS : AlgSAccurate (rejectionAccuracy (Fintype.card E)))
     {eps δ : ℝ} (heps : 0 < eps) (hδ : 0 < δ) {n b inner : ℕ}
     (hn : 64*(U.card : ℝ)/eps^2 ≤ n)
     (hqueries : (U.card+2*Fintype.card E*n : ℕ)*(7/8 : ℝ)^inner ≤ 1/16)
@@ -89,7 +89,8 @@ theorem concreteVertex_correct (p : E → ℝ) (hp : Prob01 p)
         |z-eventMass p (fun ω => G.Cyclic (retained ω))| then 1 else 0) ≤ δ := by
   rw [concreteVertex_law]
   exact G.vertexAlgorithm_confidence U _ p hp hU (by positivity)
-    (G.vertexOracle_amplified U _ (algSEstimator_correct hS) inner)
+    (G.vertexOracle_amplified U _ (algSEstimator_correct (rejectionAccuracy_bounds _).1
+      ((rejectionAccuracy_bounds _).2.trans (by norm_num))) inner)
     heps hδ hn hqueries hbits
 
 theorem vertexAlgorithm_queryBound (p : E → ℝ) (hp : Prob01 p) (n : ℕ) :

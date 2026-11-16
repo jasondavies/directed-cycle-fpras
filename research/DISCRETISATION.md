@@ -4,14 +4,14 @@ This note closes the gap between the cost model of the cited reliability
 theorem and the bit model used in [the manuscript](../paper/directed-cycle-fpras.pdf). All three steps
 below are checked in Lean for a transcription of the paper's Algorithm S
 (`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
-Lean also checks the correspondence laws below, including whole-program
-subtype reindexing and an explicit parent-pointer program. It proves Harris's
-inequality, the outflow bound, the exact weighted proposal law, empirical-pool
-moments, and the quantitative martingale bound,
-including the larger sample budget. The DFS probability identities needed to
-instantiate that bound remain unproved, so accuracy is an explicit hypothesis.
-The [formalization map](../validation/FORMALIZATION.md#algorithm-s) records the
-precise remaining obligations.
+Lean also proves Algorithm S's accuracy bound: deferred-edge DFS laws and
+snapshot splitting give the concrete conditional moments, and an absorbing
+round process connects the martingale estimate to the returned value.
+`Digraph.algS_accuracy` is the general relative-error theorem;
+`algSAccurate` supplies the constant-confidence budget used here. Whole-program
+subtype reindexing and explicit parent-pointer correspondence are checked too.
+The [formalization map](../validation/FORMALIZATION.md#algorithm-s) gives the
+proof dependencies.
 
 The counting and conditional-sampling programs use this oracle at accuracy
 `1/(16*(m+1))`, independent of their error targets. Their concrete Lean entry
@@ -33,7 +33,7 @@ The paper contains two directed algorithms. The main one (Theorem 1, time
 one, Algorithm S (Section 2.3, Theorem 9), is slower but has a fixed loop
 structure. An FPRAS only needs some polynomial, so we discretise Algorithm S.
 
-**Theorem 9 of the paper (used as a black box).** For a directed graph with
+**Theorem 9 of the paper.** For a directed graph with
 `n` vertices and `m` arcs satisfying the standing assumption, open
 probabilities `p` in `(0,1]`, `s != t` and `eps, delta` in `(0,1)`,
 Algorithm S with `M = ceil(2 n^3 m / (eps^2 delta))` performs
@@ -132,7 +132,7 @@ many fair random bits, runs in time polynomial in the binary input length and
 within `1 +- eps` of `Rel(s,t)` with probability at least 3/4. It returns
 exactly 0 when the reliability is 0.
 
-This is exactly the hypothesis of the Lean reduction: S' is a
+This establishes the reliability contract used by the Lean reduction: S' is a
 `ReliabilityEstimator` with a finite seed space, it satisfies
 `ReliabilityEstimator.Correct eps`, and its answers satisfy the size bound
 `Ho` used by `vertexAlgorithm_sat` and `concreteVertex_height`. With
@@ -150,7 +150,7 @@ oracle calls, and proves:
 | 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
 | 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
 | 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
-| link | `algSEstimator_correct`, `Digraph.cycleFPRAS_correct` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate (1/(16*(m+1)))` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height_total` gives the answer size including zero sample budgets. |
+| link | `algSEstimator_correct`, `Digraph.cycleFPRAS_correct` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the counting and sampling theorems use the proved `algSAccurate` at `1/(16*(m+1))`, with no oracle-accuracy premise (an edgeless graph is handled without the oracle). `algSEstimator_height_total` gives the answer size including zero sample budgets. |
 | all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
 
 The following additional obligations are checked:
@@ -190,57 +190,49 @@ Size bounds are proved for the estimates and the output. That each
 arithmetic operation on such numbers takes polynomial time is not formalised,
 as there is no machine model.
 
-## What this rests on
+## Accuracy and correspondence
 
-1. **Theorem 9 of the paper**, as the hypothesis `AlgSAccurate` about the
-   transcription. Lean proves the finite-program martingale and bounded-record
-   calculations, but their instantiation with the DFS prediction process is
-   incomplete. `AlgSAccurate` is slightly
-   stronger than Theorem 9 as stated: it is asserted for every instance with
-   probabilities in `(0,1]` and positive reliability, without first deleting
-   the vertices unreachable from `s`, and with `M` computed from the
-   unreduced `n` and `m`. Algorithm S never resolves or discovers an
-   unreachable vertex, so its run on the unreduced graph is its run on the
-   reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
-   lower bound on `M`: its last step is `Var <= (2 n^3 m / M) q_t^2`. This
-   numerical lower-bound argument is checked by `Prog.algSSamples_bounds`;
-   the local prediction hypotheses of `Prog.steps_relative_tail` still need
-   to be proved for the complete Algorithm S program. Closed-set invariance and
-   actual reindexing to induced vertex/edge subtypes with inherited arc order
-   are formalized in `algS_reachable_subtype`; the restriction lemma in the
-   [research manuscript](../paper/directed-cycle-fpras.pdf) explains the transfer.
-   `AlgSAccurate alpha` is false for `alpha <= 0`: at zero the sample budget
-   is zero and a positive-reliability instance with distinct terminals
-   returns zero; at negative accuracy the allowed absolute error is negative.
-   Thus the end-to-end
-   theorem invokes it at `alpha = 1/(16*(m+1))`, which lies in `(0,1)`.
-   `AlgSAccurate` also includes `s = t` and `n = 1`, where the output is
-   exactly 1.
-2. **Fidelity of the transcription** to the paper's pseudocode. The table
-   above records the checked laws. `parentAlgS_inducedClosed` combines the
-   full parent-pointer program with induced-subtype restriction. The parent
-   path is defined by reachability through the stored pointers; no Boolean
-   eligibility flags are stored by that program. Reviewing how this model
-   represents the published pseudocode remains necessary. Exact finite
-   comparisons provide additional evidence; they do not replace independent
-   expert review or the external accuracy proof.
+`Digraph.algS_accuracy` proves the relative-error bound on the ambient graph,
+without deleting unreachable vertices. Its hypotheses are `M > 0`, input
+probabilities in `[0,1]`, positive target reliability, positive accuracy, and
+the sufficient budgets
 
-   *Test.* `scripts/algs_transcription/` holds a Python port of the Lean
-   definitions (`lean_port.py`) and a separately written port of the paper's
-   pseudocode (`paper_port.py`). From the repository root,
-   `python3 scripts/algs_transcription/run.py 1,2,3` computes, in exact
-   rational arithmetic, the full output distribution of each for `M = 1, 2,
-   3` on eleven graphs with at most 5 vertices and 8 arcs (parallel arcs,
-   self-loops, arcs into `s`, unreachable vertices, probabilities equal to
-   1, `s = t`, unreachable `t`). On every instance the two distributions are
-   equal and the mean equals the reliability computed by brute force. The
-   script exits nonzero on a mismatch and records its results in
-   `validation/algs-transcription-results.json`. Equal-terminal and
-   unreachable-target cases are checked against the paper's preprocessing.
-   `run2.py` repeats this under random arc orders and adds a Monte Carlo run at `M = 40`. The ports are faithful
-   to their sources by reading only, and the test says nothing about
-   concentration at the real `M`.
-3. **Polynomial cost of rational arithmetic** on numbers of the proved size.
+```
+2*n²*m ≤ M
+2*n³*m ≤ delta*eps²*M.
+```
+
+`algSAccurate` instantiates these inequalities with
+`M = ceil(16*n³*m/eps²)` and `delta = 1/8` for `0 < eps ≤ 1`.
+The equal-terminal case returns exactly one, even when the sample budget is
+zero. Unreachable vertices contribute zero to the normalized prediction sum,
+so the proof does not require a separate transfer of accuracy to a larger
+sample budget. `algSEstimator_correct` composes this theorem with rounding.
+
+The subtype and parent-pointer theorems establish correspondence between
+formal programs. `parentAlgS_inducedClosed` combines the full parent-pointer
+program with induced-subtype restriction. The parent path is defined through
+stored pointers; that program stores no Boolean eligibility flags. These
+formal statements can be checked against the published pseudocode by reading
+the definitions. Polynomial machine cost for rational arithmetic is a written
+argument; the development has no machine-level time semantics.
+
+### Executable comparisons
+
+`scripts/algs_transcription/` contains a Python port of the Lean definitions
+(`lean_port.py`) and a separately written port of the paper's pseudocode
+(`paper_port.py`). Run `python3 scripts/algs_transcription/run.py 1,2,3` to compare
+their exact output distributions for `M = 1, 2, 3` on eleven graphs with at most
+five vertices and eight arcs. The cases cover parallel arcs, self-loops, arcs
+into the source, unreachable vertices, probability one, equal terminals, and
+unreachable targets. The script checks equality of the two laws and equality
+of their means with brute-force reliability, writing
+`validation/algs-transcription-results.json`. `run2.py` additionally varies arc
+orders and performs a Monte Carlo check at `M = 40`.
+
+These comparisons are regression evidence. They are not a Python-to-Lean
+refinement proof; Algorithm S's concentration guarantee comes from the Lean
+proof above.
 
 Not covered: the fast algorithm of Theorem 1. Its bit-model cost is not
 analysed here, so the resulting running time for the cycle FPRAS is a

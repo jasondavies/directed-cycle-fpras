@@ -70,7 +70,6 @@ def concreteVertexSample (p : E → ℝ) (hp : Prob01 p) (d : U) (L b inner : �
 
 theorem concreteVertexSample_error (p : E → ℝ) (hp : Prob01 p) (d : U)
     (hZ : 0 < (edgeLaw p (fun e => (hp e).1) (fun e => (hp e).2)).toMass.unionMass (G.vertexEvents U))
-    (hS : AlgSAccurate (rejectionAccuracy (Fintype.card E)))
     (r b inner : ℕ) (f : (E → Bool) → ℝ) (hf0 : ∀ x, 0 ≤ f x) (hf1 : ∀ x, f x ≤ 1) :
     |(G.concreteVertexSample U p hp d (4*U.card*r) b inner).exp noOracle f-
       (unionLaw (edgeLaw p (fun e => (hp e).1) (fun e => (hp e).2)).toMass (G.vertexEvents U) hZ).expectation f| ≤
@@ -79,7 +78,8 @@ theorem concreteVertexSample_error (p : E → ℝ) (hp : Prob01 p) (d : U)
   unfold concreteVertexSample
   rw [Prog.exp_inline_amplify]
   exact G.vertexSample_error U _ p hp d hZ (by positivity)
-    (G.vertexOracle_amplified U _ (algSEstimator_correct hS) inner) r b f hf0 hf1
+    (G.vertexOracle_amplified U _ (algSEstimator_correct (rejectionAccuracy_bounds _).1
+      ((rejectionAccuracy_bounds _).2.trans (by norm_num))) inner) r b f hf0 hf1
 
 theorem concreteVertexSample_bitCost (p : E → ℝ) (hp : Prob01 p) (d : U) (L b inner : ℕ) :
     Prog.BitCost (fun _ : Empty => 0) (G.concreteVertexSample U p hp d L b inner)

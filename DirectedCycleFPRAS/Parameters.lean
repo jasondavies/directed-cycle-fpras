@@ -55,12 +55,11 @@ def cycleFPRAS (p : E → ℝ) (hp : Prob01 p) (eps δ : ℝ) : Prog Empty ℝ :
 /-- Main counting theorem for the current algorithm. -/
 theorem cycleFPRAS_correct (p : E → ℝ) (hp : Prob01 p)
     (hU : G.Feedback U {e | 0 < p e})
-    (hS : AlgSAccurate (rejectionAccuracy (Fintype.card E)))
     {eps δ : ℝ} (heps : 0 < eps) (hδ : 0 < δ) :
     (G.cycleFPRAS U p hp eps δ).exp noOracle
       (fun z => if eps*eventMass p (fun ω => G.Cyclic (retained ω)) <
         |z-eventMass p (fun ω => G.Cyclic (retained ω))| then 1 else 0) ≤ δ := by
-  apply G.concreteVertex_correct U p hp hU hS heps hδ
+  apply G.concreteVertex_correct U p hp hU heps hδ
   · exact Nat.le_ceil _
   · exact oracleRepetitions_bound _ (by norm_num)
   · exact choiceWidth_bound _ (by norm_num)
@@ -76,11 +75,10 @@ def cycleSampler (p : E → ℝ) (hp : Prob01 p) (d : U) (η : ℝ) : Prog Empty
 /-- Main sampling theorem, in the bounded-test formulation of total variation. -/
 theorem cycleSampler_correct (p : E → ℝ) (hp : Prob01 p) (d : U)
     (hZ : 0 < (edgeLaw p (fun e => (hp e).1) (fun e => (hp e).2)).toMass.unionMass (G.vertexEvents U))
-    (hS : AlgSAccurate (rejectionAccuracy (Fintype.card E)))
     {η : ℝ} (hη : 0 < η) (f : (E → Bool) → ℝ) (hf0 : ∀ x, 0 ≤ f x) (hf1 : ∀ x, f x ≤ 1) :
     |(G.cycleSampler U p hp d η).exp noOracle f-
       (unionLaw (edgeLaw p (fun e => (hp e).1) (fun e => (hp e).2)).toMass (G.vertexEvents U) hZ).expectation f| ≤ η := by
-  have ht := G.concreteVertexSample_error U p hp d hZ hS (samplingBlocks η)
+  have ht := G.concreteVertexSample_error U p hp d hZ (samplingBlocks η)
     (choiceWidth ((4*U.card*samplingBlocks η)*(U.card+2*Fintype.card E+2)) (η/3))
     (oracleRepetitions (U.card+2*Fintype.card E*(4*U.card*samplingBlocks η)) (η/3)) f hf0 hf1
   have h₁ := samplingBlocks_bound hη
@@ -94,7 +92,6 @@ theorem cycleSampler_correct (p : E → ℝ) (hp : Prob01 p) (d : U)
 theorem cycleSampler_cyclic_correct (p : E → ℝ) (hp : Prob01 p) (d : U)
     (hU : G.Feedback U {e | 0 < p e})
     (hZ : 0 < eventMass p (fun ω => G.Cyclic (retained ω)))
-    (hS : AlgSAccurate (rejectionAccuracy (Fintype.card E)))
     {η : ℝ} (hη : 0 < η) (f : (E → Bool) → ℝ) (hf0 : ∀ x, 0 ≤ f x) (hf1 : ∀ x, f x ≤ 1) :
     |(G.cycleSampler U p hp d η).exp noOracle f-
       (∑ ω, if G.Cyclic (retained ω) then edgeWeight p ω*f ω else 0)/
@@ -103,7 +100,7 @@ theorem cycleSampler_cyclic_correct (p : E → ℝ) (hp : Prob01 p) (d : U)
     rw [show (edgeLaw p (fun e => (hp e).1) (fun e => (hp e).2)).toMass.unionMass (G.vertexEvents U) =
       eventMass p (fun ω => G.Cyclic (retained ω)) from G.vertex_unionMass U hp hU]
     exact hZ
-  have h := G.cycleSampler_correct U p hp d hcover hS hη f hf0 hf1
+  have h := G.cycleSampler_correct U p hp d hcover hη f hf0 hf1
   rw [G.vertex_conditional_expectation U p hp hU hcover f] at h
   exact h
 

@@ -5,4 +5,4 @@ public import DirectedCycleFPRAS.AcyclicityReduction
 public import DirectedCycleFPRAS.AlgorithmSOracle
 public import DirectedCycleFPRAS.AlgorithmSPools
 public import DirectedCycleFPRAS.AlgorithmSParentProgram
-public import DirectedCycleFPRAS.AlgorithmSPrediction
+public import DirectedCycleFPRAS.AlgorithmSAccuracy

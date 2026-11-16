@@ -8,7 +8,8 @@ public import DirectedCycleFPRAS.AlgorithmSOutflow
 
 /-! The DFS reach scores and empirical predictions of FFG §2.4, defined
 using the concrete program. Resolved-vertex predictions equal their stored
-estimates. The last-resolved-vertex splitting identity is a separate obligation. -/
+estimates. `AlgorithmSUnbiased` proves the DFS splitting identity and applies
+the algebraic update formula here to obtain unconditional unbiasedness. -/
 namespace DirectedCycleFPRAS
 open scoped BigOperators
 open Classical
