@@ -8,3 +8,6 @@ public import DirectedCycleFPRAS.PositiveOracle
 public import DirectedCycleFPRAS.Discretise
 public import DirectedCycleFPRAS.AlgorithmS
 public import DirectedCycleFPRAS.AlgorithmSEstimator
+public import DirectedCycleFPRAS.ConcreteResources
+public import DirectedCycleFPRAS.AlgorithmSPools
+public import DirectedCycleFPRAS.AlgorithmSStopping

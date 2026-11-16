@@ -1,26 +1,27 @@
 # An FPRAS reduction for directed-cycle probability
 
-This is the written mathematical solution. The Lean development checks the
-probabilistic correctness of the reduction at constant confidence, with the
-exact boundary in [FORMALIZATION.md](FORMALIZATION.md), together with the
-resource counts and size bounds behind Section 4. A machine-level running
-time is a written argument only.
+These supporting notes give the reduction in detail. The
+[paper](../paper/directed-cycle-fpras.pdf) is the main exposition; the
+[formalization map](../validation/FORMALIZATION.md) records the Lean statements
+and their hypotheses. Lean checks arbitrary confidence by median amplification,
+as well as resource counts and output-size bounds. Machine-level runtime is a
+written argument.
 
 The external ingredient is the general directed two-terminal reliability FPRAS
 of Weiming Feng, Yucheng Fu, and Heng Guo,
-[*Approximating two-terminal network reliability*](https://arxiv.org/abs/2608.02523).
-The original local proof used v1 (2026-08-03); v2 (2026-11-03) retains that
-existence theorem and gives a different, faster algorithm. Neither version's
-algorithm is implemented or formalised in this repository.
+[*Approximating two-terminal network reliability*](https://arxiv.org/abs/2608.02523v2).
+We use Algorithm S and Theorem 9 of v2 (2026-11-03). Algorithm S is
+transcribed in Lean; its accuracy theorem remains
+an external hypothesis. The fast algorithm is not implemented here.
 
 The union estimator is the standard witness-mixture/inverse-multiplicity
 method. The proposed contribution is its application to directed cycles via
 edge-return-path witnesses and a reliability-oracle self-reduction. We do not
 claim that the general union-estimation technique is new.
 
-## Caveat on the computational model
+## Computational model
 
-Read against the PDF of arXiv:2608.02523v2 on 2026-11-12. Its FPRAS
+The cited paper's FPRAS
 definition takes rational open probabilities in (0,1] on directed graphs with
 parallel arcs and self-loops allowed, and success probability 3/4 (Remark 16
 raises this by a median). But its running-time bounds, including Theorem 1,
@@ -241,12 +242,22 @@ probabilities in `(0,1]` (`Digraph.cycle_fpras_of_estimator`). That is the
 input class of the cited Theorem 1 in v2, which allows parallel arcs and
 self-loops, so the subdivision step of Section 4 is not needed for it. The
 cited running time is in a unit-cost arithmetic model; the bit-complexity
-assumption on the oracle at the start of Section 4's last part is an extra
-requirement, not something that statement provides.
+assumption on the oracle is supplied by the discretization argument, rather than the
+unit-cost statement alone.
+
+`Digraph.cycleFPRAS_spec` combines accuracy, total fair-bit usage, and
+rational output height for a single call-free program with Algorithm S and
+both median amplifications expanded. Nonempty medians are actual sample
+values, so amplification preserves height. The resource bounds also cover
+zero sample budgets and equal-terminal residual queries. Supporting Algorithm S
+lemmas prove closed-set output-law invariance, sufficient fuel, pool
+invariants and uniform sampling, first-open conditioning, and early-stop
+snapshot equivalence. The full comparison to the paper's algorithm still
+requires subtype reindexing and an explicit parent-pointer correspondence.
 
 Not formalised: a machine-level running time and the Hoeffding argument. The
 reliability theorem of Feng, Fu, and Guo enters only as a hypothesis on the
-oracle. [FORMALIZATION.md](FORMALIZATION.md) maps each step to its Lean
+oracle. [FORMALIZATION.md](../validation/FORMALIZATION.md) maps each step to its Lean
 statement.
 
 The executable model is in `scripts/cycle_fpras_reduction.py`. Its tests use

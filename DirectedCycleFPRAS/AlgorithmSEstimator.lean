@@ -171,6 +171,76 @@ theorem algSEstimator_height (α : ℝ) {V E : Type} [Fintype V] [Fintype E] [De
 
 namespace Digraph
 
+variable {V E : Type} [Fintype V] [Fintype E] [DecidableEq E]
+
+/-- With zero samples every update is zero, so rationality still holds. -/
+theorem sRounds_zero_sat (G : Digraph V E) (q : E → ℝ) (t : V) (f : ℕ)
+    (R : Finset V) (qh : V → ℝ) (pools : V → List (Finset V))
+    (hqh : ∀ u, Height 1 (qh u)) :
+    Prog.Sat (fun _ => True) (fun _ => True) (Height 1)
+      (G.sRounds (Q := Empty) q t 0 f R qh pools) := by
+  induction f generalizing R qh pools with
+  | zero => exact .ret _ (hqh t)
+  | succ f ih =>
+    unfold sRounds
+    split_ifs
+    · exact .ret _ (hqh t)
+    · generalize (((arcOrder E).filter fun e => G.source e ∈ R ∧ G.target e ∉ R).argmax
+        fun e => qh (G.source e) * q e) = o
+      cases o with
+      | none => exact .ret _ (height_zero (by omega))
+      | some e =>
+        change Prog.Sat _ _ _ (if _ then _ else _)
+        split_ifs
+        · exact .ret _ (height_zero (by omega))
+        · simp only [sGenerate, Prog.bind, Nat.cast_zero, div_zero]
+          apply ih
+          intro u
+          by_cases hu : u = G.target e
+          · subst u
+            simpa using height_zero (H := 1) (by omega)
+          · simpa [Function.update_of_ne hu] using hqh u
+
+theorem algS_zero_sat (G : Digraph V E) (q : E → ℝ) (s t : V) :
+    Prog.Sat (fun _ => True) (fun _ => True) (Height 1)
+      (G.algS (Q := Empty) q s t 0) := by
+  apply G.sRounds_zero_sat
+  intro u
+  split_ifs
+  · exact height_one (by omega)
+  · exact height_zero (by omega)
+
+/-- Equal terminals return one for every budget, including zero. -/
+theorem algS_self (G : Digraph V E) (q : E → ℝ) (s : V) (M : ℕ) :
+    G.algS (Q := Empty) q s s M = .ret 1 := by
+  unfold algS
+  cases Fintype.card V <;> simp [sRounds]
+
+end Digraph
+
+/-- Total answer-size bound, also covering zero samples and edgeless queries. -/
+theorem algSEstimator_height_total (α : ℝ) {V E : Type} [Fintype V] [Fintype E]
+    [DecidableEq E] (G : Digraph V E) (q : E → ℝ) (s t : V) (a b : E → ℕ)
+    (hb : ∀ e, 0 < b e) (ha : ∀ e, a e ≤ b e)
+    (hq : ∀ e, q e = (a e : ℝ) / (b e : ℝ))
+    (z : (algSEstimator α V E G q s t).Seed) :
+    Height (max 1 (Digraph.sizeBase (Fintype.card V) (Fintype.card E)
+      (algSSamples (Fintype.card V) (Fintype.card E) α) (∏ e, b e) ^ Fintype.card V))
+      ((algSEstimator α V E G q s t).value z) := by
+  by_cases hM : 0 < algSSamples (Fintype.card V) (Fintype.card E) α
+  · exact (algSEstimator_height α G q s t a b hb ha hq hM z).mono (le_max_right _ _)
+  · have hzero : algSSamples (Fintype.card V) (Fintype.card E) α = 0 := by omega
+    have hs : Prog.Sat (fun _ => True) (fun _ => True) (Height 1)
+        ((G.algS (Q := Empty) q s t (algSSamples (Fintype.card V) (Fintype.card E) α)).discretise
+          (algSBits (Fintype.card V) (Fintype.card E)
+            (algSSamples (Fintype.card V) (Fintype.card E) α))) := by
+      rw [hzero]
+      exact (G.algS_zero_sat q s t).discretise _
+    have hz := Prog.toRand_value_of_sat hs z
+    exact hz.mono (le_max_left _ _)
+
+namespace Digraph
+
 variable {V E : Type} [Fintype V] [Fintype E] [DecidableEq E] (G : Digraph V E)
 
 /-- **End-to-end reduction with a concrete oracle.** Assume only that the

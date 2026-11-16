@@ -50,7 +50,39 @@
     "DirectedCycleFPRAS.Prog.exp_eq_toRand",
     "DirectedCycleFPRAS.algSEstimator_correct",
     "DirectedCycleFPRAS.algSEstimator_height",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS"
+    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS",
+    "DirectedCycleFPRAS.median_mem",
+    "DirectedCycleFPRAS.median_height",
+    "DirectedCycleFPRAS.Oracle.amplify_height",
+    "DirectedCycleFPRAS.algSEstimator_height_total",
+    "DirectedCycleFPRAS.Digraph.algS_self",
+    "DirectedCycleFPRAS.Digraph.algS_sat_total",
+    "DirectedCycleFPRAS.Prog.exp_inline_amplify",
+    "DirectedCycleFPRAS.Prog.BitCost.inline",
+    "DirectedCycleFPRAS.Digraph.concreteCycle_law",
+    "DirectedCycleFPRAS.Digraph.concreteCycle_height_total",
+    "DirectedCycleFPRAS.Digraph.concreteCycle_bitCost",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_spec",
+    "DirectedCycleFPRAS.Digraph.sScan_balance",
+    "DirectedCycleFPRAS.Digraph.sDfs_initial_fuel",
+    "DirectedCycleFPRAS.Digraph.algS_round_fuel",
+    "DirectedCycleFPRAS.Digraph.path_flag",
+    "DirectedCycleFPRAS.Digraph.sDfs_closed",
+    "DirectedCycleFPRAS.Digraph.algS_restrict",
+    "DirectedCycleFPRAS.Digraph.algS_zero_unreachable",
+    "DirectedCycleFPRAS.Digraph.firstOpen_mass",
+    "DirectedCycleFPRAS.Digraph.firstOpen_conditional",
+    "DirectedCycleFPRAS.Digraph.gammaS_eventMass",
+    "DirectedCycleFPRAS.Digraph.firstOpen_normLaw_conditional",
+    "DirectedCycleFPRAS.poolDraw_expectation",
+    "DirectedCycleFPRAS.poolDraw_perm",
+    "DirectedCycleFPRAS.Digraph.PoolInvariant.update",
+    "DirectedCycleFPRAS.Digraph.sIter_records",
+    "DirectedCycleFPRAS.Digraph.sGenerate_records",
+    "DirectedCycleFPRAS.Digraph.sRounds_nonneg",
+    "DirectedCycleFPRAS.Digraph.initial_poolInvariant",
+    "DirectedCycleFPRAS.Digraph.sDfs_earlyStop",
+    "DirectedCycleFPRAS.Digraph.sExplore_fuel_add"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -297,8 +329,168 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.median_mem": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.median_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Oracle.amplify_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.algSEstimator_height_total": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_self": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_sat_total": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.exp_inline_amplify": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.BitCost.inline": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteCycle_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteCycle_height_total": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteCycle_bitCost": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_spec": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sScan_balance": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sDfs_initial_fuel": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_round_fuel": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.path_flag": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sDfs_closed": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_restrict": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_zero_unreachable": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.firstOpen_mass": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.firstOpen_conditional": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.gammaS_eventMass": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.firstOpen_normLaw_conditional": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.poolDraw_expectation": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.poolDraw_perm": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.PoolInvariant.update": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sIter_records": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sGenerate_records": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sRounds_nonneg": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.initial_poolInvariant": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sDfs_earlyStop": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sExplore_fuel_add": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis."
+  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, all amplified-oracle fair bits, and rational output height. Algorithm S support, fuel, pools, first-open conditional sampling, and early-stop lemmas are checked; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis."
 }

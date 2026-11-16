@@ -6,13 +6,13 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 subprocess.run(["lake", "build"], cwd=ROOT, check=True)
-result = subprocess.run(["lake", "env", "lean", "AxiomAudit.lean"], cwd=ROOT,
+result = subprocess.run(["lake", "env", "lean", "validation/Axioms.lean"], cwd=ROOT,
                         check=True, text=True, capture_output=True)
 print(result.stdout, end="")
 allowed = {"propext", "Classical.choice", "Quot.sound"}
 entries = re.findall(r"'([^']+)' depends on axioms: \[([^]]*)\]", result.stdout)
 empty = re.findall(r"'([^']+)' does not depend on any axioms", result.stdout)
-expected = re.findall(r"^#print axioms (\S+)", (ROOT / "AxiomAudit.lean").read_text(), re.M)
+expected = re.findall(r"^#print axioms (\S+)", (ROOT / "validation/Axioms.lean").read_text(), re.M)
 found = {name for name, _ in entries} | set(empty)
 assert found == set(expected), (found, expected)
 assert "sorryAx" not in result.stdout
@@ -34,11 +34,14 @@ report = {
     "scope": ("Probabilistic correctness of the oracle reduction, including the conditional sampler, "
               "adaptive good-oracle coupling, median amplification, random-bit rounding, and "
               "oracle-call, random-bit and charged local-operation counts, residual-instance queries "
-              "and output bit-size bounds; no machine model, so polynomial running time is "
+              "and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, "
+              "all amplified-oracle fair bits, and rational output height. Algorithm S support, "
+              "fuel, pools, first-open conditional sampling, and early-stop lemmas are checked; "
+              "no machine model, so polynomial running time is "
               "assembled from these counts by a written argument, local-operation charges are "
               "trusted annotations, and the accuracy of the cited paper's Algorithm S, as "
               "transcribed, is a hypothesis."),
 }
-(ROOT / "sources").mkdir(exist_ok=True)
-(ROOT / "sources/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")
+(ROOT / "validation").mkdir(exist_ok=True)
+(ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")
 print(f"PASS: {len(expected)} theorem axiom audits; no proof admissions.")

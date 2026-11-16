@@ -1,0 +1,494 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\Rel}{\operatorname{Rel}}
+\newcommand{\TV}{d_{\mathrm{TV}}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prb}{\mathbb{P}}
+\newcommand{\bits}{\operatorname{bits}}
+\title{Approximating directed-cycle probability via two-terminal reliability}
+\author{}
+\date{Research draft --- November 16, 2026}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+We reduce the probability that an independently edge-retained directed graph
+contains a cycle to directed two-terminal reliability. One witness event per
+edge and reliability-based conditional sampling give a classical union
+estimator with controlled error under adaptive randomized queries. Combining
+this reduction with the theorem of Feng, Fu, and Guo and a finite-bit
+implementation of their simple algorithm gives an FPRAS for rational edge
+probabilities. We bound oracle calls, random bits, and rational operand sizes.
+A Lean development verifies the probabilistic reduction and composed resource
+bounds, conditional on the external accuracy guarantee; the remaining
+pseudocode correspondence and machine-level runtime argument are written proofs.
+\end{abstract}
+
+\section{Introduction}
+Let $G=(V,E)$ be a directed multigraph. Retain each edge $e$ independently
+with rational probability $p_e\in[0,1]$, and write $Z$ for the probability
+that the retained graph contains a directed cycle. An additive estimate
+obtained by direct simulation need not give a relative approximation when
+$Z$ is exponentially small. The existence of an FPRAS for $Z$ was asked by
+Amarilli~\cite{question}, in connection with approximation on probabilistic
+graphs~\cite{probgraphs}.
+
+We reduce this problem to directed two-terminal reliability. The witnesses are edges with return paths: there are only $m=|E|$ such
+events, even when the graph has exponentially many cycles. Their probabilities and conditional samples
+can be obtained from reliability estimates. The union estimator itself is
+classical~\cite{klm}; the contribution here is its application through this
+oracle reduction, with explicit control of approximation, adaptive oracle
+failures, and finite randomness.
+
+Write $n=|V|$ and $m=|E|$. An FPRAS returns a relative $\varepsilon$-approximation
+with probability at least $1-\delta$ in time polynomial in input length,
+$\varepsilon^{-1}$, and $\log(\delta^{-1})$. Throughout, a reachability path
+may have length zero. Thus a self-loop is
+a cycle by itself. All oracle invocations use fresh independent randomness.
+We use total variation in the convention
+$\TV(P,Q)=\frac12\sum_x|P(x)-Q(x)|$.
+
+\begin{theorem}[Oracle reduction]\label{thm:reduction}
+Suppose directed two-terminal reliability on rational probabilities in
+$(0,1]$ admits a randomized estimator for every rational accuracy $0<a<1$,
+with relative error $a$, success probability at least $3/4$, rational output,
+and worst-case bit complexity polynomial in input length and $a^{-1}$.
+Then directed-cycle probability admits an FPRAS.
+More precisely, for rational $0<\varepsilon\leq1/2$ and $0<\delta<1/2$, the
+reduction uses accuracy
+\[
+ a=\frac{\varepsilon}{100m(m+1)},\qquad
+ N=\left\lceil200m^2\varepsilon^{-2}
+                \left\lceil\log_2(4/\delta)\right\rceil\right\rceil,
+ \qquad T=m+2mN
+\]
+when the support is cyclic. It makes at most $T$ amplified queries, each
+using $O(\log(T/\delta))$ base calls. Its output $\widehat Z$ satisfies
+$\Prb[|\widehat Z-Z|>\varepsilon Z]\leq\delta$.
+If $Z=0$, it returns zero deterministically.
+\end{theorem}
+
+Feng, Fu, and Guo give a reliability approximation algorithm for general
+directed graphs~\cite{ffg}. Their arithmetic model does not directly imply
+the bit-model hypothesis above. Section~\ref{sec:bits} supplies a
+discretization and size analysis for their Algorithm S, yielding the
+following consequence of their Theorem~9.
+
+\begin{corollary}\label{cor:fpras}
+Directed-cycle probability under independent rational edge retention has
+an FPRAS with worst-case running time polynomial in the binary input length,
+$\varepsilon^{-1}$, and $\log(\delta^{-1})$. Parallel edges and self-loops
+are permitted.
+\end{corollary}
+
+\section{A polynomial family of witnesses}
+Let $\mu$ be the product law on retained edge sets. For $e=(u,v)$ define
+\[
+ A_e=\{X:e\in X,\ v\text{ reaches }u\text{ in }X\setminus\{e\}\},
+ \qquad w_e=\mu(A_e)=p_e\Rel_{G-e}(v,u).
+\]
+An outcome is cyclic if and only if it belongs to some $A_e$. Indeed, an
+edge on a cycle has a return path after its deletion; conversely a return
+path together with $e$ contains a cycle. Define
+$t(X)=|\{e:X\in A_e\}|$ and $W=\sum_e w_e$. If $Z>0$, then
+\begin{equation}\label{eq:witness}
+ Z\leq W\leq mZ.
+\end{equation}
+Choose $e$ with probability $w_e/W$, then draw $X$ from $\mu(\cdot\mid A_e)$.
+The resulting law $Q$ satisfies
+\[
+ Q(X)=\frac{t(X)\mu(X)}{W}.
+\]
+Set $Y(X)=1/t(X)$ when $t(X)>0$, and $Y(X)=0$ otherwise. Then $0\leq Y\leq1$
+on every outcome, and
+\begin{equation}\label{eq:mean}
+ \theta=\E_QY=Z/W\geq1/m.
+\end{equation}
+Both membership in $A_e$ and $t(X)$ are computable by reachability tests.
+The positive-probability support contains a cycle precisely when $Z>0$,
+so the zero case is decidable by a deterministic graph search.
+
+\section{Conditional sampling with approximate reliability}
+To sample conditionally on $A_e$, fix $e$ present and condition the other
+edges on the return-path event in $G-e$. Expose those edges in a fixed order.
+At a feasible prefix, let $R_b$ denote residual reliability when the next
+edge $f$ is fixed to $b\in\{0,1\}$. Its two conditional weights are
+\[
+ c_0=(1-p_f)R_0,\qquad c_1=p_fR_1.
+\]
+A zero weight can be detected exactly: test its probability factor and
+reachability in the positive-probability support. No oracle call is needed
+for a zero weight. A positive weight uses one reliability estimate. A
+residual instance only pins original probabilities to zero or one; delete
+zero-probability edges before invoking the oracle. Cases with equal
+terminals have reliability one and may be answered directly.
+
+\begin{lemma}\label{lem:sampling}
+Suppose every oracle answer on a positive instance is within relative error
+$a\leq1/2$. Replacing exact weights by these estimates changes a conditional
+sample law by total variation at most $4ma$. Including approximate witness
+selection changes the law $Q$ by at most $4(m+1)a$.
+The same bounds hold for an always-accurate randomized oracle using fresh
+randomness for each call.
+\end{lemma}
+\begin{proof}
+For nonnegative weights $c_i$, replace each positive weight by
+$\widehat c_i\in[(1-a)c_i,(1+a)c_i]$ and leave zero weights zero. For each
+positive coordinate, the ratio of normalized probabilities lies between
+$(1-a)/(1+a)$ and $(1+a)/(1-a)$. The $\ell_1$ distance is consequently at
+most $2a/(1-a)\leq4a$, which also bounds total variation. At each shared
+prefix couple the exact and approximate next choices with disagreement
+probability at most $4a$. There are at most $m$ exposures, and their
+disagreement probabilities add. Apply the same normalization bound once
+more to witness selection. For randomized answers the bound holds for
+every realization of the answers at a shared prefix, and hence also after
+averaging. Fresh oracle randomness defines a fixed transition law at each
+prefix.
+\end{proof}
+
+\section{The algorithm and its error analysis}\label{sec:accuracy}
+After the support test, estimate all positive witness weights using the
+parameters in Theorem~\ref{thm:reduction}. Put
+$\widehat W=\sum_e\widehat w_e$. Generate $N$ independent sampling runs
+conditional on these initial estimates, each choosing a witness according
+to $\widehat w_e/\widehat W$ and exposing its remaining edges as above.
+Return
+\begin{equation}\label{eq:output}
+ \widehat Z=\widehat W\frac1N\sum_{j=1}^NY(X_j).
+\end{equation}
+For completeness on failed-oracle executions, replace negative answers
+by zero; if all weights at a choice vanish, choose a fixed alternative.
+Use the definition $Y=0$ for an outcome with no witnesses. These conventions
+define a terminating algorithm on every execution and do not change
+any execution with accurate answers.
+
+\begin{proof}[Proof of Theorem~\ref{thm:reduction}, accuracy]
+First consider exact discrete choices and an oracle that always returns
+$a$-accurate answers. Conditional on the initial estimates, the samples
+are independent with common expected score $\widehat\theta$, and
+Lemma~\ref{lem:sampling} gives
+\[
+ |\widehat\theta-\theta|\leq4(m+1)a=\frac{\varepsilon}{25m}.
+\]
+Hoeffding's inequality and the specified $N$ give
+\[
+ \Prb\left[\left|\frac1N\sum_jY(X_j)-\widehat\theta\right|
+       >\frac{\varepsilon}{10m}\right]
+ \leq2\exp\left(-\frac{N\varepsilon^2}{50m^2}\right)\leq\delta/4.
+\]
+The bound is uniform in the initial estimates, so it holds unconditionally.
+By~\eqref{eq:mean}, the relative error of the score average is at most
+$(1/25+1/10)\varepsilon<\varepsilon/4$ on this event's complement.
+Also $|\widehat W/W-1|\leq a\leq\varepsilon/200$. Multiplication in
+\eqref{eq:output} gives relative error at most
+$\varepsilon/4+\varepsilon/200+\varepsilon^2/800<\varepsilon$.
+
+Now use a randomized base oracle. Take the median of $k$ independent calls,
+where $k=8\lceil\log_2(4T/\delta)\rceil+1$ is odd and at least
+$8\ln(4T/\delta)$. The integer ceiling is computable by rational comparisons
+and repeated doubling.
+The chance that at least half the calls fail is at most $e^{-k/8}$ by
+Hoeffding's inequality, and thus at most $\delta/(4T)$. On each fixed query
+define a fictitious oracle that replaces an inaccurate median by the exact
+reliability. This oracle is always accurate and uses fresh randomness.
+Couple its execution to the real execution until the first replacement.
+Conditional on any shared history, the next query is fixed and its failure
+probability is at most $\delta/(4T)$. There are at most $T$ queries, so a
+union bound gives disagreement probability at most $\delta/4$.
+This argument never conditions the samples on all oracle calls succeeding.
+
+Finally replace exact discrete choices by fixed-bit choices. For $h$
+alternatives, draw $U$ uniformly from $\{0,\ldots,2^b-1\}$ and locate
+$U/2^b$ in their half-open cumulative-probability intervals. Each interval
+has mass error at most $2^{-b}$, so total variation is at most $h/2^b$.
+One sampling run has at most one $m$-way choice and $m$ binary choices.
+Choose
+\[
+ b=\left\lceil\log_2(12Nm/\delta)\right\rceil.
+\]
+Sequential coupling over all $N$ runs changes any event probability by
+at most $3Nm/2^b\leq\delta/4$, including on failed-oracle histories.
+The three failure budgets sum to at most $3\delta/4<\delta$.
+The support test handles $m=0$ and all other zero instances before any
+parameter involving division by $m$ is used.
+\end{proof}
+
+\section{Bit complexity and the concrete oracle}\label{sec:bits}
+\subsection{Cost of the reduction}
+Let $L$ bound the bit length of each numerator and denominator in the input,
+including $\varepsilon$ and $\delta$. A base query has $n$ vertices, at most
+$m$ edges, and parameter bit length $L'=O(L+\log(m+1))$. Let $R$ bound its
+worst-case bit cost and $H$ bound the bit length of each output numerator
+and denominator, taking maxima over the possible residual instances.
+Both bounds are evaluated at accuracy $a$. A median is one of these outputs,
+so amplification does not increase $H$.
+
+A branch weight is a product of an input probability and an oracle answer;
+its numerator and denominator have $O(L+H)$ bits. A sum of at most $m$ witness
+weights can be represented using their product denominator, with
+$O(m(L+H)+\log(m+1))$ bits. Choice comparisons use these unnormalized
+weights: multiply by $U$ and $2^b$ and compare integer partial sums, without
+forming real probabilities. For the score sum use the fixed denominator
+$m!$, since every positive $t(X)$ lies in $\{1,\ldots,m\}$. The accumulator
+then has $O(m\log(m+1)+\log(N+1))$ bits. Multiplying it by $\widehat W$ gives
+the rational output without any uncontrolled growth of denominators.
+
+Consequently all integers in this implementation have at most a constant
+multiple of
+\[
+ K=m(L+H+\log(m+1))+\log(N+1)+b
+\]
+bits, apart from parameter arithmetic, which has polynomial cost in the
+input length. With schoolbook arithmetic, a conservative bit-cost bound is
+\begin{equation}\label{eq:cost}
+ O\!\left(T\left[(n+m)\log(n+m+2)
+       +k\bigl(R+\log(k+1)K^2\bigr)\right]\right),
+\end{equation}
+plus that parameter computation. Here graph searches, witness tests, and
+choice scans total $O(T)$ searches or $O(T)$ arithmetic operations, and
+sorting the $k$ oracle answers accounts for the median term. Edges and
+vertices can be indexed with $O(\log(n+m+2))$ bits.
+This proves the cost assertion in Theorem~\ref{thm:reduction}.
+In particular no bound depends polynomially on $1/Z$.
+
+\subsection{Finite-bit reliability}
+For the mathematical corollary we implement the preprocessing of
+Feng--Fu--Guo explicitly: return one for equal terminals, delete vertices
+unreachable from the source, and return zero if the target disappears.
+In the remaining graph $n\geq2$, $m\geq n-1$, and all probabilities are
+positive. Their Algorithm S with
+\[
+ M=\left\lceil16n^3m/a^2\right\rceil
+\]
+has relative error at most $a$ except with probability $1/8$, by their
+Theorem~9~\cite{ffg}. Algorithm S grows a resolved set $R$ from $\{s\}$.
+Each resolved vertex stores an estimate $\widehat q_u$ and a pool of DFS
+discovered sets; $M$ independent sampling iterations generate the estimate
+and pool of one new vertex per round. We replace its choices by fair bits.
+
+\begin{lemma}[Rational discretization]\label{lem:discrete}
+For rational edge probabilities, Algorithm S at this value of $M$ admits
+a finite-bit implementation with failure probability at most $1/4$,
+polynomial worst-case bit complexity, and polynomial-length rational output.
+\end{lemma}
+\begin{proof}
+In one sampling iteration the choices are a resolved vertex (at most $n$
+alternatives), a pool entry (at most $M$), the first open outgoing cut edge
+(at most $m$), and at most $m$ binary edge states. There are at most $n-1$
+rounds and $M$ iterations per round. Thus the sum of numbers of alternatives
+along any execution is at most
+\[
+ A=(n-1)M(n+M+3m).
+\]
+Use $b_S=\lceil\log_2(8A)\rceil$ bits per choice. The sequential coupling
+argument from Section~\ref{sec:accuracy} bounds the change in any output
+event by $A/2^{b_S}\leq1/8$.
+
+Write $p_e=c_e/d_e$ and $B=\prod_ed_e$. Every probability that a particular
+cut edge is the first open one, and every probability $\gamma_u$ that the
+cut at $u$ has some open edge, is a multiple of $1/B$ in $[0,1]$.
+After $r$ completed rounds, all current estimates can be written over the
+common denominator $(MB)^r$, with magnitude at most $n^r$. This holds
+initially; a new estimate is $\widehat\Phi J/M$, where
+$\widehat\Phi=\sum_{u\in R}\widehat q_u\gamma_u$ and $0\leq J\leq M$.
+The denominator gains only a factor $MB$ and the magnitude at most a factor
+$n$. Existing estimates can be rescaled to the new denominator.
+
+This invariant controls intermediate selection weights as well as stored
+estimates. At the start of a round, products $\widehat q_u\gamma_u$ have
+common denominator $(MB)^rB$, and their partial sums have only an additional
+$O(\log n)$ numerator bits. The first-open-edge weights share denominator
+$B$. Sampling a pool of size $\ell$ uses index
+$\lfloor U\ell/2^{b_S}\rfloor$, avoiding an explicit scan through its
+$\ell$ equal-weight intervals. Comparisons of unnormalized partial sums
+implement all remaining choices using integers of
+\[
+ K_S=O\bigl(n(mL+\log(M+1)+\log(n+1))+b_S\bigr)
+\]
+bits. Snapshots are $n$-bit vertex sets, and there are at most $nM$ of them.
+A direct implementation using scans, explicit snapshots, and common
+denominators needs at most $O(nM(n+m)^2)$ elementary arithmetic or set
+operations. Its bit cost is bounded conservatively by
+$O(nM(n+m)^2K_S^2)$, in addition to preprocessing and parameter computation.
+All these bounds are polynomial in input length and $a^{-1}$, on every
+execution. Adding the discretization error to $1/8$ proves the lemma.
+\end{proof}
+
+Theorem~\ref{thm:reduction} and Lemma~\ref{lem:discrete} prove
+Corollary~\ref{cor:fpras}. The fast reliability algorithm's advertised
+unit-cost running time is not a running-time bound for this construction.
+
+\section{Correspondence and formal verification}\label{sec:formal}
+The companion Lean development transcribes Algorithm S without deleting
+unreachable vertices. The following written lemma connects that choice to
+the preprocessed algorithm. It also records the invariants needed to
+interpret the transcription's totalized operations.
+
+\begin{lemma}[Restriction to reachable vertices]\label{lem:restriction}
+Fix $M\geq1$, a finite directed graph with positive edge probabilities,
+distinct terminals $s,t$, and a fixed arc order. Suppose $t$ is reachable
+from $s$, and let $U$ be the vertices reachable from $s$ in the underlying
+graph. The exact transcription and Algorithm S on the graph induced by
+$U$, using the restricted arc order and the same $M$, have the same output
+law. Stopping a sampling DFS when its selected target is popped, replacing
+its parent-path test by a Boolean flag, and imposing fuel $|V|+1$ on DFS
+and $|V|$ on rounds do not change that law.
+\end{lemma}
+\begin{proof}
+There is no edge from $U$ to $V\setminus U$. Initially the resolved set and
+the sole snapshot are $\{s\}$. Inductively all resolved vertices and stored
+snapshots lie in $U$: cut edges with resolved tails end in $U$, and DFS
+cannot leave $U$. Restriction therefore preserves the ordered cut, its
+maximizing edge, all $\gamma_u$, and all nonzero vertex-selection weights.
+Vertices outside $U$ have zero selection weight. Couple the choices on
+their common nonzero alternatives.
+
+The identity $\widehat q_u>0$ if and only if the pool at $u$ is nonempty
+holds for resolved vertices. It holds at initialization. A continuing round
+has a positive maximizing edge product, hence $\widehat\Phi>0$, and its
+new estimate $\widehat\Phi J/M$ is positive exactly when $J>0$ records are
+stored. Thus a selected vertex always has a nonempty pool. The extra null
+alternatives and out-of-range pool indices in the transcription have
+probability zero. Uniform pool indices and uniform pool entries agree,
+including multiplicities.
+
+Choosing the first open cut edge $e_j$ with weight
+$p_{e_j}\prod_{i<j}(1-p_{e_i})$, fixing earlier cut edges closed, and
+revealing later ones independently gives exactly the cut's product law
+conditioned on at least one open edge. Revealing the remaining states only
+when examined preserves the joint law of everything the DFS observes.
+The initial snapshot contains its starting vertex, so that vertex is not
+pushed again. Every other vertex is marked discovered when first pushed
+and is pushed at most once. Hence a DFS has at most $|U|$ pops.
+
+Give the starting vertex flag true. When discovering $y$ from a vertex with
+flag $f$, give it flag $f\wedge(y\notin R)$. By induction this flag is true
+exactly when its tree path avoids resolved vertices other than the root.
+The snapshot at the target is taken when it is popped, before scanning its
+outgoing edges. Continuing beyond that pop cannot alter the recorded
+snapshot or its eligibility, and cannot record the target a second time.
+The early stop and flag therefore preserve each iteration's record law.
+Prepending instead of appending records only permutes a pool, preserving
+future uniform draws. Finally each continuing round resolves a new vertex,
+so at most $|U|-1$ rounds occur. Both fuel bounds are sufficient. Induction
+over rounds proves equality of the output laws.
+\end{proof}
+
+If $M$ is computed using the unreduced graph, it is at least the budget
+computed on the reduced graph. This does not invoke a general monotonicity
+principle for sample counts: the variance proof in Section~2.4 of
+\cite{ffg} gives $\operatorname{Var}(\widehat q_t)\leq2n'^3m'q_t^2/M$
+whenever $M\geq2n'^3m'$, where $n',m'$ are the reduced sizes.
+The unreduced budget therefore gives failure at most $1/8$ at error $a$.
+Equal terminals return one directly, including on a one-vertex or edgeless
+graph. The larger-budget variance argument remains written mathematics;
+the equal-terminal return is also proved in Lean.
+
+\subsection{Verified guarantees and remaining boundary}
+Lean proves several components of Lemma~\ref{lem:restriction}: invariance
+of the entire output law under changes outside a closed set containing the
+source; sufficient DFS and round fuel; pool positivity, size, and membership
+invariants; uniform pool sampling with multiplicities and under permutations;
+and the first-open conditional product law. It also proves that stopping
+at the target pop preserves the law of a snapshot recorded before finishing
+DFS, and that the Boolean path fold expresses avoidance of resolved vertices.
+
+The remaining correspondence steps are reindexing to induced vertex and edge
+subtypes with an inherited arc order and connecting the flag to an explicit
+parent-pointer traversal. The external variance proof is not formalized.
+Accordingly, Lean assumes \texttt{AlgSAccurate} for every accuracy in $(0,1)$:
+the exact transcribed Algorithm S has relative error at most that accuracy
+with probability at least $7/8$. This is a hypothesis about real probabilities;
+the binary-input corollary only requires rational probabilities and uses
+explicit preprocessing.
+
+The formal reduction uses $a=\varepsilon/(128m(m+1))$ and
+$N=\lceil2048m^2/\varepsilon^2\rceil$, with Chebyshev's inequality followed
+by median amplification of whole runs. Thus its constants and confidence
+argument differ from Section~\ref{sec:accuracy}; its failed-oracle fallback
+conventions also differ. Lean verifies the witness identity, sampling error,
+adaptive-oracle coupling, rounding, and resource bounds for that program.
+
+The final theorem \texttt{cycleFPRAS\_spec} concerns one call-free program
+with every reliability query expanded and both median amplifications
+included. It combines the accuracy claim with a bound on all fair bits
+and the height of every final output. The edgeless case returns zero.
+For $m\geq1$, write $N$ for the formal sample budget, $T=m+2mN$, $k$ for the inner amplification count,
+$r$ for the outer count, and $b$ for the reduction's draw width. With
+$M_j=\lceil16n^3j/a^2\rceil$, define
+\[
+ C_j=nM_j\bigl((n+1)+(M_j+1)+(j+1)+(n+1)2j\bigr),\qquad
+ b_j=\lceil\log_2(8C_j)\rceil,
+\]
+where the formal natural ceiling logarithm returns zero at zero. The
+proved total fair-bit bound is
+\[
+ brN(m+1)+rTk\sum_{j=0}^{m}b_jC_j.
+\]
+For input denominators at most $H\geq1$, put
+\[
+ H_O=1+\sum_{j=0}^{m}\max\{1,[(nj+1)M_jH^j]^n\}.
+\]
+Every output has numerator absolute value and denominator at most
+$\max\{1,(2HH_O)^mN m!\}$. The sums cover all residual positive-edge
+subgraphs. Each nonempty median is the lower sample median, hence an
+actual input value; neither amplification increases height. Empty medians
+return zero, and the total bounds include zero sample budgets and
+edgeless or equal-terminal residual queries. These resource statements do
+not assume successful oracle answers or the external accuracy hypothesis.
+The operation charges are annotations; converting the resource bounds into
+a machine-level runtime remains the written argument of Section~\ref{sec:bits}.
+
+The development uses Lean 4.35.0 and a pinned mathlib dependency. Its
+audit of 81 declarations permits only \texttt{propext},
+\texttt{Classical.choice}, and \texttt{Quot.sound}; there are no admitted
+proofs in the audited development. From the repository root, reproduce the
+build and audit with:
+\begin{quote}\ttfamily
+python3 scripts/check\_formalization.py
+\end{quote}
+Exact enumeration comparing two Python ports is additional finite evidence;
+it neither proves correspondence nor links Python execution to Lean.
+
+\paragraph{Provenance.}
+The reduction, formalization, and manuscript were developed with AI assistance.
+The reliability theorem and union-estimation method are external contributions.
+Independent expert review and novelty assessment remain pending.
+
+\begin{thebibliography}{9}
+\bibitem{question}
+Antoine Amarilli.
+\emph{FPRAS to estimate the probability to get a cyclic subgraph of a
+directed graph}. Theoretical Computer Science Stack Exchange, September 26,
+2023. \href{https://cstheory.stackexchange.com/q/53359}{Question 53359}.
+See also the author's
+\href{https://a3nm.net/work/research/questions/\#fpras-for-the-probability-of-obtaining-a-cyclic-subgraph-of-a-directed-graph}{open-question list}.
+
+\bibitem{probgraphs}
+Antoine Amarilli, Timothy van Bremen, Octave Gaspard, and Kuldeep S. Meel.
+\emph{Approximating Queries on Probabilistic Graphs}.
+Logical Methods in Computer Science, 21(4:30), 2025.
+\href{https://doi.org/10.46298/lmcs-21(4:30)2025}{doi:10.46298/lmcs-21(4:30)2025}.
+
+\bibitem{ffg}
+Weiming Feng, Yucheng Fu, and Heng Guo.
+\emph{Approximating two-terminal network reliability}.
+\href{https://arxiv.org/abs/2608.02523v2}{arXiv:2608.02523v2}, November 3, 2026.
+We use Algorithm S and Theorem 9, with the computational model in Section 2.1.
+
+\bibitem{klm}
+Richard M. Karp, Michael Luby, and Neal Madras.
+\emph{Monte-Carlo approximation algorithms for enumeration problems}.
+Journal of Algorithms, 10(3):429--448, 1989.
+\href{https://doi.org/10.1016/0196-6774(89)90038-2}{doi:10.1016/0196-6774(89)90038-2}.
+\end{thebibliography}
+\end{document}

@@ -16,7 +16,7 @@ oracle calls. This file proves, about that transcription:
 
 * `algS_choiceBound`: every random action is a finite choice, and along every
   execution the numbers of alternatives sum to at most an explicit polynomial
-  (Step 1 of DISCRETISATION.md);
+  (Step 1 of research/DISCRETISATION.md);
 * `algS_sat`: with rational input probabilities, the output is a fraction of
   explicitly bounded size, by a common-denominator invariant (Step 3);
 * `algS_discretised`: if the exact algorithm fails with probability at most
@@ -24,8 +24,11 @@ oracle calls. This file proves, about that transcription:
   uses only uniform `b`-bit draws, and has the same output size bound.
 
 The accuracy of the exact algorithm, Theorem 9 of the paper, is a hypothesis.
-It is a hypothesis about this transcription; that the transcription matches
-the paper's pseudocode is checked by reading, not by Lean.
+It is a hypothesis about this transcription. Supporting fuel, pool,
+closed-set restriction, first-open sampling, and early-stop lemmas are proved
+in AlgorithmSInvariants, AlgorithmSPools, AlgorithmSRestriction, FirstOpen,
+and AlgorithmSStopping. The full equivalence to the paper's pseudocode,
+including subtype reindexing and explicit parent pointers, remains written.
 -/
 
 namespace DirectedCycleFPRAS

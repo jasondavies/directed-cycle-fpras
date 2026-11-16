@@ -14,6 +14,8 @@ for name,(n,arcs,p,s,t) in INST.items():
         lit=None
         if M==1 or len(arcs)<=5:
             lit=enumerate_dist(lambda ch:Lp.algS(ch,s,t,M))
+        assert a == b, (name, M, "canonical pool order changes the law")
+        assert lit is None or lit == a, (name, M, "literal and structured laws differ")
         print(f"{name:42s} M={M} canon==noncanon:{a==b} literal==structured:{'skipped' if lit is None else lit==a}",flush=True)
 print("== B. M=3 exact, and random arc-order permutations (M=2)")
 rng=random.Random(1)
@@ -22,6 +24,8 @@ for name,(n,arcs,p,s,t) in INST.items():
     t0=time.time()
     L=LeanS(n,arcs,p).exact(s,t,3); mean=sum(z*w for z,w in L.items())
     P=PaperS(n,arcs,p).exact(s,t,3) if (s!=t and rel>0) else None
+    assert mean == rel, (name, "biased M=3 output")
+    assert P is None or P == L, (name, "M=3 laws differ")
     print(f"{name:42s} M=3 rel={rel} E[lean]={mean} unbiased={mean==rel} support={len(L)} lean==paper:{'n/a' if P is None else P==L} [{time.time()-t0:.1f}s]",flush=True)
     oks=[];eqs=[]
     for _ in range(4):
@@ -29,6 +33,7 @@ for name,(n,arcs,p,s,t) in INST.items():
         a2=[arcs[i] for i in perm]; p2=[p[i] for i in perm]
         L=LeanS(n,a2,p2).exact(s,t,2); oks.append(sum(z*w for z,w in L.items())==rel)
         if s!=t and rel>0: eqs.append(PaperS(n,a2,p2).exact(s,t,2)==L)
+    assert all(oks) and all(eqs), (name, "arc-order comparison failed")
     print(f"{'':42s} 4 random arc orders, M=2: unbiased={oks} lean==paper={eqs}",flush=True)
 print("== C. Monte Carlo of the literal LeanS.algS sampler, M=40, 20000 runs")
 for name,(n,arcs,p,s,t) in INST.items():

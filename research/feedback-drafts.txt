@@ -1,0 +1,67 @@
+UNSENT DRAFTS
+Suggested attachment: paper/directed-cycle-fpras.pdf. Add the public repository URL, if one
+is available, before sending. Authorship and the signature remain for the
+repository owner to supply.
+
+To: Antoine Amarilli
+Subject: A proposed reliability reduction for directed-cycle probability
+
+Dear Antoine,
+
+I have prepared a short draft addressing your question about an FPRAS for
+the probability that an independently edge-retained directed graph contains
+a cycle. I would appreciate your view on whether this consequence is already
+known and whether the reduction answers the question as intended.
+
+For each edge e=(u,v), the witness event is that e is present and v reaches u
+without e. These m events cover cyclic outcomes and have probabilities
+p_e Rel_{G-e}(v,u). Reliability estimates also provide conditional samples
+by sequential edge exposure. The classical inverse-multiplicity union
+estimator then gives an approximation-preserving reduction to directed
+two-terminal reliability.
+
+The draft combines this with Feng, Fu, and Guo's Theorem 9, including a
+finite-bit implementation of their Algorithm S. A companion Lean development
+checks the probabilistic oracle reduction and resource bounds. The external
+accuracy theorem, the remaining pseudocode correspondence, and the machine-level
+cost argument are not formalized; supporting correspondence lemmas and the
+complete amplified program's fair-bit and output-size bounds are checked. The work was developed with AI assistance.
+
+The main reduction is in Sections 2–4; the computational model and precise
+verification scope are in Sections 5–6. Any pointer to prior work or concern
+about the argument would be very helpful.
+
+Best wishes,
+[Signature]
+
+
+To: Weiming Feng, Yucheng Fu, and Heng Guo
+Subject: Algorithm S discretization and a directed-cycle probability corollary
+
+Dear Weiming, Yucheng, and Heng,
+
+I have prepared a draft deriving an FPRAS for directed-cycle probability
+from your two-terminal reliability result. Could you advise whether this
+consequence is already known, and whether the use of Algorithm S in the
+attached draft matches your Theorem 9?
+
+The reduction uses one event per edge: the edge is present and its head
+reaches its tail without that edge. It combines reliability-based conditional
+sampling with the classical union estimator. To obtain a worst-case bit-model
+statement, Section 5 discretizes Algorithm S at failure probability 1/8,
+bounding both cumulative rounding error and rational operand lengths.
+
+Section 6 also considers the variant retaining vertices unreachable from s.
+Its restriction lemma preserves the exact output law at fixed M, with the
+inherited arc order. It then uses your variance bound to justify computing M
+from the larger, unreduced graph. Feedback on this transfer and on the
+finite-bit adaptation would be particularly valuable.
+
+There is a companion Lean development, but it assumes the accuracy of the
+transcribed Algorithm S; it does not formalize your accuracy proof. The
+full correspondence lemma and machine-level bit-cost argument remain written;
+supporting correspondence lemmas and composed resource bounds are checked. The work and
+draft were developed with AI assistance.
+
+Best wishes,
+[Signature]

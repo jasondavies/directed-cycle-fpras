@@ -46,7 +46,8 @@ def IsMedian {k : ℕ} (v : Fin k → ℝ) (m : ℝ) : Prop :=
   2 * (Finset.univ.filter fun i => v i < m).card ≤ k ∧
     2 * (Finset.univ.filter fun i => m < v i).card ≤ k
 
-theorem exists_median {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : ∃ m, IsMedian v m := by
+theorem exists_median_entry {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) :
+    ∃ m, (∃ i, v i = m) ∧ IsMedian v m := by
   have : Nonempty (Fin k) := ⟨⟨0, hk⟩⟩
   let c : ℝ → ℕ := fun r => (Finset.univ.filter fun i => v i ≤ r).card
   let S : Finset ℝ := Finset.univ.image v
@@ -60,7 +61,9 @@ theorem exists_median {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : ∃ m, IsMedi
       exact Finset.le_max' S (v i) (Finset.mem_image_of_mem v (Finset.mem_univ i))
     simp only [c, hall, Finset.card_univ, Fintype.card_fin]
     omega
-  refine ⟨T.min' hT, ?_, ?_⟩
+  refine ⟨T.min' hT, ?_, ?_, ?_⟩
+  · exact Finset.mem_image.mp (Finset.mem_filter.mp (Finset.min'_mem T hT)).1 |>.imp
+      (fun i hi => hi.2)
   · by_contra hcon
     have hlt : k < 2 * (Finset.univ.filter fun i => v i < T.min' hT).card := not_le.mp hcon
     have hne : (Finset.univ.filter fun i => v i < T.min' hT).Nonempty := by
@@ -92,17 +95,47 @@ theorem exists_median {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : ∃ m, IsMedi
     simp only [not_le, Finset.card_univ, Fintype.card_fin] at hpart
     omega
 
-/-- Some median of the entries, selected by its characterising property; for an
-even number of entries any point between the two middle values may be chosen.
-With no entries every real is a median and the value is irrelevant. -/
+theorem exists_median {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : ∃ m, IsMedian v m :=
+  (exists_median_entry hk v).imp fun _ h => h.2
+
+/-- Input values satisfying the median inequalities. -/
+def medianValues {k : ℕ} (v : Fin k → ℝ) : Finset ℝ :=
+  (Finset.univ.image v).filter (IsMedian v)
+
+theorem medianValues_nonempty {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) :
+    (medianValues v).Nonempty := by
+  obtain ⟨m, ⟨i, hi⟩, hm⟩ := exists_median_entry hk v
+  exact ⟨m, Finset.mem_filter.mpr ⟨Finset.mem_image.mpr ⟨i, Finset.mem_univ i, hi⟩, hm⟩⟩
+
+/-- The least input value satisfying the median inequalities (the lower sample
+median). This is a finite order statistic, not an arbitrary real in an interval.
+An empty vector returns zero. -/
 def median {k : ℕ} (v : Fin k → ℝ) : ℝ :=
-  if h : ∃ m, IsMedian v m then Classical.choose h else 0
+  if h : (medianValues v).Nonempty then (medianValues v).min' h else 0
+
+theorem median_mem {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : ∃ i, v i = median v := by
+  have h := medianValues_nonempty hk v
+  rw [median, dite_eq_left h]
+  obtain ⟨i, _, hi⟩ := Finset.mem_image.mp (Finset.mem_filter.mp
+    (Finset.min'_mem (medianValues v) h)).1
+  exact ⟨i, hi⟩
+
+theorem median_zero (v : Fin 0 → ℝ) : median v = 0 := by simp [median, medianValues]
 
 theorem median_isMedian {k : ℕ} (hk : 0 < k) (v : Fin k → ℝ) : IsMedian v (median v) := by
-  have hex := exists_median hk v
-  unfold median
-  rw [dite_eq_left hex]
-  exact Classical.choose_spec hex
+  have h := medianValues_nonempty hk v
+  rw [median, dite_eq_left h]
+  exact (Finset.mem_filter.mp (Finset.min'_mem (medianValues v) h)).2
+
+theorem median_property {k : ℕ} {P : ℝ → Prop} (h0 : P 0) (v : Fin k → ℝ)
+    (hv : ∀ i, P (v i)) : P (median v) := by
+  by_cases hk : 0 < k
+  · obtain ⟨i, hi⟩ := median_mem hk v
+    rw [← hi]
+    exact hv i
+  · have : k = 0 := by omega
+    subst k
+    simpa [median_zero] using h0
 
 /-- If a strict majority of the entries satisfy an interval property, so does
 the median. -/

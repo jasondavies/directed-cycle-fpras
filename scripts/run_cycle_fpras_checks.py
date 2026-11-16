@@ -56,8 +56,8 @@ assert bad == 0 and stats["oracle_zero_fallback"]
 large = plan(100, Q(1, 2**128), Q(1, 2**80))
 assert large["samples"].bit_length() < 300
 assert large["random_bits_per_choice"] < 400
-out = {"date": "2026-11-12", "oracle": "exponential exact / bounded-error test oracle",
+out = {"oracle": "exponential exact / bounded-error test oracle",
        "external_fpras_implemented": False, "cases": records,
        "bad_oracle_fallback_checked": True, "large_precision_budget_checked": True}
-(ROOT / "sources/cycle-fpras-results.json").write_text(json.dumps(out, indent=2) + "\n")
+(ROOT / "validation/cycle-fpras-results.json").write_text(json.dumps(out, indent=2) + "\n")
 print("PASS: executable reduction checks", flush=True)

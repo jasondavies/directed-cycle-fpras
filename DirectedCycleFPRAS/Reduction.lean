@@ -26,7 +26,7 @@ probabilistic correctness against a randomized reliability oracle.
   accurate only with probability 3/4 per call and amplifies it by medians.
 
 Running time and bit complexity are not modelled; internal random choices use
-exact real weights. See FORMALIZATION.md for the exact boundary.
+exact real weights. See validation/FORMALIZATION.md for the exact boundary.
 -/
 
 namespace DirectedCycleFPRAS

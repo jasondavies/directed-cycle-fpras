@@ -27,4 +27,4 @@ search, not proof that no prior solution exists.
 
 The proposed answer is positive via an approximation-preserving oracle
 reduction to general directed two-terminal reliability. See
-[SOLUTION.md](SOLUTION.md) and the precise [Lean scope](FORMALIZATION.md).
+[SOLUTION.md](SOLUTION.md) and the precise [Lean scope](../validation/FORMALIZATION.md).

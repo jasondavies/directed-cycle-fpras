@@ -1,121 +1,91 @@
 # Directed-cycle probability via reliability
 
-An approximation-preserving reduction from directed-cycle probability to directed
-two-terminal reliability, with a Lean 4 formalisation of the reduction's
-probabilistic correctness.
+An approximation-preserving reduction from directed-cycle probability to
+directed two-terminal reliability. Combined with the reliability theorem of
+Feng, Fu, and Guo and the finite-bit implementation developed here, it gives
+an FPRAS for independent rational edge retention, including parallel edges
+and self-loops. The running time is polynomial in the binary input length,
+`1/epsilon`, and `log(1/delta)`, even when the cycle probability is
+exponentially small. Zero-probability instances are detected exactly.
 
-**Status:** the written reduction is complete. Lean verifies the correctness of
-the whole oracle algorithm: given a randomized reliability oracle that is
-accurate with probability at least 3/4 per call, the algorithm's output has
-relative error at most epsilon with probability at least 3/4, using explicit
-numbers of samples, oracle calls, random bits and charged local operations,
-and bounds on the size of every query and of the output. There is no machine
-model, so polynomial running time is assembled from these verified bounds by a
-written argument, and the reliability FPRAS itself is a hypothesis. See the exact boundary in
-[FORMALIZATION.md](FORMALIZATION.md).
+Read the [paper](paper/directed-cycle-fpras.pdf)
+([LaTeX source](paper/directed-cycle-fpras.tex)). It presents the reduction,
+its error analysis, the bit-cost argument, and the verification boundary.
 
-**Cost model:** the cited reliability theorem is stated in a unit-cost model
-with real uniform random draws. [DISCRETISATION.md](DISCRETISATION.md) argues
-that the paper's simple algorithm can be run on fair random bits with
-polynomial bit complexity, which is what the bit-model claim needs. Lean
-checks this for a transcription of that algorithm, taking the paper's
-Theorem 9 as a hypothesis.
+**Verification status.** Lean checks the probabilistic reduction and explicit
+resource bounds. The final theorem, `Digraph.cycleFPRAS_spec`, combines
+accuracy, total fair-bit usage, and rational output size for one program
+with every oracle call expanded and both amplification stages included.
+Accuracy assumes the stated guarantee for the transcribed Algorithm S.
+Supporting correspondence lemmas are proved; the external accuracy theorem,
+full correspondence with the published pseudocode, and machine-level runtime
+remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
 
-- [Problem and public status](PROBLEM.md)
-- [Written solution and external theorem](SOLUTION.md)
-- [Formalisation map and remaining obligations](FORMALIZATION.md)
-- [Running the reliability oracle on random bits](DISCRETISATION.md)
-- [The algorithm and the reduction theorems](DirectedCycleFPRAS/Reduction.lean)
-- [Graph-specific estimator theorem](DirectedCycleFPRAS/CycleEstimator.lean)
-- [Reduction of witness weights to reliability](DirectedCycleFPRAS/ReliabilityIdentity.lean)
+This is a research draft. Independent expert review and novelty assessment
+remain pending. The union estimator is classical; the proposed contribution
+is its application through reliability queries, with adaptive-error and
+finite-bit analysis. The work was developed with AI assistance.
 
-For each edge e=(u,v), use the event that e is present and v reaches u without e.
-Its probability is `p_e * Rel_(G-e)(v,u)`. These events cover exactly the cyclic
-subgraphs. Selecting a witness proportionally to its probability and sampling
-conditionally gives an outcome with probability proportional to its number of
-witnesses. Correcting by the inverse of that count yields an unbiased union
-estimator. Conditional sampling exposes one edge at a time, using two residual
-reliability estimates per edge.
+## The reduction
 
-## Build
+For each edge `e=(u,v)`, use the event that `e` is present and `v` reaches `u`
+without `e`. Its probability is `p_e * Rel_(G-e)(v,u)`. These `m` events cover
+exactly the cyclic outcomes, although the graph may have exponentially many
+cycles.
 
-Requires [elan](https://github.com/leanprover/elan) and Python 3 for the checks.
-The toolchain is Lean **4.35.0**; mathlib is pinned to its matching release and
-an exact dependency manifest is included.
+Choose an event proportionally to its probability and sample conditionally
+on it. If the sampled graph belongs to `t` witness events, give it score
+`1/t`. The expected score is the cycle probability divided by the sum of
+witness probabilities, and is at least `1/m`. Reliability estimates provide
+both the weights and conditional samples. The proof controls approximate
+choices and adaptive oracle failures without conditioning on all calls
+succeeding.
+
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `paper/` | Manuscript source, PDF, and Makefile. |
+| `DirectedCycleFPRAS/` | Lean proofs; `DirectedCycleFPRAS.lean` imports the library. |
+| `validation/` | Axiom audit, generated check reports, and the detailed formalization map. |
+| `scripts/` | Reproducible checks and Python models. |
+| `research/` | Problem statement, supporting proof notes, discretization details, and unsent feedback drafts. |
+
+The main Lean statements are
+[`cycle_fpras_of_estimator`](DirectedCycleFPRAS/PositiveOracle.lean) for the
+oracle reduction and [`cycleFPRAS_spec`](DirectedCycleFPRAS/ConcreteResources.lean)
+for the expanded program. The
+[written proof](research/SOLUTION.md) and
+[discretization note](research/DISCRETISATION.md) give supporting details;
+the [problem note](research/PROBLEM.md) records the original question and sources.
+
+## Reproduce
+
+Requires Lean **4.35.0** via [elan](https://github.com/leanprover/elan), the
+pinned mathlib dependency, and Python 3. No third-party Python packages are needed.
 
 ```sh
-lake exe cache get
-lake build
-lake env lean AxiomAudit.lean
-python3 scripts/check_formalization.py
-python3 scripts/run_cycle_fpras_checks.py
+lake exe cache get              # first setup
+bash scripts/check.sh          # build, axiom audit, and finite checks
+make -C paper                  # requires LaTeX and latexmk
 ```
 
-`check_formalization.py` runs the build and audits the named public theorems.
-The audit permits only Lean's standard `propext`, `Classical.choice`, and
-`Quot.sound` axioms. There are no admitted proofs or project-defined axioms.
-The Python regression tests use an **exponential exact reliability oracle** and
-bounded-error test oracles. They do not implement the external reliability FPRAS
-and are not the justification for the Lean theorems.
+The audit covers 81 declarations and permits only `propext`,
+`Classical.choice`, and `Quot.sound`; there are no proof admissions or
+project-defined axioms. Reports are written to `validation/`.
 
-## What is verified
+Python checks use exact enumeration or test oracles on small graphs. They
+are finite regression evidence, not a polynomial-time reliability
+implementation or a proof of equivalence with Lean. The default checks
+compare the two Algorithm S ports at `M=1`; run
+`python3 scripts/algs_transcription/run.py 1,2,3` for the larger exact suite.
 
-The algorithm is `Digraph.cycleAlgorithm`, a randomized program whose only
-oracle queries are reliability instances on the input graph with some edge
-probabilities replaced by 0 or 1. Write m for the number of edges and Z for the
-cycle probability. For independent edge retention with probabilities in [0,1],
-including loops and parallel arcs, and 0<epsilon<=1:
+## Next steps
 
-- `Digraph.cycle_fpras_of_constant_confidence`: if every oracle call on such an
-  instance of positive reliability has relative error at most
-  `epsilon/(128*m*(m+1))` with probability at least 3/4, using fresh randomness,
-  then with `n = ceil(2048*m^2/epsilon^2)` samples and each query answered by
-  the median of `6*ceil(log2(8*T))` calls, `T = m + 2*m*n`, the output is
-  within relative error epsilon of Z except with probability at most 1/4.
-- `Digraph.cycle_fpras_confidence`: the median of `O(log(1/delta))` such runs
-  fails with probability at most delta.
-- `Digraph.cycle_fpras_of_estimator`: the same from one hypothesis, a
-  reliability estimator that is accurate with probability 3/4 on finite
-  directed multigraphs with probabilities in (0,1], which is the input class
-  of the cited theorem. Zero-probability edges are deleted before each call.
-- `Digraph.cycle_fpras_of_algS`: the same with a concrete oracle, the cited
-  paper's Algorithm S run on fair random bits. Its only hypothesis is that the
-  exact Algorithm S, as transcribed here, is accurate with probability 7/8,
-  which is the paper's Theorem 9.
-- `Digraph.cycleAlgorithm_of_cycleMass_eq_zero`: if Z=0 the algorithm makes no
-  oracle call and returns exactly 0.
-- `Digraph.cycleAlgorithm_failure`: the same for a general per-call failure
-  probability gamma, with failure at most the Chebyshev term plus `T*gamma`.
-  Queries are adaptive; the proof couples the oracle with a repaired one and
-  never conditions on all calls succeeding.
-- `Digraph.cycleAlgorithm_queryBound` and `Digraph.cycleAlgorithm_bitBound`:
-  at most T oracle calls, and all internal randomness is at most `n*(m+1)`
-  uniform draws of `bitBudget m epsilon` bits.
-- `Digraph.cycleAlgorithm_workBound`: at most `2*m + n*(6*m+2)` charged local
-  operations (reachability tests and steps of discrete choices). The charges
-  are annotations in the program, trusted like cslib's `TimeM` ticks.
-- `Digraph.cycleAlgorithm_sat`: every query is a residual instance of the
-  input, and if input probabilities and oracle answers are fractions with
-  numerator and denominator at most `Hp` and `Ho`, the output is a fraction
-  with numerator and denominator at most `(2*Hp*Ho)^m * n * m!`.
-- `Digraph.cycleAlgorithm_weightSat`: every weight used in a discrete choice
-  has numerator and denominator at most `2*Hp*Ho`.
+1. Obtain expert review of the reduction, finite-bit adaptation, and novelty.
+2. Complete the remaining formal correspondence: induced-subgraph reindexing
+   with an inherited arc order, and the connection to explicit parent pointers.
+3. Prepare a reviewed release with confirmed authorship and publication metadata.
 
-The oracle contract is an explicit hypothesis, not a hidden axiom, and
-`Digraph.cycleAlgorithm_exactOracle` shows it is satisfiable. Supporting
-results include the witness identity, the weight/reliability identity, exact
-and approximate sequential conditional sampling, the support test for the zero
-case, the rounding error of fixed-bit choices, and median amplification. The
-earlier statistical theorem `Digraph.cycle_estimator_success`, which takes the
-sampling law as an input, remains and is what the reduction instantiates.
-
-What is still only a written argument: turning these counts and size bounds
-into a machine-level running time, and the Hoeffding route to confidence `1-delta`. Details are in [FORMALIZATION.md](FORMALIZATION.md).
-
-## Provenance
-
-Extracted from a3nm-012 in `../open-problems`; written proof dated 2026-10-25,
-Lean development begun 2026-11-12. This work was developed with AI assistance.
-Independent review and novelty checking remain pending. The substantial
-external reliability result is due to Feng, Fu, and Guo; the classical
-witness-union estimator is not claimed as new. See [SOLUTION.md](SOLUTION.md).
+The external accuracy proof and a machine-level runtime formalization are
+separate, substantially larger projects. Neither is claimed in this draft.

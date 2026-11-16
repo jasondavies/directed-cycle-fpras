@@ -4,8 +4,9 @@ This note closes the gap between the cost model of the cited reliability
 theorem and the bit model used in [SOLUTION.md](SOLUTION.md). All three steps
 below are checked in Lean for a transcription of the paper's Algorithm S
 (`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
-What Lean does not check is that the transcription matches the paper's
-pseudocode, and the paper's Theorem 9, which is a hypothesis.
+Lean also checks the correspondence lemmas listed below. A complete
+equivalence to the paper's pseudocode and the paper's Theorem 9 remain
+outside Lean; accuracy is an explicit hypothesis.
 
 ## The gap
 
@@ -140,8 +141,21 @@ oracle calls, and proves:
 | 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
 | 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
 | 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
-| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate alpha` for all `alpha` in `(0,1)` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height` gives the size of its answers. |
+| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate alpha` for all `alpha` in `(0,1)` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height_total` gives the answer size including zero sample budgets. |
 | all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
+
+The following additional obligations are checked:
+
+| Obligation | Lean theorem(s) | Scope |
+| --- | --- | --- |
+| Rational medians | `median_mem`, `median_height`, `Oracle.amplify_height` | Nonempty medians are sample values; both amplification stages preserve height. Empty medians return zero. |
+| Complete program resources | `concreteCycle_law`, `concreteCycle_bitCost`, `concreteCycle_height_total`, `cycleFPRAS_spec` | Inlines the oracle and both amplifications; counts all fair bits and bounds every final output, including zero-budget cases. |
+| Reachable-set restriction | `sDfs_closed`, `algS_restrict`, `algS_zero_unreachable` | Arbitrary probability changes outside a closed set containing the source preserve the full output law, at fixed `M` and with the ambient types retained. |
+| Fuel | `sDfs_initial_fuel`, `algS_round_fuel` | Extra fuel changes neither DFS from a valid snapshot nor the complete rounds program. |
+| Pools | `initial_poolInvariant`, `PoolInvariant.update`, `sIter_records`, `sGenerate_records`, `sRounds_nonneg` | The invariants hold initially, are preserved in every continuing round, and ensure valid snapshots contain their starting/recorded vertex. |
+| Uniform pool sampling | `poolDraw_expectation`, `poolDraw_perm` | Padded finite indices sample the list uniformly, respecting duplicates and invariant under permutation. |
+| First-open sampling | `firstOpen_mass`, `firstOpen_mixture`, `firstOpen_normLaw_conditional` | Exact event weights and joint conditional law for the actual optional-edge choice when the conditioning mass is positive. The unnormalized factorization also covers zero-mass events. |
+| Early stopping and flags | `sDfs_earlyStop`, `path_flag` | Record-then-finish and early-stop DFS have the same snapshot law; the Boolean path fold is true exactly when all nonroot path vertices avoid the resolved set. |
 
 The Lean constants are cruder than the ones above: the DFS is charged `2m`
 alternatives per popped vertex instead of using that each arc is examined
@@ -168,8 +182,8 @@ as there is no machine model.
 ## What this rests on
 
 1. **Theorem 9 of the paper**, as the hypothesis `AlgSAccurate` about the
-   transcription. I read its statement, the algorithm, and the outline of the
-   martingale proof; I did not verify the proof. `AlgSAccurate` is slightly
+   transcription. The external martingale proof is used as a cited result,
+   not re-proved here. `AlgSAccurate` is slightly
    stronger than Theorem 9 as stated: it is asserted for every instance with
    probabilities in `(0,1]` and positive reliability, without first deleting
    the vertices unreachable from `s`, and with `M` computed from the
@@ -177,28 +191,39 @@ as there is no machine model.
    unreachable vertex, so its run on the unreduced graph is its run on the
    reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
    lower bound on `M`: its last step is `Var <= (2 n^3 m / M) q_t^2`. This
-   justification is written, not formalised. `AlgSAccurate alpha` is false
-   for `alpha <= 0` (then `M = 0` and the output is 0), so the end-to-end
+   larger-budget justification remains written. The closed-set and
+   unreachable-edge invariance parts are formalized, while actual
+   reindexing to induced vertex/edge subtypes with an inherited arc order
+   remains written; Lemma 5 in the
+   [research manuscript](../paper/directed-cycle-fpras.pdf) gives the restriction argument.
+   `AlgSAccurate alpha` is false for `alpha <= 0`: at zero the sample budget
+   is zero and a positive-reliability instance with distinct terminals
+   returns zero; at negative accuracy the allowed absolute error is negative.
+   Thus the end-to-end
    theorem assumes it only for `alpha` in `(0,1)`, the paper's range.
    `AlgSAccurate` also includes `s = t` and `n = 1`, where the output is
    exactly 1.
-2. **Fidelity of the transcription** to the paper's pseudocode. This is not
-   checked in Lean. It was checked twice by reading (once by the author of
-   the transcription, once by an independent reviewer who first wrote down
-   the paper's algorithm without seeing the Lean), and by the test below.
-   The independent review found no difference that changes the law of the
-   output.
+2. **Fidelity of the transcription** to the paper's pseudocode. The table
+   above records the checked supporting lemmas. There is not yet a single
+   equivalence theorem to an independently formalized paper algorithm:
+   subtype reindexing and the link to an explicit parent-pointer traversal
+   remain written. Code review and exact finite comparisons provide
+   additional evidence; they do not establish general equivalence or replace
+   independent expert review.
 
    *Test.* `scripts/algs_transcription/` holds a Python port of the Lean
    definitions (`lean_port.py`) and a separately written port of the paper's
-   pseudocode (`paper_port.py`). `python3 run.py 1,2,3` computes, in exact
+   pseudocode (`paper_port.py`). From the repository root,
+   `python3 scripts/algs_transcription/run.py 1,2,3` computes, in exact
    rational arithmetic, the full output distribution of each for `M = 1, 2,
    3` on eleven graphs with at most 5 vertices and 8 arcs (parallel arcs,
    self-loops, arcs into `s`, unreachable vertices, probabilities equal to
    1, `s = t`, unreachable `t`). On every instance the two distributions are
-   equal and the mean equals the reliability computed by brute force, as the
-   paper's unbiasedness claim requires. `run2.py` repeats this under random
-   arc orders and adds a Monte Carlo run at `M = 40`. The ports are faithful
+   equal and the mean equals the reliability computed by brute force. The
+   script exits nonzero on a mismatch and records its results in
+   `validation/algs-transcription-results.json`. Equal-terminal and
+   unreachable-target cases are checked against the paper's preprocessing.
+   `run2.py` repeats this under random arc orders and adds a Monte Carlo run at `M = 40`. The ports are faithful
    to their sources by reading only, and the test says nothing about
    concentration at the real `M`.
 3. **Polynomial cost of rational arithmetic** on numbers of the proved size.

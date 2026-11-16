@@ -1,0 +1,93 @@
+{
+  "scope": "Exact finite comparison of two Python ports, including paper preprocessing cases",
+  "cases": [
+    {
+      "case": "path2+parallel",
+      "samples": 1,
+      "reliability": "4/9",
+      "mean": "4/9",
+      "support_size": 1,
+      "laws_equal": true
+    },
+    {
+      "case": "diamond",
+      "samples": 1,
+      "reliability": "35/72",
+      "mean": "35/72",
+      "support_size": 4,
+      "laws_equal": true
+    },
+    {
+      "case": "diamond+backarcs+loop",
+      "samples": 1,
+      "reliability": "35/72",
+      "mean": "35/72",
+      "support_size": 3,
+      "laws_equal": true
+    },
+    {
+      "case": "unreachable+p1",
+      "samples": 1,
+      "reliability": "3/4",
+      "mean": "3/4",
+      "support_size": 3,
+      "laws_equal": true
+    },
+    {
+      "case": "parallel-into-t,p=1 mix",
+      "samples": 1,
+      "reliability": "22/45",
+      "mean": "22/45",
+      "support_size": 2,
+      "laws_equal": true
+    },
+    {
+      "case": "5v-cycle",
+      "samples": 1,
+      "reliability": "17/80",
+      "mean": "17/80",
+      "support_size": 4,
+      "laws_equal": true
+    },
+    {
+      "case": "t-first(order rev)",
+      "samples": 1,
+      "reliability": "43/80",
+      "mean": "43/80",
+      "support_size": 5,
+      "laws_equal": true
+    },
+    {
+      "case": "t unreachable",
+      "samples": 1,
+      "reliability": "0",
+      "mean": "0",
+      "support_size": 1,
+      "laws_equal": true
+    },
+    {
+      "case": "s=t",
+      "samples": 1,
+      "reliability": "1",
+      "mean": "1",
+      "support_size": 1,
+      "laws_equal": true
+    },
+    {
+      "case": "all p=1",
+      "samples": 1,
+      "reliability": "1",
+      "mean": "1",
+      "support_size": 2,
+      "laws_equal": true
+    },
+    {
+      "case": "intermediate t (t resolved before others)",
+      "samples": 1,
+      "reliability": "361/400",
+      "mean": "361/400",
+      "support_size": 2,
+      "laws_equal": true
+    }
+  ]
+}

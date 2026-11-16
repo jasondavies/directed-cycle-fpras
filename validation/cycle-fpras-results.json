@@ -1,5 +1,4 @@
 {
-  "date": "2026-11-12",
   "oracle": "exponential exact / bounded-error test oracle",
   "external_fpras_implemented": false,
   "cases": [

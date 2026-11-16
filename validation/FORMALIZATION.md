@@ -6,12 +6,14 @@ being executable by exhaustive enumeration does not make it polynomial-time.
 All theorems below are checked by Lean. No `sorry`, project axioms, or native
 computation oracle is used to obtain them.
 
-**In one sentence:** Lean verifies the probabilistic correctness of the whole
-oracle reduction, with explicit counts of samples, oracle calls, random bits
-and charged local operations, and bounds on the size of every query and of the
-output. There is no machine model, so "polynomial time" is assembled from
-those bounds by a short written argument, and the reliability FPRAS itself is
-a hypothesis.
+`Digraph.cycleFPRAS_spec` is the main composed theorem: one program satisfies
+the accuracy bound, a total fair-bit budget including both amplification
+stages, and a rational output-size bound. Accuracy assumes `AlgSAccurate`;
+the resource bounds do not. The external accuracy proof, remaining pseudocode
+correspondence, and machine-level runtime are outside Lean.
+
+This file is the detailed reference. Start with the
+[paper](../paper/directed-cycle-fpras.pdf) for the mathematical argument.
 
 ## Modules
 
@@ -29,16 +31,23 @@ a hypothesis.
 | `OracleProgram` | Randomized programs with adaptive oracle queries (`Prog`), oracles with fresh finite randomness per call (`Oracle`), expectation semantics, output laws, independent repetitions equal the explicit product law, oracle-call counting, and the good-oracle coupling `Prog.exp_le_repair`. |
 | `RandomBits` | A discrete choice implemented by one uniform `b`-bit integer and cumulative intervals; each alternative's mass is within `2^(-b)` of its target, so the L1 error is at most `k/2^b`; a predicate counting uniform `b`-bit draws on every path. |
 | `ConditionalSampler` | The edge-exposure sampler `expose` with guarded oracle calls and its L1 distance to the exact conditional law: at most `4*alpha + 2/2^b` per exposed edge, for a randomized oracle whose answers are always `alpha`-accurate. |
-| `Amplification` | The law of `k` independent seeds, a median defined by its characterising property, and `Oracle.amplify_failure`: per-call failure at most 1/4 becomes at most `(7/8)^k`. |
+| `Amplification` | The law of `k` independent seeds, the lower sample median (zero for an empty sample), proved to be an input value whenever the sample is nonempty, and `Oracle.amplify_failure`: per-call failure at most 1/4 becomes at most `(7/8)^k`. |
 | `Confidence` | The median of `k` independent runs of a real-valued program fails with probability at most `(7/8)^k`; the reduction at confidence `1 - delta`. |
 | `Resources` | Charged local-operation count, the invariant that every query is a feasible residual instance, a size calculus for fractions, the output size bound, and division-free selection. |
 | `PositiveOracle` | Removing deterministic coordinates of a product law; deleting zero-probability edges preserves reliability; the reduction from an estimator for multigraphs with probabilities in `(0,1]`. |
 | `Discretise` | Replacing every exact choice of an adaptive program by a `b`-bit draw changes any `[0,1]` expectation by at most `N/2^b`, `N` the total number of alternatives on a path. |
 | `AlgorithmS` | A transcription of the cited paper's Algorithm S as a program; its count of random alternatives, a common-denominator bound on its output size, and the guarantee of its `b`-bit version given the paper's Theorem 9. |
 | `AlgorithmSEstimator` | A call-free program as a randomized real with a finite seed space; the `b`-bit Algorithm S as a `ReliabilityEstimator`, its correctness and answer size; the end-to-end theorem `cycle_fpras_of_algS`. |
+| `ProgramComposition` | Query inlining preserves the law, including amplified queries; sample medians preserve rational height; a varying-width fair-bit cost composes through inlining and repetition. |
+| `ConcreteResources` | The call-free program `cycleFPRAS` and `cycleFPRAS_spec`: accuracy, total fair-bit budget, and rational output height together, including zero sample budgets and equal-terminal residual queries. |
+| `AlgorithmSInvariants` | DFS stack/cardinality potential, sufficient DFS and round fuel, closed-set exploration, the path-flag identity, and generated count equals pool length. |
+| `FirstOpen` | Exact partial-assignment factorization, first-open event probabilities, their disjoint mixture, and the conditional product-law identity. |
+| `AlgorithmSRestriction` | Equality of the entire Algorithm S output law under probability changes outside a closed set containing the source; in particular, zeroing unreachable edges. This retains the ambient vertex and edge types and the same sample budget. |
+| `AlgorithmSPools` | Positive estimates correspond to nonempty pools; initialization and round updates preserve pool invariants; supported records contain their target; padded-index sampling is uniform and invariant under pool permutation; the actual first-open choice realizes the conditional product law when its conditioning mass is positive. |
+| `AlgorithmSStopping` | Early stopping has the same recorded-snapshot law as recording at the target pop and then finishing DFS; the finishing traversal also satisfies the fuel bound. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
-The entry point `DirectedCycleFPRAS.lean` imports all modules. `AxiomAudit.lean`
+The entry point `DirectedCycleFPRAS.lean` imports all modules. `validation/Axioms.lean`
 prints the dependencies of the principal results.
 
 ## The reduction theorems
@@ -70,7 +79,7 @@ alternative.
 | `Digraph.cycleAlgorithm_queryBound` | At most `m + 2*m*n` oracle calls on every execution path. |
 | `Digraph.cycleAlgorithm_bitBound` | Every internal random choice is a uniform `bits`-bit draw, and at most `n*(m+1)` draws occur on every path. |
 | `Digraph.cycleAlgorithm_workBound` | At most `2*m + n*(6*m + 2)` charged local operations on every path. |
-| `Digraph.cycleAlgorithm_sat` | If the input probabilities are fractions with numerator and denominator at most `Hp` and the oracle's answers likewise at most `Ho`, then every query asked is a residual instance passing the support test, and the output is a fraction with numerator and denominator at most `(2*Hp*Ho)^m * n * m!`. |
+| `Digraph.cycleAlgorithm_sat` | For `n > 0`, if the input probabilities are fractions with numerator and denominator at most `Hp` and the oracle's answers likewise at most `Ho`, then every query asked is a residual instance passing the support test, and the output is a fraction with numerator and denominator at most `(2*Hp*Ho)^m * n * m!`. |
 | `Digraph.cycleAlgorithm_ideal` | If *every* answer to a valid query is `eps/(128 m (m+1))`-accurate (the oracle may still be randomized) and `(3m+1)/2^bits <= eps/(32 m)`, then `Pr[|Zhat - Z| > eps*Z] <= 1/(n (eps/(16 m))^2)`. |
 | `Digraph.cycleAlgorithm_failure` | If instead each call on a valid query is inaccurate with probability at most `gamma`, the bound is the same plus `(m + 2*m*n) * gamma`. |
 | `Digraph.cycle_fpras_reduction` | With `n = ceil(2048 m^2/eps^2)`, `bits = bitBudget m eps` and `(m + 2*m*n) * gamma <= 1/8`: failure probability at most 1/4. |
@@ -82,16 +91,55 @@ alternative.
 | `Digraph.cycleAlgorithm_of_cycleMass_eq_zero` | If `Z = 0` the algorithm is literally `ret 0`: no oracle call, no randomness, output exactly 0. |
 | `Digraph.cycleAlgorithm_exactOracle` | The exact oracle meets the contract, so the hypotheses are satisfiable. |
 
-All of them hold for `0 < eps <= 1`, arbitrary `p : E -> [0,1]`, loops and
-parallel edges, and include the case `Z = 0`. `cycleAlgorithm_ideal` and
+The accuracy theorems apply to `0 < eps <= 1` and probabilities in `[0,1]`,
+allow loops and parallel edges, and include `Z = 0`. Individual resource
+theorems have the hypotheses displayed above; `cycleFPRAS_spec` assembles
+the total bounds for the final program. `cycleAlgorithm_ideal` and
 `cycleAlgorithm_failure` implicitly need `m >= 1` through their hypothesis on
 `bits`; the later theorems treat the edgeless graph separately.
 The oracle is constrained only on valid queries; on every other input it may
 answer arbitrarily.
 
+### The composed program and its resource bounds
+
+`Digraph.cycleFPRAS p eps delta : Prog Empty ℝ` expands every oracle call
+into discretised Algorithm S, with the inner oracle median and outer run
+median both included. `Digraph.concreteCycle_law` proves its law equals the
+previous abstract-oracle program. `Digraph.cycleFPRAS_spec` gives the three
+claims about this same program: failure at most `delta`, a bound on **all**
+fair bits on every execution, and rational output height on every branch.
+Accuracy retains the explicit `AlgSAccurate` hypothesis. The resource claims
+do not depend on that hypothesis.
+
+Write `n = |V|`, `m = |E|`, `N = reductionBudget m eps`,
+`T = m + 2*m*N`, `k = amplifyRounds T`, `r = confidenceRuns delta`,
+`a = eps/(128*m*(m+1))`, and `b = bitBudget m eps`.
+The complete fair-bit bound is
+
+```text
+b * r * N * (m+1) + r * T * k * oracleBitBudget n m a.
+```
+
+`oracleBitBudget` sums `algSBits n j Mj * algSChoices n j Mj` over
+`0 <= j <= m`, with `Mj = algSSamples n j a`. This safely bounds every
+possible positive-edge subgraph without requiring monotonicity in `j`.
+For input denominators at most `H >= 1`, `oracleHeight n m H a` similarly
+bounds the base oracle answers uniformly over these subgraphs. The final
+height is at most
+
+```text
+max 1 ((2 * H * oracleHeight n m H a)^m * N * m!).
+```
+
+Neither median increases height. In particular, even-sized samples select
+an actual input value, rather than an arbitrary real between the two middle
+values. Empty samples return zero. The total height statements also cover
+`M = 0`, an edgeless positive part, and equal terminals; they do not assume
+that a feasible residual query has a positive Algorithm S sample budget.
+
 ### How the written argument maps to Lean
 
-| Written step (SOLUTION.md) | Lean |
+| Written step (research/SOLUTION.md) | Lean |
 | --- | --- |
 | Section 1, witness family and mixture | `cyclic_iff_exists_witness`, `Mass.mixture_eq_conditioned_sum`, `Mass.mixture_score` |
 | Section 1, `w_e = p_e Rel_(G-e)(v,u)` | `weight_eq_edge_mul_reliability`, `deletedReliability_eq_exact`, `weight_eq_edge_mul_exact` |
@@ -135,8 +183,7 @@ differences are deliberate and do not affect polynomiality.
    - The local-operation charges are annotations placed in `Prog.guarded`
      (one support-reachability test), `Prog.draw` (one step per alternative)
      and the final aggregation (`n*m` witness tests and two sums). Lean proves
-     their total, not that each charge matches a real cost; this is the same
-     trust as a `TimeM` tick in cslib. The initial cyclicity test of the
+     their total, not that each charge matches a real cost; these charges are part of the model. The initial cyclicity test of the
      support and the handful of arithmetic operations next to each guard or
      draw are not charged separately.
    - Each charged operation is a reachability test on the input graph or
@@ -147,9 +194,6 @@ differences are deliberate and do not affect polynomiality.
      the selection rule compares (`height_partialSum`). `WeightSat` asserts
      that the program can be presented as draws on weights of that size; it
      does not inspect a concrete data representation.
-   cslib has multi-tape Turing machines with time bounds; compiling this
-   algorithm to one, with randomness and oracle access, would be a separate
-   and much larger project.
 2. **The external theorem.** The reliability FPRAS of Feng, Fu and Guo is a
    hypothesis: `ReliabilityEstimator.Correct`, an estimator accurate with
    probability at least 3/4 on finite directed multigraphs with probabilities
@@ -162,22 +206,30 @@ differences are deliberate and do not affect polynomiality.
    operations and draws of uniform real variables; it gives no bit-complexity
    bound. The formal hypothesis asks for a finite seed space, and
    `cycleAlgorithm_sat` for a size bound `Ho` on answers.
-   [DISCRETISATION.md](DISCRETISATION.md) shows that the paper's Algorithm S,
+   [DISCRETISATION.md](../research/DISCRETISATION.md) shows that the paper's Algorithm S,
    run on `b`-bit choices, is such an estimator, and Lean checks it for a
    transcription of Algorithm S. `Digraph.cycle_fpras_of_algS` is the
    resulting end-to-end theorem. Its only hypothesis is `AlgSAccurate alpha`
    for every `alpha` in `(0,1)`: the exact Algorithm S, as transcribed, has
-   relative error more than `alpha` with probability at most 1/8. That is the
-   paper's Theorem 9, in a slightly stronger form explained in that note. The
-   fidelity of the transcription to the paper's pseudocode is not checked in
-   Lean; it was reviewed independently and tested by exact enumeration on
-   small instances, as recorded in that note.
+   relative error more than `alpha` with probability at most 1/8. The written correspondence and larger-budget variance argument connect
+   this hypothesis to the paper's Theorem 9. The
+   correspondence is partly formalized: closure and unreachable-edge
+   invariance of the whole output law, DFS/round fuel, pool invariants and
+   uniform sampling, first-open conditioning, the path-flag identity, and
+   early-stop versus record-then-finish laws are checked. These are supporting
+   lemmas, not a single equivalence with an independently formalized version
+   of the paper. Reindexing to the induced vertex/edge subtypes with an
+   inherited arc order, connecting the flag to an explicit parent-pointer
+   traversal, and the larger-budget variance argument remain written steps.
+   The external martingale/concentration proof is not formalized. Exact
+   enumeration of small instances supplies separate evidence, as recorded
+   in that note.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding
-   inside a single run; that argument is not formalised. Counts of base oracle
-   calls after amplification (queries times repetitions) are not stated as a
-   theorem.
+   inside a single run; that argument is not formalised. The composed
+   fair-bit bound includes both repetitions: `r*T*k` base oracle runs
+   are accounted for in `concreteCycle_bitCost`.
 4. **Simple-graph oracles.** Not needed for the cited theorem, which accepts
    multigraphs. The subdivision of parallel arcs described at the end of
    Section 4, for a hypothetical oracle restricted to simple graphs, is not
@@ -198,6 +250,6 @@ checked by reading its definition, not by a theorem.
 Pinned toolchain: `leanprover/lean4:v4.35.0`.
 Pinned mathlib commit: `56a005855ea17e0b0958f73ec801ae140b0a1679`.
 Run `python3 scripts/check_formalization.py`; the report is written to
-`sources/lean-verification.json`. This checks the actual theorem dependencies,
+`validation/lean-verification.json`. This checks the actual theorem dependencies,
 not just a text search. The Python model has a separate finite regression suite;
 it has not been proved equivalent to the Lean definitions.
