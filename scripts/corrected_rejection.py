@@ -1,15 +1,16 @@
-"""Vertex-witness corrected rejection, with a supplied rational reliability oracle.
+"""Vertex-witness counting and conditional sampling with a reliability oracle.
 
-The oracle has the signature documented in cycle_fpras_reduction.py. This
-module implements the revised written algorithm, not Algorithm S, and has
-no Lean refinement proof. The yielded Query/Draw protocol also permits exact
-finite enumeration of the same proposal code, including oracle transcripts.
+The oracle signature is (n, arcs, probabilities, s, t, alpha, delta, rng).
+It returns a rational alpha-relative estimate with failure at most delta.
+This module models the reduction; it does not implement Algorithm S and has
+no Lean refinement proof. The Query/Draw protocol permits exact enumeration
+of proposal choices and adaptive oracle transcripts.
 """
 from dataclasses import dataclass
 from fractions import Fraction as Q
 import random
 
-from cycle_fpras_reduction import ceiling, ceil_log2, choose
+from finite_choices import ceiling, ceil_log2, choose
 from cycle_reliability import cyclic_independent, product_mass, reachable
 
 

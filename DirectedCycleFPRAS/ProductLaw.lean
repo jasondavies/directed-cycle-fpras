@@ -1,6 +1,6 @@
 module
 
-public import DirectedCycleFPRAS.CycleEstimator
+public import DirectedCycleFPRAS.GraphProbability
 
 @[expose] public section
 

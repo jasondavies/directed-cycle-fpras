@@ -7,17 +7,9 @@ public import DirectedCycleFPRAS.PositiveOracle
 
 set_option linter.unusedSectionVars false
 
-/-!
-# The discretised Algorithm S as a reliability estimator
-
-A program without oracle calls is a randomized real with a finite seed space
-(`Prog.toRand`). Applying this to the `b`-bit version of Algorithm S gives a
-`ReliabilityEstimator`, `algSEstimator`. If the exact Algorithm S is accurate
-with probability 7/8 (`AlgSAccurate`, the paper's Theorem 9 at `δ = 1/8`),
-this estimator meets the contract of the reduction, and
-`Digraph.cycle_fpras_of_algS` is the resulting end-to-end statement: its only
-hypothesis is the accuracy of the exact Algorithm S.
--/
+/-! The discretized Algorithm S reliability estimator. Its accuracy is
+conditional on the explicit external hypothesis `AlgSAccurate`; its finite
+randomness and rational output bounds are proved here. -/
 
 namespace DirectedCycleFPRAS
 
@@ -239,60 +231,5 @@ theorem algSEstimator_height_total (α : ℝ) {V E : Type} [Fintype V] [Fintype 
     have hz := Prog.toRand_value_of_sat hs z
     exact hz.mono (le_max_left _ _)
 
-namespace Digraph
-
-variable {V E : Type} [Fintype V] [Fintype E] [DecidableEq E] (G : Digraph V E)
-
-/-- **End-to-end reduction with a concrete oracle.** Assume only that the
-exact Algorithm S is accurate with probability 7/8 at every relative error
-`α ∈ (0,1)`, which is Theorem 9 of Feng, Fu and Guo. Then for
-every finite directed multigraph with edge probabilities in `[0,1]`,
-`0 < ε ≤ 1` and `δ > 0`, the cycle algorithm, with every reliability query
-answered by medians of the discretised Algorithm S after deleting
-zero-probability edges, has relative error more than `ε` with probability at
-most `δ`. All randomness, of the reduction and of the oracle, is fair bits.
-The hypothesis is used at `α = ε / (128 * m * (m + 1))` when `m ≥ 1`; an
-edgeless graph needs no oracle. -/
-theorem cycle_fpras_of_algS (p : E → ℝ) (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)
-    {ε δ : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) (hδ : 0 < δ)
-    (hS : ∀ α : ℝ, 0 < α → α < 1 → AlgSAccurate α) :
-    ((G.cycleAlgorithm p (bitBudget (Fintype.card E) ε)
-        (reductionBudget (Fintype.card E) ε)).medianOf (confidenceRuns δ)).exp
-        ((G.oracleOfEstimator
-            (algSEstimator (ε / (128 * Fintype.card E * (Fintype.card E + 1))))).amplify
-          (amplifyRounds (Fintype.card E +
-            reductionBudget (Fintype.card E) ε * (2 * Fintype.card E))))
-        (fun z =>
-          if ε * G.cycleMass (edgeLaw p hp0 hp1).toMass <
-            |z - G.cycleMass (edgeLaw p hp0 hp1).toMass| then 1 else 0) ≤ δ := by
-  by_cases hm : 0 < Fintype.card E
-  · have hmR : (1 : ℝ) ≤ Fintype.card E := by exact_mod_cast hm
-    have hden : (1 : ℝ) < 128 * Fintype.card E * (Fintype.card E + 1) := by nlinarith
-    refine G.cycle_fpras_of_estimator p hp0 hp1 _ hε hε1 hδ
-      (algSEstimator_correct (hS _ (by positivity) ?_))
-    rw [div_lt_one (by positivity)]
-    linarith
-  · set Z := G.cycleMass (edgeLaw p hp0 hp1).toMass with hZ
-    have hind : (fun z : ℝ => if ε * Z < |z - Z| then (1 : ℝ) else 0) =
-        fun z => if |z - Z| ≤ ε * Z then 0 else 1 := by
-      ext z
-      by_cases h : ε * Z < |z - Z|
-      · rw [ite_eq_left h, ite_eq_right (not_le.mpr h)]
-      · rw [ite_eq_right h, ite_eq_left (not_lt.mp h)]
-    have hsingle := G.cycleAlgorithm_no_edges p hp0 hp1
-      ((G.oracleOfEstimator
-          (algSEstimator (ε / (128 * Fintype.card E * (Fintype.card E + 1))))).amplify
-        (amplifyRounds (Fintype.card E +
-          reductionBudget (Fintype.card E) ε * (2 * Fintype.card E))))
-      ε (bitBudget (Fintype.card E) ε) (reductionBudget (Fintype.card E) ε) hm
-    rw [← hZ, hind] at hsingle
-    rw [hind]
-    refine le_trans (Prog.medianOf_failure _ _ _ ?_ (by rw [hsingle]; norm_num))
-      (confidenceRuns_bound hδ)
-    intro a b c ha hc hab hbc
-    rw [abs_le] at *
-    exact ⟨by linarith [ha.1], by linarith [hc.2]⟩
-
-end Digraph
 end
 end DirectedCycleFPRAS

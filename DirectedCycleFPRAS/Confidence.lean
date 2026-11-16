@@ -1,6 +1,6 @@
 module
 
-public import DirectedCycleFPRAS.Reduction
+public import DirectedCycleFPRAS.Amplification
 
 @[expose] public section
 
@@ -147,45 +147,5 @@ theorem confidenceRuns_bound {δ : ℝ} (hδ : 0 < δ) : (7 / 8 : ℝ) ^ confide
       rw [div_le_iff₀ hδ] at h3
       linarith
 
-namespace Digraph
-
-variable {V E : Type} [Fintype E] [DecidableEq E] (G : Digraph V E) (p : E → ℝ)
-
-/-- **The reduction at arbitrary confidence.** Under the constant-confidence
-oracle contract of `cycle_fpras_of_constant_confidence`, the median of
-`confidenceRuns δ` independent runs of the algorithm has relative error more
-than `ε` with probability at most `δ`. It makes at most
-`confidenceRuns δ * T` amplified oracle queries, `T = m + 2*m*n`. -/
-theorem cycle_fpras_confidence (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)
-    (O : Oracle (Query V E)) {ε δ : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) (hδ : 0 < δ)
-    (hO : ∀ x, G.Valid p x →
-      (∑ s, if G.Accurate (ε / (128 * Fintype.card E * (Fintype.card E + 1))) x (O.answer x s)
-        then 0 else (O.law x).value s) ≤ 1 / 4) :
-    ((G.cycleAlgorithm p (bitBudget (Fintype.card E) ε)
-        (reductionBudget (Fintype.card E) ε)).medianOf (confidenceRuns δ)).exp
-        (O.amplify (amplifyRounds (Fintype.card E +
-          reductionBudget (Fintype.card E) ε * (2 * Fintype.card E))))
-        (fun z =>
-          if ε * G.cycleMass (edgeLaw p hp0 hp1).toMass <
-            |z - G.cycleMass (edgeLaw p hp0 hp1).toMass| then 1 else 0) ≤ δ := by
-  set Z := G.cycleMass (edgeLaw p hp0 hp1).toMass with hZ
-  have hZ0 : 0 ≤ Z := by
-    rw [hZ, G.cycleMass_eq_unionMass]
-    exact Mass.unionMass_nonneg _ G.event
-  have hind : (fun z : ℝ => if ε * Z < |z - Z| then (1 : ℝ) else 0) =
-      fun z => if |z - Z| ≤ ε * Z then 0 else 1 := by
-    ext z
-    by_cases h : ε * Z < |z - Z|
-    · rw [ite_eq_left h, ite_eq_right (not_le.mpr h)]
-    · rw [ite_eq_right h, ite_eq_left (not_lt.mp h)]
-  have hsingle := G.cycle_fpras_of_constant_confidence p hp0 hp1 O hε hε1 hO
-  rw [← hZ, hind] at hsingle
-  rw [hind]
-  refine le_trans (Prog.medianOf_failure _ _ _ ?_ hsingle) (confidenceRuns_bound hδ)
-  intro a b c ha hc hab hbc
-  rw [abs_le] at *
-  exact ⟨by linarith [ha.1], by linarith [hc.2]⟩
-
-end Digraph
 end
 end DirectedCycleFPRAS

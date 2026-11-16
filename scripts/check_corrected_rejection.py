@@ -1,4 +1,4 @@
-"""Exact finite checks of the revised mathematical claims and executable model.
+"""Exact finite checks of the mathematical claims and executable model.
 
 The reliability oracle here enumerates edge configurations exponentially.
 These checks are regression evidence, not proofs or a polynomial oracle.
@@ -10,7 +10,7 @@ from itertools import combinations
 import json
 from pathlib import Path
 
-from cycle_fpras_reduction import ceiling
+from finite_choices import ceiling
 from corrected_rejection import (Draw, Query, budgets, cycle_vertices, estimate,
     initial_weights, prepare, proposal, sample, split_vertex)
 from cycle_reliability import (cycle_witnesses, cyclic_independent, product_mass,

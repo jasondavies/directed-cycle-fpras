@@ -1,6 +1,7 @@
 module
 
 public import DirectedCycleFPRAS.AlgorithmSEstimator
+public import DirectedCycleFPRAS.Confidence
 
 @[expose] public section
 

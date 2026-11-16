@@ -31,8 +31,8 @@ constant-confidence run, with reliability accuracy independent of
 $\varepsilon$. A finite-bit implementation of the reliability oracle gives
 worst-case polynomial bit complexity. In contrast, approximating acyclicity
 probability has no FPRAS unless $\mathrm{RP}=\mathrm{NP}$. The companion Lean
-development verifies the earlier edge-witness estimator; the strengthened
-results here have written proofs.
+development checks the vertex reduction, counting and sampling programs,
+resource bounds, and the exact complement-hardness gadget.
 \end{abstract}
 
 \section{Main results}
@@ -139,7 +139,7 @@ $S$ in components of size at least two or with a retained self-loop.
 The support test also decides $Z=0$ exactly. If $k=1$, cyclicity is a
 single reliability event and counting can instead use that estimator directly.
 
-The original edge cover is another option:
+An edge cover is another option:
 \[
  A_e=\{X:e\in X,\ \operatorname{head}(e)\rightsquigarrow
        \operatorname{tail}(e)\text{ in }X\setminus\{e\}\},\qquad
@@ -247,7 +247,7 @@ with a shared random scale.
 
 \paragraph{Conditional sampling.}
 Estimate weights once and run at most
-$L=\lceil4k\log(3/\eta)\rceil$ proposals, returning the first accepted
+$L=4k\lceil\log_2(3/\eta)\rceil$ proposals, returning the first accepted
 configuration. In the reference process the timeout probability is at most
 $(1-1/(4k))^L\leq\eta/3$. Conditional on the weights, the first accepted
 configuration before timeout has the desired law, by~\eqref{eq:cancel}.
@@ -255,8 +255,8 @@ On timeout return the full positive-probability support, a fixed cyclic
 configuration of positive product-law mass.
 Mixing in this fallback changes total variation by at most $\eta/3$.
 With the two implementation errors below each at most $\eta/3$, this proves
-Theorem~\ref{thm:sample}. Compute the cap by an integer upper bound, for
-example $\lceil4k\lceil\log_2(3/\eta)\rceil\rceil$.
+Theorem~\ref{thm:sample}. The logarithmic ceiling is computable by integer
+bit lengths.
 
 \section{Implementation and finite-bit reliability}\label{sec:bits}
 A reliability oracle here returns rational answers in worst-case polynomial
@@ -379,57 +379,27 @@ variable occurs once, and cycles correspond. Apply the main theorems to
 this enlarged graph.
 
 \section{Verification contract}
-The companion Lean development verifies the original edge-witness estimator:
-its probabilistic reduction, composed fair-bit and output-size bounds, and
-induced-subtype and parent-pointer correspondences. Accuracy assumes the
-explicit hypothesis \texttt{AlgSAccurate}; the external variance proof and
-machine-level runtime remain written arguments. The revised vertex cover,
-rejection estimator, conditional sampler, and hardness proposition have
-written proofs and exact finite checks, but are not yet formalized.
-The counting proof uses Lean's Chebyshev-plus-median architecture with a
-different estimator. Appendix~\ref{app:formal} gives the correspondence claims;
-\texttt{validation/FORMALIZATION.md} records the detailed scope and bounds.
+The companion Lean development checks the vertex-splitting identity and
+feedback cover, recorded-probability cancellation across adaptive oracle
+calls, the rejection envelope, and the counting and conditional-sampling
+programs with the budgets used here. It also checks the acyclicity gadget's
+exact independent-set probability identity. Both programs have composed
+fair-bit bounds; the counting program has a rational output-size bound.
+Accuracy invokes the explicit external hypothesis \texttt{AlgSAccurate}
+at $a_0=1/(16(m+1))$. The external variance proof, independent-set hardness
+theorem, and machine-level runtime are not re-proved in Lean.
+Appendix~\ref{app:formal} records the Algorithm S correspondence;
+\texttt{validation/FORMALIZATION.md} maps the results to declarations.
 
 \paragraph{Provenance.}
 The reduction, formalization, and manuscript were developed with AI assistance.
 The reliability theorem and union-estimation framework are external contributions.
-Review suggestions led to the stronger estimator and witness construction;
-rejection correction and the accurate-oracle argument follow JVV.
+Rejection correction and the accurate-oracle argument follow JVV.
 
 \clearpage
 \appendix
-\section{Sharper analysis of the original score}\label{app:score}
-The original estimator can also be improved without changing its reciprocal
-score. Let a cover have $k$ witnesses and at most $m$ exposed variables.
-Use relative oracle accuracy $a=\varepsilon/(64(m+1))$ and put
-$\rho=(1+a)/(1-a)$. Conditional on the initial estimates, for exact choices
-and always-accurate answers the approximate mixture satisfies
-\[
- \rho^{-(m+1)}Q(x)\leq\widehat Q(x)\leq\rho^{m+1}Q(x).
-\]
-This follows by multiplying the normalization ratios along each exposure
-path and at witness selection, then summing over witnesses and oracle
-randomness. For $Y=1/t$ on the union and zero elsewhere, nonnegativity gives
-the same bounds on $\widehat\theta=\E_{\widehat Q}Y$ versus $\theta=Z/W$.
-In particular $\widehat\theta\geq1/(2k)$ and
-\[
- \left|\log\frac{\widehat W\widehat\theta}{Z}\right|
- \leq2a+3(m+1)a\leq5\varepsilon/64,
- \qquad
- \left|\frac{\widehat W\widehat\theta}{Z}-1\right|\leq\varepsilon/8.
-\]
-Since $0\leq Y\leq1$, $\operatorname{Var}(Y)\leq\E Y$.
-With $N\geq512k\varepsilon^{-2}$, Chebyshev bounds the probability of
-relative sampling error greater than $\varepsilon/4$ by
-$16/(N\varepsilon^2\widehat\theta)\leq1/16$. Combining this with the bias
-bound gives relative error below $\varepsilon$. The same two implementation
-couplings and outer median as in the main text give arbitrary confidence.
-Thus this simpler variant needs $a=\Theta(\varepsilon/m)$ and
-$O(k\varepsilon^{-2}\log(1/\delta))$ proposals. These improved constants
-are not the constants of the existing Lean program.
-
 \section{Explicit bit bounds}\label{app:cost}
-\paragraph{The revised reduction.}
+\paragraph{The reduction.}
 Let $D$ bound proposals in a run, $T=k+2mD$, and $b$ be its choice width.
 Let $h=O(\log(T/\beta))$ be the inner amplification count,
 $C_{\rm rel}$ the maximum base-oracle bit cost on the split residual graphs,
@@ -456,12 +426,16 @@ and include polynomial-cost median selection. All logarithmic ceilings can
 be computed by rational comparisons and repeated doubling.
 
 \paragraph{Algorithm S.}
-Use $n',m'$ for the preprocessed oracle sizes and
-$M=\lceil16n'^3m'/a_0^2\rceil$. A sampling iteration chooses a resolved
-vertex, a pool entry, a first open cut edge, and at most $m'$ binary states.
-There are at most $n'-1$ rounds and $M$ iterations per round. Hence one may take
+Use $n',m'$ for the oracle vertex and positive-edge counts; unreachable
+vertices may be retained. Set $M=\lceil16n'^3m'/a_0^2\rceil$.
+A sampling iteration chooses a resolved vertex, a pool entry, and a first
+open cut edge. Allowing padded alternatives, $n'+1$ DFS scans, and $n'$
+rounds gives the conservative bound used in Lean:
 \[
- A_S=(n'-1)M(n'+M+3m'),\qquad b_S=\lceil\log_2(8A_S)\rceil.
+ \begin{aligned}
+ A_S&=n'M\bigl((n'+1)+(M+1)+(m'+1)+2m'(n'+1)\bigr),\
+ b_S&=\left\lceil\log_2\max\{1,8A_S\}\right\rceil.
+ \end{aligned}
 \]
 The denominator invariant in Lemma~\ref{lem:discrete} bounds stored estimates
 by the common denominator $(MB)^j$ after $j$ rounds. Selection weights have
@@ -502,16 +476,15 @@ and coupling budget $\beta$, both $h$ and $b$ are
 $O(\log(D(k+2m+2)/\beta))$, and
 $K=O(uv(u+v)[L+\log((u+v)D(k+2m+2)/\beta)])$.
 The fourth power absorbs median comparisons and schoolbook arithmetic.
-These bounds are deliberately conservative in graph size. Relative to the
-straightforward multiplicative analysis in Appendix~\ref{app:score}, using
-$a=\Theta(1/m)$ instead of $\Theta(\varepsilon/m)$ removes the extra
-$\varepsilon^{-2}$ inside Algorithm S's budget. This is an application of
-classical correction, not a new counting-to-sampling principle.
+These bounds are deliberately conservative in graph size. The oracle's
+accuracy is independent of $\varepsilon$, so its sample budget contributes
+no additional inverse power of the final counting error. The correction
+uses the classical counting-to-sampling principle.
 
-\section{Correspondence for the original Lean program}\label{app:formal}
-The original formal program retains unreachable vertices and uses flags
-instead of explicit parent tables. The following claims isolate its
-correspondence obligations; they do not formalize the new estimator.
+\section{Algorithm S correspondence}\label{app:formal}
+The Algorithm S transcription retains unreachable vertices and uses path
+flags. The following checked laws relate it to induced graphs and an
+explicit-parent program.
 
 \begin{lemma}[Closed-set restriction]
 For a closed vertex set $U$ containing the terminals, restricting Algorithm S
@@ -540,7 +513,7 @@ Induct through Generate and rounds; the result is \texttt{parentAlgS\_law}.
 \end{proof}
 
 \begin{lemma}[Fuel]
-The original DFS fuel $|V|+1$ and round fuel $|V|$ suffice, including for the
+DFS fuel $|V|+1$ and round fuel $|V|$ suffice, including for the
 parent traversal that finishes after recording.
 \end{lemma}
 \begin{proof}
@@ -557,19 +530,20 @@ its bound $\operatorname{Var}(\widehat q_t)\leq2n'^3m'q_t^2/M$ for
 $M\geq2n'^3m'$ justifies using an unreduced sample budget in the transcription.
 Equal-terminal output is one and is checked separately.
 
-Lean assumes \texttt{AlgSAccurate} for accuracies in $(0,1)$: the exact
-transcription has relative-error failure at most $1/8$. Its original
-edge-witness reduction uses $a=\varepsilon/(128m(m+1))$ and
-$N=\lceil2048m^2/\varepsilon^2\rceil$, followed by median amplification.
-The theorem \texttt{cycleFPRAS\_spec} combines accuracy, all fair bits, and
-rational output size for the program with all queries and both amplifications
-expanded. The resource bounds do not assume successful answers.
+Lean invokes \texttt{AlgSAccurate} at $a_0=1/(16(m+1))$: the exact
+transcription has relative-error failure at most $1/8$.
+The theorems \texttt{cycleFPRAS\_correct} and
+\texttt{cycleSampler\_cyclic\_correct} concern the programs with all
+queries expanded and the parameters fixed as in the main text.
+Theorems \texttt{concreteVertex\_bitCost},
+\texttt{concreteVertexSample\_bitCost}, and
+\texttt{concreteVertex\_height} give their resource bounds. Those bounds
+hold on every execution, including inaccurate-oracle histories.
+The formalization map gives the exact expressions and the treatment of
+zero-budget and equal-terminal cases. Polynomial machine time follows by
+the written arithmetic analysis, rather than a formal machine semantics.
 
-The formalization map records the exact resource expressions, including
-zero-budget and equal-terminal cases. These are bounds for the original
-program; operation charges are annotations rather than a machine cost semantics.
-
-The development uses Lean 4.35.0 and pinned mathlib. Its 100-declaration
+The development uses Lean 4.35.0 and pinned mathlib. Its principal-declaration
 audit permits only \texttt{propext}, \texttt{Classical.choice}, and
 \texttt{Quot.sound}, with no proof admissions. Reproduce it with
 \texttt{bash scripts/check.sh}; build this manuscript with

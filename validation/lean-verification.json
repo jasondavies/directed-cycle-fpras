@@ -2,67 +2,71 @@
   "toolchain": "leanprover/lean4:v4.35.0",
   "mathlib_commit": "56a005855ea17e0b0958f73ec801ae140b0a1679",
   "theorems_audited": [
-    "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness",
-    "DirectedCycleFPRAS.Mass.mixture_eq_conditioned_sum",
-    "DirectedCycleFPRAS.Mass.mixture_score",
-    "DirectedCycleFPRAS.Mass.totalWeight_zero_iff_unionMass_zero",
-    "DirectedCycleFPRAS.normalised_weights_l1",
-    "DirectedCycleFPRAS.sequential_stability",
-    "DirectedCycleFPRAS.Law.centeredSum_secondMoment",
-    "DirectedCycleFPRAS.Law.average_tail",
-    "DirectedCycleFPRAS.approximate_mixture_success",
-    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_reliability",
-    "DirectedCycleFPRAS.Digraph.cycle_estimator_success",
+    "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split",
+    "DirectedCycleFPRAS.Digraph.feedback_cover",
+    "DirectedCycleFPRAS.Digraph.vertex_weight_reliability",
+    "DirectedCycleFPRAS.Digraph.vertex_unionMass",
+    "DirectedCycleFPRAS.Mass.unionMass_le_totalWeight",
+    "DirectedCycleFPRAS.Mass.totalWeight_le_card_mul_unionMass",
     "DirectedCycleFPRAS.eventMass_pos_iff",
     "DirectedCycleFPRAS.condWeight_split",
-    "DirectedCycleFPRAS.Prog.exp_replicate",
+    "DirectedCycleFPRAS.Law.centeredSum_secondMoment",
+    "DirectedCycleFPRAS.Law.variance_le_mean",
+    "DirectedCycleFPRAS.Law.relative_average_tail",
+    "DirectedCycleFPRAS.normalized_lower",
+    "DirectedCycleFPRAS.recordedExpose_inverse",
+    "DirectedCycleFPRAS.recordedExpose_envelope",
+    "DirectedCycleFPRAS.rejectionAccuracy_envelope",
+    "DirectedCycleFPRAS.recordedRejectionSpec",
+    "DirectedCycleFPRAS.correctedProposal_exp",
+    "DirectedCycleFPRAS.correctedProposal_acceptance",
+    "DirectedCycleFPRAS.correctedProposal_conditional",
+    "DirectedCycleFPRAS.correctedCount_ideal",
+    "DirectedCycleFPRAS.witnessCount_ideal",
+    "DirectedCycleFPRAS.cappedSample_exp",
+    "DirectedCycleFPRAS.cappedSample_error",
+    "DirectedCycleFPRAS.rejection_timeout",
+    "DirectedCycleFPRAS.witnessSample_ideal",
     "DirectedCycleFPRAS.Prog.exp_le_repair",
-    "DirectedCycleFPRAS.bitLaw_l1",
-    "DirectedCycleFPRAS.expose_l1",
+    "DirectedCycleFPRAS.Prog.exp_repair_abs",
+    "DirectedCycleFPRAS.Prog.exp_discretise_le",
+    "DirectedCycleFPRAS.Prog.finiteBit_failure",
+    "DirectedCycleFPRAS.Prog.finiteBit_error",
     "DirectedCycleFPRAS.Oracle.amplify_failure",
-    "DirectedCycleFPRAS.Digraph.eventMass_returnEvent",
-    "DirectedCycleFPRAS.Digraph.cycleMass_pos_iff",
-    "DirectedCycleFPRAS.Digraph.deletedReliability_eq_exact",
-    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_exact",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_queryBound",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_bitBound",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_ideal",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_failure",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_reduction",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_constant_confidence",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_exactOracle",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_of_cycleMass_eq_zero",
     "DirectedCycleFPRAS.Prog.medianOf_failure",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_confidence",
-    "DirectedCycleFPRAS.hit_normLaw_iff",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat",
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_weightSat",
-    "DirectedCycleFPRAS.height_partialSum",
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_zero",
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_failure",
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_confidence",
+    "DirectedCycleFPRAS.Digraph.vertexSample_error",
+    "DirectedCycleFPRAS.Digraph.vertex_conditional_expectation",
+    "DirectedCycleFPRAS.Digraph.vertexOracle_correct",
+    "DirectedCycleFPRAS.Digraph.concreteVertex_law",
+    "DirectedCycleFPRAS.Digraph.concreteVertex_correct",
+    "DirectedCycleFPRAS.Digraph.concreteVertex_bitCost",
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_sat",
+    "DirectedCycleFPRAS.Digraph.concreteVertex_height",
+    "DirectedCycleFPRAS.Digraph.concreteVertexSample_error",
+    "DirectedCycleFPRAS.Digraph.concreteVertexSample_bitCost",
+    "DirectedCycleFPRAS.choiceWidth_bound",
+    "DirectedCycleFPRAS.oracleRepetitions_bound",
+    "DirectedCycleFPRAS.samplingBlocks_bound",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_correct",
+    "DirectedCycleFPRAS.Digraph.cycleSampler_correct",
+    "DirectedCycleFPRAS.Digraph.cycleSampler_cyclic_correct",
+    "DirectedCycleFPRAS.AcyclicityReduction.acyclic_iff_independent",
+    "DirectedCycleFPRAS.AcyclicityReduction.retention_values",
+    "DirectedCycleFPRAS.AcyclicityReduction.edge_retention_probability",
     "DirectedCycleFPRAS.eventMass_restrict",
     "DirectedCycleFPRAS.Digraph.reliability_positivePart",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator",
-    "DirectedCycleFPRAS.Prog.discretise_bitBound",
-    "DirectedCycleFPRAS.Prog.exp_discretise_le",
     "DirectedCycleFPRAS.Digraph.algS_choiceBound",
     "DirectedCycleFPRAS.Digraph.algS_sat",
     "DirectedCycleFPRAS.Digraph.algS_discretised",
-    "DirectedCycleFPRAS.Prog.exp_eq_toRand",
     "DirectedCycleFPRAS.algSEstimator_correct",
-    "DirectedCycleFPRAS.algSEstimator_height",
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS",
-    "DirectedCycleFPRAS.median_mem",
-    "DirectedCycleFPRAS.median_height",
-    "DirectedCycleFPRAS.Oracle.amplify_height",
     "DirectedCycleFPRAS.algSEstimator_height_total",
-    "DirectedCycleFPRAS.Digraph.algS_self",
     "DirectedCycleFPRAS.Digraph.algS_sat_total",
     "DirectedCycleFPRAS.Prog.exp_inline_amplify",
     "DirectedCycleFPRAS.Prog.BitCost.inline",
-    "DirectedCycleFPRAS.Digraph.concreteCycle_law",
-    "DirectedCycleFPRAS.Digraph.concreteCycle_height_total",
-    "DirectedCycleFPRAS.Digraph.concreteCycle_bitCost",
-    "DirectedCycleFPRAS.Digraph.cycleFPRAS_spec",
+    "DirectedCycleFPRAS.Digraph.algS_self",
     "DirectedCycleFPRAS.Digraph.sScan_balance",
     "DirectedCycleFPRAS.Digraph.sDfs_initial_fuel",
     "DirectedCycleFPRAS.Digraph.algS_round_fuel",
@@ -104,57 +108,30 @@
     "DirectedCycleFPRAS.Digraph.parentAlgS_inducedClosed"
   ],
   "axioms": {
-    "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
+    "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split": [
+      "propext"
+    ],
+    "DirectedCycleFPRAS.Digraph.feedback_cover": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Mass.mixture_eq_conditioned_sum": [
+    "DirectedCycleFPRAS.Digraph.vertex_weight_reliability": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Mass.mixture_score": [
+    "DirectedCycleFPRAS.Digraph.vertex_unionMass": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Mass.totalWeight_zero_iff_unionMass_zero": [
+    "DirectedCycleFPRAS.Mass.unionMass_le_totalWeight": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.normalised_weights_l1": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.sequential_stability": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Law.centeredSum_secondMoment": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Law.average_tail": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.approximate_mixture_success": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_reliability": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycle_estimator_success": [
+    "DirectedCycleFPRAS.Mass.totalWeight_le_card_mul_unionMass": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -169,7 +146,87 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Prog.exp_replicate": [
+    "DirectedCycleFPRAS.Law.centeredSum_secondMoment": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Law.variance_le_mean": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Law.relative_average_tail": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.normalized_lower": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedExpose_inverse": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedExpose_envelope": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.rejectionAccuracy_envelope": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedRejectionSpec": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.correctedProposal_exp": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.correctedProposal_acceptance": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.correctedProposal_conditional": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.correctedCount_ideal": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.witnessCount_ideal": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.cappedSample_exp": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.cappedSample_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.rejection_timeout": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.witnessSample_ideal": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -179,12 +236,22 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.bitLaw_l1": [
+    "DirectedCycleFPRAS.Prog.exp_repair_abs": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.expose_l1": [
+    "DirectedCycleFPRAS.Prog.exp_discretise_le": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.finiteBit_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Prog.finiteBit_error": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -194,97 +261,117 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.eventMass_returnEvent": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleMass_pos_iff": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.deletedReliability_eq_exact": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.weight_eq_edge_mul_exact": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_queryBound": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_bitBound": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_ideal": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_failure": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_reduction": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_constant_confidence": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_exactOracle": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_of_cycleMass_eq_zero": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
     "DirectedCycleFPRAS.Prog.medianOf_failure": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_confidence": [
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_zero": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.hit_normLaw_iff": [
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_failure": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_workBound": [
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_confidence": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_sat": [
+    "DirectedCycleFPRAS.Digraph.vertexSample_error": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.cycleAlgorithm_weightSat": [
+    "DirectedCycleFPRAS.Digraph.vertex_conditional_expectation": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.height_partialSum": [
+    "DirectedCycleFPRAS.Digraph.vertexOracle_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertex_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertex_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertex_bitCost": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.vertexAlgorithm_sat": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertex_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertexSample_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.concreteVertexSample_bitCost": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.choiceWidth_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.oracleRepetitions_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.samplingBlocks_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleSampler_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleSampler_cyclic_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.AcyclicityReduction.acyclic_iff_independent": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.AcyclicityReduction.retention_values": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.AcyclicityReduction.edge_retention_probability": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -295,21 +382,6 @@
       "Quot.sound"
     ],
     "DirectedCycleFPRAS.Digraph.reliability_positivePart": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_estimator": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Prog.discretise_bitBound": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Prog.exp_discretise_le": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -329,47 +401,12 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Prog.exp_eq_toRand": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
     "DirectedCycleFPRAS.algSEstimator_correct": [
       "propext",
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.algSEstimator_height": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycle_fpras_of_algS": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.median_mem": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.median_height": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Oracle.amplify_height": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
     "DirectedCycleFPRAS.algSEstimator_height_total": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.algS_self": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -389,22 +426,7 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "DirectedCycleFPRAS.Digraph.concreteCycle_law": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.concreteCycle_height_total": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.concreteCycle_bitCost": [
-      "propext",
-      "Classical.choice",
-      "Quot.sound"
-    ],
-    "DirectedCycleFPRAS.Digraph.cycleFPRAS_spec": [
+    "DirectedCycleFPRAS.Digraph.algS_self": [
       "propext",
       "Classical.choice",
       "Quot.sound"
@@ -606,5 +628,5 @@
     ]
   },
   "build_passed": true,
-  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, all amplified-oracle fair bits, and rational output height. Algorithm S support, fuel, pools, first-open conditional sampling, and early-stop lemmas are checked, as are whole-program induced-subtype and explicit parent-pointer correspondences; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis. This audit concerns the original edge-witness estimator; the revised vertex-witness corrected rejection estimator, conditional sampler, and acyclicity-hardness proposition are not formalized."
+  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Accuracy assumes AlgSAccurate at 1/(16*(m+1)); the external variance proof, independent-set complexity hardness, and machine-level runtime are not formalized. Python models have no Lean refinement proof."
 }

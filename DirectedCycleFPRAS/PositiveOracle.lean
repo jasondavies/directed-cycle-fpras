@@ -1,27 +1,13 @@
 module
 
-public import DirectedCycleFPRAS.Confidence
+public import DirectedCycleFPRAS.Reliability
 
 @[expose] public section
 
 set_option linter.unusedSectionVars false
 
-/-!
-# Reduction to an estimator for positive edge probabilities
-
-The algorithm's queries delete an edge by giving it probability zero. The
-reliability FPRAS of Feng, Fu and Guo is stated for directed multigraphs
-(parallel arcs and self-loops allowed) whose edge probabilities lie in `(0,1]`,
-so zero is outside its input class. This file removes that mismatch:
-
-* `eventMass_restrict`: coordinates of a product law that are deterministic
-  can be removed.
-* `Digraph.reliability_positivePart`: deleting the zero-probability edges
-  preserves two-terminal reliability.
-* `Digraph.cycle_fpras_of_estimator`: the reduction theorem with, as its only
-  oracle hypothesis, a reliability estimator that is accurate with probability
-  3/4 on finite directed multigraphs with probabilities in `(0,1]`.
--/
+/-! Remove deterministic zero coordinates before calling a reliability
+estimator whose input probabilities lie in `(0,1]`. -/
 
 namespace DirectedCycleFPRAS
 
@@ -184,34 +170,6 @@ def oracleOfEstimator [Fintype V] (R : ReliabilityEstimator) : Oracle (Query V E
   law x := (R V {e : E // 0 < x.1 e} (G.positivePart x.1) (fun e => x.1 e) x.2.1 x.2.2).law
   answer x := (R V {e : E // 0 < x.1 e} (G.positivePart x.1) (fun e => x.1 e) x.2.1 x.2.2).value
 
-/-- **The reduction from a reliability estimator on the positive class.**
-Let `R` be a randomized estimator of directed two-terminal reliability that,
-on every finite directed multigraph with edge probabilities in `(0,1]`, has
-relative error at most `ε / (128 * m * (m + 1))` with probability at least 3/4.
-Then for every finite directed multigraph with edge probabilities in `[0,1]`,
-`0 < ε ≤ 1` and `δ > 0`, the median of `confidenceRuns δ` runs of the cycle
-algorithm, with each query answered by the median of independent runs of `R`
-on the instance with its zero-probability edges deleted, has relative error
-more than `ε` with probability at most `δ`. -/
-theorem cycle_fpras_of_estimator [Fintype V] (p : E → ℝ) (hp0 : ∀ e, 0 ≤ p e)
-    (hp1 : ∀ e, p e ≤ 1) (R : ReliabilityEstimator) {ε δ : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1)
-    (hδ : 0 < δ)
-    (hR : R.Correct (ε / (128 * Fintype.card E * (Fintype.card E + 1)))) :
-    ((G.cycleAlgorithm p (bitBudget (Fintype.card E) ε)
-        (reductionBudget (Fintype.card E) ε)).medianOf (confidenceRuns δ)).exp
-        ((G.oracleOfEstimator R).amplify (amplifyRounds (Fintype.card E +
-          reductionBudget (Fintype.card E) ε * (2 * Fintype.card E))))
-        (fun z =>
-          if ε * G.cycleMass (edgeLaw p hp0 hp1).toMass <
-            |z - G.cycleMass (edgeLaw p hp0 hp1).toMass| then 1 else 0) ≤ δ := by
-  apply G.cycle_fpras_confidence p hp0 hp1 _ hε hε1 hδ
-  intro x hx
-  have hx01 : Prob01 x.1 := derived_prob01 (fun e => ⟨hp0 e, hp1 e⟩) hx.1
-  have hrel := G.reliability_positivePart hx01 x.2.1 x.2.2
-  have h := hR V {e : E // 0 < x.1 e} (G.positivePart x.1) (fun e => x.1 e) x.2.1 x.2.2
-    (fun e => ⟨e.2, (hx01 e.1).2⟩) (by rw [hrel]; exact hx.2)
-  rw [hrel] at h
-  exact h
 
 end Digraph
 end

@@ -5,6 +5,5 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 scripts/check_formalization.py
-python3 scripts/run_cycle_fpras_checks.py
 python3 scripts/check_corrected_rejection.py
 python3 scripts/algs_transcription/run.py 1

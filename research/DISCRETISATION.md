@@ -1,7 +1,7 @@
 # Running the reliability oracle on random bits
 
 This note closes the gap between the cost model of the cited reliability
-theorem and the bit model used in [SOLUTION.md](SOLUTION.md). All three steps
+theorem and the bit model used in [the manuscript](../paper/directed-cycle-fpras.pdf). All three steps
 below are checked in Lean for a transcription of the paper's Algorithm S
 (`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
 Lean also checks the correspondence laws below, including whole-program
@@ -9,17 +9,16 @@ subtype reindexing and an explicit parent-pointer program. The paper's
 Theorem 9 and its larger-budget variance argument remain outside Lean;
 accuracy is an explicit hypothesis.
 
-The revised manuscript uses this same oracle construction at accuracy
-`1/(16*(m+1))`, independent of the final counting or sampling error. The
-vertex-witness corrected estimator itself is not yet formalized. The Lean
-reduction referenced below is the original edge-witness program.
+The counting and conditional-sampling programs use this oracle at accuracy
+`1/(16*(m+1))`, independent of their error targets. Their concrete Lean entry
+points are `Digraph.cycleFPRAS` and `Digraph.cycleSampler`.
 
 ## The gap
 
 Feng, Fu and Guo, *Approximating two-terminal network reliability*
 (arXiv:2608.02523v2), count "unit-cost arithmetic operations and independent
 draws of uniform random variables on (0, 1)". They give no bit-complexity
-bound and no bound on the length of the output. The reduction in SOLUTION.md
+bound and no bound on the length of the output. The manuscript's reduction
 needs an oracle that uses finitely many random bits, runs in time polynomial
 in the binary input length, and returns a rational of polynomial length.
 
@@ -132,8 +131,8 @@ exactly 0 when the reliability is 0.
 This is exactly the hypothesis of the Lean reduction: S' is a
 `ReliabilityEstimator` with a finite seed space, it satisfies
 `ReliabilityEstimator.Correct eps`, and its answers satisfy the size bound
-`Ho` assumed by `cycleAlgorithm_sat` and `cycleAlgorithm_weightSat`. With
-`Digraph.cycle_fpras_of_estimator`, the reduction then gives an FPRAS for
+`Ho` used by `vertexAlgorithm_sat` and `concreteVertex_height`. With
+`Digraph.cycleFPRAS_correct`, the reduction gives an FPRAS for
 directed-cycle probability in the bit model.
 
 ## What is formalised
@@ -147,7 +146,7 @@ oracle calls, and proves:
 | 1 | `algS_choiceBound` | Along every execution the alternatives sum to at most `n * M * ((n+1) + (M+1) + (m+1) + (n+1)*2m)`. |
 | 2 | `Prog.exp_discretise_le` | Running on `b`-bit draws changes any probability by at most that number over `2^b`. |
 | 3 | `algS_sat` | With input probabilities `a_e / b_e`, every possible output is a fraction with numerator and denominator at most `((n*m + 1) * M * B)^n`. |
-| link | `algSEstimator_correct`, `Digraph.cycle_fpras_of_algS` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate alpha` for all `alpha` in `(0,1)` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height_total` gives the answer size including zero sample budgets. |
+| link | `algSEstimator_correct`, `Digraph.cycleFPRAS_correct` | The `b`-bit Algorithm S, as a randomized real with a finite seed space, meets the estimator contract; hence the cycle reduction holds with `AlgSAccurate (1/(16*(m+1)))` as its only hypothesis (an edgeless graph is handled without the oracle). `algSEstimator_height_total` gives the answer size including zero sample budgets. |
 | all | `algS_discretised` | If the exact algorithm fails with probability at most 1/8, the `b`-bit version fails with probability at most 1/4, uses only uniform `b`-bit draws, and keeps the size bound. |
 
 The following additional obligations are checked:
@@ -155,7 +154,7 @@ The following additional obligations are checked:
 | Obligation | Lean theorem(s) | Scope |
 | --- | --- | --- |
 | Rational medians | `median_mem`, `median_height`, `Oracle.amplify_height` | Nonempty medians are sample values; both amplification stages preserve height. Empty medians return zero. |
-| Complete program resources | `concreteCycle_law`, `concreteCycle_bitCost`, `concreteCycle_height_total`, `cycleFPRAS_spec` | Inlines the oracle and both amplifications; counts all fair bits and bounds every final output, including zero-budget cases. |
+| Complete program resources | `concreteVertex_law`, `concreteVertex_bitCost`, `concreteVertex_height`, `concreteVertexSample_bitCost` | Inlines the oracle and both amplifications; counts all fair bits and bounds every final output, including zero-budget cases. |
 | Reachable-set restriction | `sDfs_closed`, `algS_restrict`, `algS_zero_unreachable` | Arbitrary probability changes outside a closed set containing the source preserve the full output law, at fixed `M` and with the ambient types retained. |
 | Induced types | `orderedAlgS_canonical`, `algS_inducedClosed`, `algS_reachable_subtype` | Reindexes vertices and edges, retaining the original arc order, restricted first-open ranks, sample budget, and ambient fuel; preserves the full output law, including zero-budget cases. |
 | Explicit parents | `ParentState.flags_discover`, `parentDfs_initial_law`, `parentAlgS_law`, `parentAlgS_inducedClosed` | Updates actual parent pointers and tests their paths; equality of full output laws for probabilities in `[0,1]` and `M > 0`, using valid pools on supported choices. `parentExplore_done` and `parentDfs_initial_fuel` justify finishing the traversal. |
@@ -207,7 +206,7 @@ as there is no machine model.
    is zero and a positive-reliability instance with distinct terminals
    returns zero; at negative accuracy the allowed absolute error is negative.
    Thus the end-to-end
-   theorem assumes it only for `alpha` in `(0,1)`, the paper's range.
+   theorem invokes it at `alpha = 1/(16*(m+1))`, which lies in `(0,1)`.
    `AlgSAccurate` also includes `s = t` and `n = 1`, where the output is
    exactly 1.
 2. **Fidelity of the transcription** to the paper's pseudocode. The table

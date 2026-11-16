@@ -31,19 +31,14 @@ report = {
     "axioms": {name: [s.strip() for s in axioms.split(",") if s.strip()]
                for name, axioms in entries} | {name: [] for name in empty},
     "build_passed": True,
-    "scope": ("Probabilistic correctness of the oracle reduction, including the conditional sampler, "
-              "adaptive good-oracle coupling, median amplification, random-bit rounding, and "
-              "oracle-call, random-bit and charged local-operation counts, residual-instance queries "
-              "and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, "
-              "all amplified-oracle fair bits, and rational output height. Algorithm S support, "
-              "fuel, pools, first-open conditional sampling, and early-stop lemmas are checked, "
-              "as are whole-program induced-subtype and explicit parent-pointer correspondences; "
-              "no machine model, so polynomial running time is "
-              "assembled from these counts by a written argument, local-operation charges are "
-              "trusted annotations, and the accuracy of the cited paper's Algorithm S, as "
-              "transcribed, is a hypothesis. This audit concerns the original edge-witness "
-              "estimator; the revised vertex-witness corrected rejection estimator, conditional "
-              "sampler, and acyclicity-hardness proposition are not formalized."),
+    "scope": ("Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and "
+              "conditional sampling programs; oracle repair, amplification and finite-bit coupling; "
+              "oracle-call and composed fair-bit budgets; residual-instance queries and counting "
+              "output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, "
+              "first-open sampling, stopping, induced-subtype and parent-pointer correspondences "
+              "are checked. Accuracy assumes AlgSAccurate at 1/(16*(m+1)); the external variance "
+              "proof, independent-set complexity hardness, and machine-level runtime are not "
+              "formalized. Python models have no Lean refinement proof."),
 }
 (ROOT / "validation").mkdir(exist_ok=True)
 (ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")
