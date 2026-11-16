@@ -114,13 +114,35 @@ size; it does not provide a machine-level running-time semantics.
 | `FirstOpen`, `AlgorithmSPools` | First-open conditional product law, pool positivity and membership, indexed sampling with multiplicities, and permutation invariance. |
 | `AlgorithmSRestriction`, `AlgorithmSOrdered`, `ReindexLaw`, `AlgorithmSSubtypes` | Closed-set invariance and full output-law equality on induced vertex/edge subtypes, with inherited ordering, sample budget, and ambient fuel. |
 | `AlgorithmSParents`, `AlgorithmSParentProgram` | Explicit parent paths and a separate parent-pointer program; equality of the complete output law; composition with induced-subtype restriction. |
+| `HarrisReliability`, `AlgorithmSOutflow` | Harris's inequality (FFG Lemma 4), `Rel(s,v)*Rel(v,w) ≤ Rel(s,w)`, the arc-extension bound, and Lemma 8 for the concrete first-open weights and argmax rule. |
+| `AlgorithmSKernel`, `AlgorithmSMoments` | Exact weighted proposal law, including zero cut mass; equality of Generate's scored output law with independent sums; exact means and variances; cancellation of the empirical pool size, including empty pools. |
+| `AlgorithmSPrediction` | DFS reach scores and empirical predictions; resolved predictions equal stored estimates; the expectation of the actual Generate/update pair; unbiasedness conditional on the explicit DFS splitting identity. |
+| `PredictionMartingale` | Local bounded-record variance calculation; finite-program martingale second moments and relative-error tail; `algSSamples` satisfies the numerical bounds using ambient graph counts. Its iteration theorems explicitly assume the local mean and variance identities. |
 | `ProgramComposition`, `Resources` | Inlining, median properties, fair-bit composition, resource invariants, and rational height arithmetic. |
 
 `algS_inducedClosed`, `algS_reachable_subtype`, `parentAlgS_law`, and
-`parentAlgS_inducedClosed` are the principal correspondence results. The external
-variance argument that justifies the unreduced sample budget remains written.
-The [oracle note](../research/DISCRETISATION.md) explains this external hypothesis
-and the relationship to the published pseudocode.
+`parentAlgS_inducedClosed` are the principal structural correspondence results.
+`Prog.steps_relative_tail` proves the quantitative conclusion of Theorem 9
+from local prediction identities. `Prog.algSSamples_bounds` checks its two
+sample-budget inequalities for reduced counts `n ≤ N`, `m ≤ J`, with the
+sample count computed from `N,J`. These do **not** yet prove `AlgSAccurate`.
+
+The remaining obligations concern the concrete DFS probability law:
+
+1. Identify the initial DFS reach score with product-law reliability and bound
+   a restarted score by `Rel(v,w)`. This requires showing that deferred edge
+   reveals have the same law as one independently retained graph.
+2. Prove the last-resolved-vertex splitting identity, FFG equation (8), for
+   the actual snapshot kernel. `prediction_generate_unbiased_of_split`
+   already derives the concrete round's unbiasedness from that identity on
+   the stored snapshots; `sIter_weighted_score` supplies the exact proposal law.
+3. Instantiate the local variance estimates and finite-program iteration
+   theorem with the adaptive Algorithm S states, including absorbing early
+   exits, and identify the final prediction with the returned estimate.
+
+`AlgSAccurate` remains explicit rather than being replaced by a new opaque
+premise. The [oracle note](../research/DISCRETISATION.md) explains its use and
+the relationship to the published pseudocode.
 
 ## Audit and reproduction
 

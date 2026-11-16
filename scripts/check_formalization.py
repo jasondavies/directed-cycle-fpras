@@ -36,9 +36,12 @@ report = {
               "oracle-call and composed fair-bit budgets; residual-instance queries and counting "
               "output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, "
               "first-open sampling, stopping, induced-subtype and parent-pointer correspondences "
-              "are checked. Accuracy assumes AlgSAccurate at 1/(16*(m+1)); the external variance "
-              "proof, independent-set complexity hardness, and machine-level runtime are not "
-              "formalized. Python models have no Lean refinement proof."),
+              "are checked. Harris's inequality, concrete outflow and weighted proposal laws, "
+              "empirical-pool moments, resolved predictions, and quantitative finite-program "
+              "martingale bounds are checked. The concrete DFS splitting and reachability "
+              "identities and the complete round-process instantiation remain unproved; accuracy "
+              "assumes AlgSAccurate at 1/(16*(m+1)). Independent-set complexity hardness and "
+              "machine-level runtime are external. Python models have no Lean refinement proof."),
 }
 (ROOT / "validation").mkdir(exist_ok=True)
 (ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")

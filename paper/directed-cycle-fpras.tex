@@ -386,8 +386,10 @@ programs with the budgets used here. It also checks the acyclicity gadget's
 exact independent-set probability identity. Both programs have composed
 fair-bit bounds; the counting program has a rational output-size bound.
 Accuracy invokes the explicit external hypothesis \texttt{AlgSAccurate}
-at $a_0=1/(16(m+1))$. The external variance proof, independent-set hardness
-theorem, and machine-level runtime are not re-proved in Lean.
+at $a_0=1/(16(m+1))$. Harris's inequality, the outflow and empirical-pool
+bounds, and the quantitative martingale estimate are checked. The DFS
+probability identities needed to instantiate that estimate remain unproved.
+Independent-set complexity hardness and machine-level runtime are external.
 Appendix~\ref{app:formal} records the Algorithm S correspondence;
 \texttt{validation/FORMALIZATION.md} maps the results to declarations.
 
@@ -525,9 +527,18 @@ resolves a new vertex. The corresponding fuel lemmas are checked in Lean.
 Pool positivity and size, uniform indexed sampling with multiplicities,
 permutation invariance, and first-open conditional product laws are also
 checked. Identifying this mathematical model with the published pseudocode
-still requires review. The external variance proof is not formalized:
-its bound $\operatorname{Var}(\widehat q_t)\leq2n'^3m'q_t^2/M$ for
-$M\geq2n'^3m'$ justifies using an unreduced sample budget in the transcription.
+still requires review. Lean checks Harris's inequality, the max-cut outflow
+bound, the weighted proposal law, and the means and variances of Generate's
+empirical scores. It also checks that the prediction at a resolved vertex
+equals its stored estimate, and derives unbiasedness of the concrete round
+from the DFS splitting identity.
+
+The finite-program martingale calculation gives
+$\operatorname{Var}(\widehat q_t)\leq2n'^3m'q_t^2/M$ from the local prediction
+identities and variance bounds. Its numerical sample-budget inequalities,
+including an unreduced budget, are checked. The deferred-edge DFS law,
+last-resolved-vertex splitting identity, and full round-process instantiation
+remain unproved; thus this does not discharge \texttt{AlgSAccurate}.
 Equal-terminal output is one and is checked separately.
 
 Lean invokes \texttt{AlgSAccurate} at $a_0=1/(16(m+1))$: the exact

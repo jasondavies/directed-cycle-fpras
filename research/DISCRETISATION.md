@@ -5,9 +5,13 @@ theorem and the bit model used in [the manuscript](../paper/directed-cycle-fpras
 below are checked in Lean for a transcription of the paper's Algorithm S
 (`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
 Lean also checks the correspondence laws below, including whole-program
-subtype reindexing and an explicit parent-pointer program. The paper's
-Theorem 9 and its larger-budget variance argument remain outside Lean;
-accuracy is an explicit hypothesis.
+subtype reindexing and an explicit parent-pointer program. It proves Harris's
+inequality, the outflow bound, the exact weighted proposal law, empirical-pool
+moments, and the quantitative martingale bound,
+including the larger sample budget. The DFS probability identities needed to
+instantiate that bound remain unproved, so accuracy is an explicit hypothesis.
+The [formalization map](../validation/FORMALIZATION.md#algorithm-s) records the
+precise remaining obligations.
 
 The counting and conditional-sampling programs use this oracle at accuracy
 `1/(16*(m+1))`, independent of their error targets. Their concrete Lean entry
@@ -189,8 +193,9 @@ as there is no machine model.
 ## What this rests on
 
 1. **Theorem 9 of the paper**, as the hypothesis `AlgSAccurate` about the
-   transcription. The external martingale proof is used as a cited result,
-   not re-proved here. `AlgSAccurate` is slightly
+   transcription. Lean proves the finite-program martingale and bounded-record
+   calculations, but their instantiation with the DFS prediction process is
+   incomplete. `AlgSAccurate` is slightly
    stronger than Theorem 9 as stated: it is asserted for every instance with
    probabilities in `(0,1]` and positive reliability, without first deleting
    the vertices unreachable from `s`, and with `M` computed from the
@@ -198,7 +203,9 @@ as there is no machine model.
    unreachable vertex, so its run on the unreduced graph is its run on the
    reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
    lower bound on `M`: its last step is `Var <= (2 n^3 m / M) q_t^2`. This
-   larger-budget justification remains written. Closed-set invariance and
+   numerical lower-bound argument is checked by `Prog.algSSamples_bounds`;
+   the local prediction hypotheses of `Prog.steps_relative_tail` still need
+   to be proved for the complete Algorithm S program. Closed-set invariance and
    actual reindexing to induced vertex/edge subtypes with inherited arc order
    are formalized in `algS_reachable_subtype`; the restriction lemma in the
    [research manuscript](../paper/directed-cycle-fpras.pdf) explains the transfer.

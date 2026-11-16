@@ -49,10 +49,14 @@ counting-output size, and the acyclicity/independent-set reduction.
 - [`AcyclicityReduction.edge_retention_probability`](DirectedCycleFPRAS/AcyclicityReduction.lean):
   the exact probability identity used by the complement-hardness proposition.
 
-Accuracy invokes the explicit external hypothesis `AlgSAccurate` at
-`1/(16*(m+1))`. Its variance proof, the external independent-set hardness
-theorem, and machine-level running time are not re-proved in Lean. Algorithm S's
-whole-program induced-subtype and parent-pointer correspondences are checked.
+Accuracy invokes the explicit hypothesis `AlgSAccurate` at `1/(16*(m+1))`.
+Lean checks Harris's inequality, Algorithm S's outflow and proposal laws,
+empirical-pool moments, and the quantitative martingale bound. The DFS snapshot
+identities needed to instantiate that bound remain unproved; the
+[formalization map](validation/FORMALIZATION.md#algorithm-s) states the remaining
+obligations. Whole-program induced-subtype and parent-pointer correspondences
+are checked. Independent-set complexity hardness and machine-level running
+time are external results.
 
 ## Repository layout
 
