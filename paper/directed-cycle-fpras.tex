@@ -25,9 +25,8 @@ The probability that an independently edge-retained directed graph contains
 a cycle admits an FPRAS, even when that probability is exponentially small.
 Splitting a vertex expresses its cycle-membership event as two-terminal
 reliability; a supplied feedback vertex set gives a cover by $k$ such events.
-Recording and correcting the probabilities of approximate conditional
-proposals yields an unbiased rejection estimator and a sampler conditioned
-on cyclicity. Counting uses $O(k\varepsilon^{-2})$ proposals per
+Classical union estimation and counting-to-sampling methods then give an
+unbiased rejection estimator and a sampler conditioned on cyclicity. Counting uses $O(k\varepsilon^{-2})$ proposals per
 constant-confidence run, with reliability accuracy independent of
 $\varepsilon$. A finite-bit implementation of the reliability oracle gives
 worst-case polynomial bit complexity. In contrast, approximating acyclicity
@@ -85,14 +84,23 @@ multiplicity corrects that bias. We additionally correct the known proposal
 probabilities of an approximate sampler. The resulting rejection step has
 an exact cancellation identity and accepts with probability at least $1/(4k)$.
 
-Union estimation is classical~\cite{klm}; approximate volume, sampling, and
-membership oracles are also studied by Bringmann and Friedrich~\cite{bf}.
-The contribution developed here is the reliability cover for cycles, its
-recorded-probability correction, and a finite-bit implementation. We use
-Algorithm S of Feng, Fu, and Guo~\cite{ffg} as the external reliability
-estimator. Their arithmetic model requires the bit-model supplement in
-Section~\ref{sec:bits}; we do not infer bit complexity from their fast
-algorithm's advertised runtime.
+The main observation is the polynomial reliability cover for cyclicity.
+Together with the reliability theorem of Feng, Fu, and Guo~\cite{ffg}, it
+answers the stated approximation question. The feedback-set parameter,
+conditional sampler, and complement-hardness result describe its consequences.
+
+The approximation machinery is classical. Karp, Luby, and Madras~\cite{klm}
+provide union estimation; Bringmann and Friedrich~\cite{bf} treat approximate
+volume, sampling, and membership oracles. Jerrum, Valiant, and Vazirani
+(JVV)~\cite{jvv}, in the proofs of Theorems 3.3 and 6.3, respectively use
+inverse-proposal rejection and an auxiliary execution with corrected oracle
+answers. Their oracle accuracy is inverse in solution length, independently
+of the final sampling tolerance. We apply these methods to the weighted
+reliability cover, proving its cancellation and rejection bound explicitly.
+We claim neither rejection correction nor the oracle coupling as a new
+general technique. Section~\ref{sec:bits} supplies a finite-bit implementation
+of Algorithm S; the cited unit-cost arithmetic theorem alone does not give
+the binary-input guarantee.
 All oracle calls use fresh independent randomness. Total variation is
 $\TV(P,Q)=\frac12\sum_x|P(x)-Q(x)|$.
 
@@ -150,7 +158,8 @@ Use the relative oracle accuracy
 \[
  a_0=\frac1{16(m+1)},\qquad \rho=\frac{1+a_0}{1-a_0}.
 \]
-For now, choices are exact and every oracle answer is accurate. Estimate
+The correction follows JVV's inverse-proposal rejection method~\cite[proof
+of Theorem 3.3]{jvv}. For now, choices are exact and every oracle answer is accurate. Estimate
 $w_i$ by $\widehat w_i$ and set $\widehat W=\sum_i\widehat w_i$.
 
 \paragraph{Conditional proposal.}
@@ -258,8 +267,9 @@ No bound in the reduction depends polynomially on $1/Z$.
 \paragraph{Adaptive failures and totality.}
 For a run with at most $T$ queries, amplify each query by the median of
 $O(\log(T/\beta))$ fresh calls to make its failure probability at most
-$\beta/T$. Define an auxiliary oracle replacing inaccurate answers by exact
-reliabilities, and couple it to the real oracle until the first replacement.
+$\beta/T$. Following JVV~\cite[proof of Theorem 6.3]{jvv}, replace inaccurate answers
+by exact reliabilities in an auxiliary oracle, and couple the two executions
+until the first replacement.
 At every shared history the next query is fixed, so disagreement has probability
 at most $\beta$ over the entire run. This does not condition the analysis
 on all calls succeeding.
@@ -369,37 +379,22 @@ variable occurs once, and cycles correspond. Apply the main theorems to
 this enlarged graph.
 
 \section{Verification contract}
-The companion Lean development verifies the original edge-witness
-inverse-multiplicity estimator, with its original conservative accuracy
-and sample budgets. It does \emph{not} yet verify the vertex-splitting
-construction, corrected rejection estimator, conditional-sampling theorem,
-or hardness proposition of this revision. Their proofs above are written
-mathematics; exact rational checks give separate finite evidence.
-
-\begin{center}\small
-\renewcommand{\arraystretch}{1.1}
-\begin{tabular}{p{0.49\linewidth}p{0.43\linewidth}}
-\hline
-Component & Status in the companion development \\
-\hline
-Original edge-witness identity and reduction & Checked in Lean \\
-Accuracy of the original formal program & Assumes \texttt{AlgSAccurate} \\
-Composed fair-bit and output-size bounds & Checked for that program \\
-Induced-subtype and parent-pointer correspondences & Checked in Lean \\
-External variance proof and machine-level runtime & Written arguments \\
-New counting, sampling, and hardness results & Written proofs in this revision \\
-\hline
-\end{tabular}
-\end{center}
-The new counting proof uses the same Chebyshev-plus-median architecture as
-Lean, but its estimator and bounds differ. Appendix~\ref{app:formal} and
-\texttt{validation/FORMALIZATION.md} give the exact verification boundary.
+The companion Lean development verifies the original edge-witness estimator:
+its probabilistic reduction, composed fair-bit and output-size bounds, and
+induced-subtype and parent-pointer correspondences. Accuracy assumes the
+explicit hypothesis \texttt{AlgSAccurate}; the external variance proof and
+machine-level runtime remain written arguments. The revised vertex cover,
+rejection estimator, conditional sampler, and hardness proposition have
+written proofs and exact finite checks, but are not yet formalized.
+The counting proof uses Lean's Chebyshev-plus-median architecture with a
+different estimator. Appendix~\ref{app:formal} gives the correspondence claims;
+\texttt{validation/FORMALIZATION.md} records the detailed scope and bounds.
 
 \paragraph{Provenance.}
 The reduction, formalization, and manuscript were developed with AI assistance.
 The reliability theorem and union-estimation framework are external contributions.
-The stronger estimator and witness construction were developed from review
-suggestions; we make no novelty claim for the general correction principle.
+Review suggestions led to the stronger estimator and witness construction;
+rejection correction and the accurate-oracle argument follow JVV.
 
 \clearpage
 \appendix
@@ -448,8 +443,10 @@ Each of the at most $m$ nominal branch probabilities contributes
 $O(L_{\rm in}+H_{\rm rel})$ bits to its product. The same bound controls
 $\mu(X)$; summing $k$ initial weights uses their product denominator.
 Acceptance and the final scaled integer count therefore fit this $K$.
-The support-valid fallback and an SCC computation take polynomial graph
-work. A conservative schoolbook bit bound per run is
+After pruning zero-mass witnesses, at most $m$ remain: every vertex on a
+support cycle has an outgoing edge. Witness selection therefore uses
+$O(m)$ arithmetic operations per proposal. Including SCCs and fallback
+construction, a conservative schoolbook bit bound per run is
 \[
  O\!\left(T\left[(n+m+1)\log(n+m+2)
        +hC_{\rm rel}+(h\log(h+1)+1)K^2\right]\right),
@@ -479,6 +476,37 @@ Snapshots are $n'$-bit sets, with at most $n'M$ stored. A direct implementation
 using scans and common denominators takes at most
 $O(n'M(n'+m')^2K_S^2)$ bit operations, besides preprocessing and parameters.
 The bounds hold on every execution, including rounded choices.
+
+\paragraph{Substituted worst-case bounds.}
+To make the dependence on the concrete oracle explicit, set $u=n+1$,
+$v=m+1$, and $L=\max\{1,L_{\rm in}\}$. Uniformly over split residual queries,
+\[
+ M=O(u^3v^3),\qquad K_S=O(uv[L+\log(u+v)]),\qquad
+ C_{\rm rel}=O(u^6v^5(u+v)^2[L+\log(u+v)]^2).
+\]
+Here $H_{\rm rel}=O(K_S)$. Substitution into the per-run bound gives the
+following conservative schoolbook bounds when the support is cyclic:
+\[
+ \begin{aligned}
+ \text{counting: }&O\!\left(k\varepsilon^{-2}\log(1/\delta)
+                      F\Lambda_c^4\right),\\
+ \text{sampling: }&O\!\left(k\log(1/\eta)F\Lambda_s^4\right),\\
+ F&=(n+1)^6(m+1)^6(n+m+2)^2,\\
+ \Lambda_c&=L+\log\frac{n+m+2}{\varepsilon\delta},\qquad
+ \Lambda_s=L+\log\frac{n+m+2}{\eta}.
+ \end{aligned}
+\]
+These bounds include inner oracle amplification, outer median selection for
+counting, finite-bit choices, and input and parameter processing. To see the logarithmic factors, with $D$ proposals
+and coupling budget $\beta$, both $h$ and $b$ are
+$O(\log(D(k+2m+2)/\beta))$, and
+$K=O(uv(u+v)[L+\log((u+v)D(k+2m+2)/\beta)])$.
+The fourth power absorbs median comparisons and schoolbook arithmetic.
+These bounds are deliberately conservative in graph size. Relative to the
+straightforward multiplicative analysis in Appendix~\ref{app:score}, using
+$a=\Theta(1/m)$ instead of $\Theta(\varepsilon/m)$ removes the extra
+$\varepsilon^{-2}$ inside Algorithm S's budget. This is an application of
+classical correction, not a new counting-to-sampling principle.
 
 \section{Correspondence for the original Lean program}\label{app:formal}
 The original formal program retains unreachable vertices and uses flags
@@ -537,23 +565,9 @@ The theorem \texttt{cycleFPRAS\_spec} combines accuracy, all fair bits, and
 rational output size for the program with all queries and both amplifications
 expanded. The resource bounds do not assume successful answers.
 
-For completeness, with $h$ inner repetitions, $r$ outer repetitions,
-$T=m+2mN$, reduction draw width $b$, and input denominators at most $D_p\geq1$,
-define
-\[
- \begin{split}
- M_j&=\lceil16n^3j/a^2\rceil,\\
- C_j&=nM_j((n+1)+(M_j+1)+(j+1)+(n+1)2j),\\
- b_j&=\lceil\log_2(8C_j)\rceil,\qquad
- H_O=1+\sum_{j=0}^m\max\{1,[(nj+1)M_jD_p^j]^n\}.
- \end{split}
-\]
-The formal natural ceiling logarithm returns zero at zero. The proved
-fair-bit bound is $brN(m+1)+rTh\sum_{j=0}^m b_jC_j$; numerator absolute
-value and denominator of the final output are at most
-$\max\{1,(2D_pH_O)^mNm!\}$. These bounds include zero budgets and equal-terminal
-residual queries. The edgeless case returns zero. Operation charges are
-annotations, not a machine-level cost semantics.
+The formalization map records the exact resource expressions, including
+zero-budget and equal-terminal cases. These are bounds for the original
+program; operation charges are annotations rather than a machine cost semantics.
 
 The development uses Lean 4.35.0 and pinned mathlib. Its 100-declaration
 audit permits only \texttt{propext}, \texttt{Classical.choice}, and
@@ -588,6 +602,13 @@ Richard M. Karp, Michael Luby, and Neal Madras.
 \emph{Monte-Carlo approximation algorithms for enumeration problems}.
 Journal of Algorithms, 10(3):429--448, 1989.
 \href{https://doi.org/10.1016/0196-6774(89)90038-2}{doi:10.1016/0196-6774(89)90038-2}.
+\bibitem{jvv}
+Mark R. Jerrum, Leslie G. Valiant, and Vijay V. Vazirani.
+\emph{Random generation of combinatorial structures from a uniform distribution}.
+Theoretical Computer Science, 43:169--188, 1986.
+\href{https://ics.uci.edu/~vazirani/JVV.pdf}{Full text};
+\href{https://doi.org/10.1016/0304-3975(86)90174-X}{doi:10.1016/0304-3975(86)90174-X}.
+
 \bibitem{bf}
 Karl Bringmann and Tobias Friedrich.
 \emph{Approximating the volume of unions and intersections of

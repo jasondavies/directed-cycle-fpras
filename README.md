@@ -23,9 +23,11 @@ yet formalized. The external accuracy proof and machine-level runtime also
 remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
 
 This is a research draft. Independent expert review and novelty assessment
-remain pending. The union-estimation framework is classical. The revision
-develops a reliability cover and recorded-probability correction from review suggestions;
-novelty of the correction principle is not claimed. The work was developed
+remain pending. The publication case rests on the directed-cycle consequence
+of the reliability cover. Union estimation follows Karp–Luby–Madras;
+rejection correction and the accurate-oracle argument follow
+[Jerrum–Valiant–Vazirani (1986)](https://ics.uci.edu/~vazirani/JVV.pdf).
+These are applications of classical machinery. The work was developed
 with AI assistance.
 
 ## The reduction
@@ -95,11 +97,13 @@ compare the two Algorithm S ports at `M=1`; run
 
 ## Next steps
 
-1. Obtain expert review of the reduction, finite-bit adaptation, and novelty.
-2. Formalize vertex splitting, the adaptive-transcript cancellation, and the
-   corrected estimator and sampler, retaining the existing correspondence laws.
-3. Review the external accuracy transfer and prepare a release with confirmed
-   authorship and publication metadata.
+1. Obtain targeted novelty feedback on the cycle consequence and complement
+   hardness, especially whether they were recognized after the reliability result.
+   [Feedback requests](research/feedback-drafts.txt) are drafted and unsent.
+2. Obtain an independent check of the weighted correction, external accuracy
+   transfer, and explicit bit bounds before preparing a short-paper submission.
+3. Extend Lean to the revised estimator if that supports the publication route;
+   the existing verified scope remains explicit.
 
 The external accuracy proof and a machine-level runtime formalization are
 separate, substantially larger projects. Neither is claimed in this draft.

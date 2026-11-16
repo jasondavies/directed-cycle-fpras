@@ -28,3 +28,25 @@ search, not proof that no prior solution exists.
 The proposed answer is positive via an approximation-preserving oracle
 reduction to general directed two-terminal reliability. See
 [SOLUTION.md](SOLUTION.md) and the precise [Lean scope](../validation/FORMALIZATION.md).
+
+## Novelty check, 2026-11-16
+
+The publication case rests on the cycle-probability consequence, not on new
+general approximation machinery. Karp–Luby–Madras supplies union estimation;
+[Jerrum–Valiant–Vazirani](https://ics.uci.edu/~vazirani/JVV.pdf), proofs of
+Theorems 3.3 and 6.3, supplies rejection correction and the accurate-oracle
+comparison. The revised manuscript attributes these methods explicitly.
+
+Targeted searches for “directed-cycle probability” with FPRAS, “cyclic
+subgraph” with FPRAS, and directed acyclicity probability/counting with
+approximation found the original question and related work, but did not
+establish whether the consequence or the complementary hardness result was
+already known. Search results are incomplete and may predate the reliability
+preprint. No novelty conclusion follows from this check.
+
+Before submission, ask the question's author and a reliability/counting
+specialist whether the consequence was recognized after Feng–Fu–Guo and
+whether the witness reduction merits a short standalone note. The
+[feedback drafts](feedback-drafts.txt) remain unsent. The current
+[manuscript](../paper/directed-cycle-fpras.pdf) contains the weighted analysis
+and explicit conservative bit bounds; independent checking remains pending.
