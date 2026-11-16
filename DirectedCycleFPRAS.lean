@@ -11,3 +11,5 @@ public import DirectedCycleFPRAS.AlgorithmSEstimator
 public import DirectedCycleFPRAS.ConcreteResources
 public import DirectedCycleFPRAS.AlgorithmSPools
 public import DirectedCycleFPRAS.AlgorithmSStopping
+public import DirectedCycleFPRAS.AlgorithmSSubtypes
+public import DirectedCycleFPRAS.AlgorithmSParentProgram

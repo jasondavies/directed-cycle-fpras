@@ -9,8 +9,9 @@ computation oracle is used to obtain them.
 `Digraph.cycleFPRAS_spec` is the main composed theorem: one program satisfies
 the accuracy bound, a total fair-bit budget including both amplification
 stages, and a rational output-size bound. Accuracy assumes `AlgSAccurate`;
-the resource bounds do not. The external accuracy proof, remaining pseudocode
-correspondence, and machine-level runtime are outside Lean.
+the resource bounds do not. Whole-program subtype and parent-pointer
+correspondences are proved. The external accuracy proof, its larger-budget
+variance argument, and machine-level runtime are outside Lean.
 
 This file is the detailed reference. Start with the
 [paper](../paper/directed-cycle-fpras.pdf) for the mathematical argument.
@@ -45,6 +46,11 @@ This file is the detailed reference. Start with the
 | `AlgorithmSRestriction` | Equality of the entire Algorithm S output law under probability changes outside a closed set containing the source; in particular, zeroing unreachable edges. This retains the ambient vertex and edge types and the same sample budget. |
 | `AlgorithmSPools` | Positive estimates correspond to nonempty pools; initialization and round updates preserve pool invariants; supported records contain their target; padded-index sampling is uniform and invariant under pool permutation; the actual first-open choice realizes the conditional product law when its conditioning mass is positive. |
 | `AlgorithmSStopping` | Early stopping has the same recorded-snapshot law as recording at the target pop and then finishing DFS; the finishing traversal also satisfies the fuel bound. |
+| `ReindexLaw` | Normalized finite choices preserve expectations under injective reindexing when omitted weights vanish; the default fallback is retained. |
+| `AlgorithmSOrdered` | Algorithm S with explicit arc order, first-open ranks, and separate DFS/round fuel; its canonical specialization equals `algS`. |
+| `AlgorithmSSubtypes` | Actual induced vertex/edge types; inherited arc list is complete and duplicate-free when the original is; scan, DFS, choices, pools, and whole rounds preserve the output law. `algS_reachable_subtype` specializes to reachable vertices, keeping the sample budget and ambient fuel. |
+| `AlgorithmSParents` | Explicit parent table and vertex-only stack; installing a parent preserves old path tests and gives the flag recurrence for the new vertex. Scan and full DFS simulate the flag version; sufficient fuel empties the finishing traversal's stack. |
+| `AlgorithmSParentProgram` | A separate parent-pointer iteration, Generate, and rounds program. `parentAlgS_law` proves equality of the complete output law for probabilities in `[0,1]` and `M > 0`; `parentAlgS_inducedClosed` combines both correspondences. |
 | `Reduction` | Two-terminal reliability, the support test, the witness queries, the complete algorithm `Digraph.cycleAlgorithm`, its call and bit budgets, and the reduction theorems below. |
 
 The entry point `DirectedCycleFPRAS.lean` imports all modules. `validation/Axioms.lean`
@@ -211,19 +217,27 @@ differences are deliberate and do not affect polynomiality.
    transcription of Algorithm S. `Digraph.cycle_fpras_of_algS` is the
    resulting end-to-end theorem. Its only hypothesis is `AlgSAccurate alpha`
    for every `alpha` in `(0,1)`: the exact Algorithm S, as transcribed, has
-   relative error more than `alpha` with probability at most 1/8. The written correspondence and larger-budget variance argument connect
-   this hypothesis to the paper's Theorem 9. The
-   correspondence is partly formalized: closure and unreachable-edge
-   invariance of the whole output law, DFS/round fuel, pool invariants and
-   uniform sampling, first-open conditioning, the path-flag identity, and
-   early-stop versus record-then-finish laws are checked. These are supporting
-   lemmas, not a single equivalence with an independently formalized version
-   of the paper. Reindexing to the induced vertex/edge subtypes with an
-   inherited arc order, connecting the flag to an explicit parent-pointer
-   traversal, and the larger-budget variance argument remain written steps.
-   The external martingale/concentration proof is not formalized. Exact
-   enumeration of small instances supplies separate evidence, as recorded
-   in that note.
+   relative error more than `alpha` with probability at most 1/8. The
+   correspondence laws now include actual induced vertex/edge subtypes and
+   a separately defined parent-pointer program, each equivalent in full
+   output law to `algS`. Closure, fuel, pool invariants and uniform draws,
+   first-open conditioning, and early stopping are also checked.
+
+   `algS_inducedClosed` keeps the original sample budget and fuel and filters
+   the original arc list. First-open ranks are the original indices restricted
+   to surviving arcs; they need not be consecutive. A fresh canonical order
+   on the subtype is not assumed to give the same law. The theorem holds for
+   every sample budget, including zero. `parentAlgS_law` assumes `M > 0` and
+   probabilities in `[0,1]`; it uses pool invariants on supported choices.
+   Its state stores actual parent pointers, and the path test is relational
+   reachability along those pointers, not an assumed Boolean label. These
+   are mathematical program semantics, not a verified pointer-chasing implementation.
+
+   The identification of the published pseudocode with this mathematical
+   model still calls for review. In particular, the external
+   martingale/concentration proof and the larger-budget variance argument
+   transferring Theorem 9 to the unreduced budget are not formalized.
+   Exact enumeration supplies separate finite evidence, as recorded in the note.
 3. **The written route to confidence `1 - delta`.** Lean reaches arbitrary
    confidence by a median of `O(log(1/delta))` independent constant-confidence
    runs (`cycle_fpras_confidence`). The written proof instead uses Hoeffding

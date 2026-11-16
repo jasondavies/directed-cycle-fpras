@@ -23,9 +23,10 @@ two-terminal reliability.
 The draft combines this with Feng, Fu, and Guo's Theorem 9, including a
 finite-bit implementation of their Algorithm S. A companion Lean development
 checks the probabilistic oracle reduction and resource bounds. The external
-accuracy theorem, the remaining pseudocode correspondence, and the machine-level
-cost argument are not formalized; supporting correspondence lemmas and the
-complete amplified program's fair-bit and output-size bounds are checked. The work was developed with AI assistance.
+accuracy theorem, its larger-budget variance argument, and the machine-level
+cost argument are not formalized. Whole-program subtype and parent-pointer
+correspondences and the amplified program's fair-bit and output-size bounds
+are checked. The work was developed with AI assistance.
 
 The main reduction is in Sections 2–4; the computational model and precise
 verification scope are in Sections 5–6. Any pointer to prior work or concern
@@ -59,8 +60,9 @@ finite-bit adaptation would be particularly valuable.
 
 There is a companion Lean development, but it assumes the accuracy of the
 transcribed Algorithm S; it does not formalize your accuracy proof. The
-full correspondence lemma and machine-level bit-cost argument remain written;
-supporting correspondence lemmas and composed resource bounds are checked. The work and
+larger-budget variance argument and machine-level bit-cost argument remain
+written; subtype and parent-pointer output-law correspondences and composed
+resource bounds are checked. The work and
 draft were developed with AI assistance.
 
 Best wishes,

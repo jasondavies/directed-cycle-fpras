@@ -252,8 +252,12 @@ values, so amplification preserves height. The resource bounds also cover
 zero sample budgets and equal-terminal residual queries. Supporting Algorithm S
 lemmas prove closed-set output-law invariance, sufficient fuel, pool
 invariants and uniform sampling, first-open conditioning, and early-stop
-snapshot equivalence. The full comparison to the paper's algorithm still
-requires subtype reindexing and an explicit parent-pointer correspondence.
+snapshot equivalence. Whole-program laws now also prove induced vertex/edge
+subtype reindexing with inherited arc order (`algS_inducedClosed`) and equality
+to a separately defined explicit parent-pointer program (`parentAlgS_law`).
+The subtype theorem keeps the same sample budget and ambient fuel; the parent
+program theorem assumes probabilities in `[0,1]` and a positive sample budget.
+The external larger-budget variance argument remains written mathematics.
 
 Not formalised: a machine-level running time and the Hoeffding argument. The
 reliability theorem of Feng, Fu, and Guo enters only as a hypothesis on the

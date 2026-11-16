@@ -17,9 +17,10 @@ resource bounds. The final theorem, `Digraph.cycleFPRAS_spec`, combines
 accuracy, total fair-bit usage, and rational output size for one program
 with every oracle call expanded and both amplification stages included.
 Accuracy assumes the stated guarantee for the transcribed Algorithm S.
-Supporting correspondence lemmas are proved; the external accuracy theorem,
-full correspondence with the published pseudocode, and machine-level runtime
-remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
+Lean also proves whole-program output-law equivalence for induced vertex/edge
+subtypes with inherited arc order and for an explicit parent-pointer traversal.
+The external accuracy proof, its larger-budget variance argument, and
+machine-level runtime remain outside Lean. See the [formalization map](validation/FORMALIZATION.md).
 
 This is a research draft. Independent expert review and novelty assessment
 remain pending. The union estimator is classical; the proposed contribution
@@ -70,7 +71,7 @@ bash scripts/check.sh          # build, axiom audit, and finite checks
 make -C paper                  # requires LaTeX and latexmk
 ```
 
-The audit covers 81 declarations and permits only `propext`,
+The audit covers 100 declarations and permits only `propext`,
 `Classical.choice`, and `Quot.sound`; there are no proof admissions or
 project-defined axioms. Reports are written to `validation/`.
 
@@ -83,8 +84,8 @@ compare the two Algorithm S ports at `M=1`; run
 ## Next steps
 
 1. Obtain expert review of the reduction, finite-bit adaptation, and novelty.
-2. Complete the remaining formal correspondence: induced-subgraph reindexing
-   with an inherited arc order, and the connection to explicit parent pointers.
+2. Review the transfer of the cited accuracy theorem, especially the
+   larger-budget variance argument, against the verified correspondence laws.
 3. Prepare a reviewed release with confirmed authorship and publication metadata.
 
 The external accuracy proof and a machine-level runtime formalization are

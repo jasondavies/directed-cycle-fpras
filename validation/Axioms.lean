@@ -85,3 +85,23 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.Digraph.initial_poolInvariant
 #print axioms DirectedCycleFPRAS.Digraph.sDfs_earlyStop
 #print axioms DirectedCycleFPRAS.Digraph.sExplore_fuel_add
+
+#print axioms DirectedCycleFPRAS.normLaw_reindex
+#print axioms DirectedCycleFPRAS.Digraph.orderedAlgS_canonical
+#print axioms DirectedCycleFPRAS.Digraph.subtypeOrder_map
+#print axioms DirectedCycleFPRAS.Digraph.subtypeOrder_nodup
+#print axioms DirectedCycleFPRAS.Digraph.subtypeOrder_complete
+#print axioms DirectedCycleFPRAS.Digraph.sScan_subtype
+#print axioms DirectedCycleFPRAS.Digraph.oDfs_subtype
+#print axioms DirectedCycleFPRAS.Digraph.oIter_subtype
+#print axioms DirectedCycleFPRAS.Digraph.orderedAlgS_subtype
+#print axioms DirectedCycleFPRAS.Digraph.algS_inducedClosed
+#print axioms DirectedCycleFPRAS.Digraph.algS_reachable_subtype
+#print axioms DirectedCycleFPRAS.Digraph.ParentState.flags_discover
+#print axioms DirectedCycleFPRAS.Digraph.parentExplore_done
+#print axioms DirectedCycleFPRAS.Digraph.parentExplore_fuel_add
+#print axioms DirectedCycleFPRAS.Digraph.parentDfs_initial_fuel
+#print axioms DirectedCycleFPRAS.Digraph.parentDfs_initial_law
+#print axioms DirectedCycleFPRAS.Digraph.parentIter_law
+#print axioms DirectedCycleFPRAS.Digraph.parentAlgS_law
+#print axioms DirectedCycleFPRAS.Digraph.parentAlgS_inducedClosed

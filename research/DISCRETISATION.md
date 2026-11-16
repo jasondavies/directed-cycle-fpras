@@ -4,9 +4,10 @@ This note closes the gap between the cost model of the cited reliability
 theorem and the bit model used in [SOLUTION.md](SOLUTION.md). All three steps
 below are checked in Lean for a transcription of the paper's Algorithm S
 (`DirectedCycleFPRAS/AlgorithmS.lean`, theorem `Digraph.algS_discretised`).
-Lean also checks the correspondence lemmas listed below. A complete
-equivalence to the paper's pseudocode and the paper's Theorem 9 remain
-outside Lean; accuracy is an explicit hypothesis.
+Lean also checks the correspondence laws below, including whole-program
+subtype reindexing and an explicit parent-pointer program. The paper's
+Theorem 9 and its larger-budget variance argument remain outside Lean;
+accuracy is an explicit hypothesis.
 
 ## The gap
 
@@ -151,6 +152,8 @@ The following additional obligations are checked:
 | Rational medians | `median_mem`, `median_height`, `Oracle.amplify_height` | Nonempty medians are sample values; both amplification stages preserve height. Empty medians return zero. |
 | Complete program resources | `concreteCycle_law`, `concreteCycle_bitCost`, `concreteCycle_height_total`, `cycleFPRAS_spec` | Inlines the oracle and both amplifications; counts all fair bits and bounds every final output, including zero-budget cases. |
 | Reachable-set restriction | `sDfs_closed`, `algS_restrict`, `algS_zero_unreachable` | Arbitrary probability changes outside a closed set containing the source preserve the full output law, at fixed `M` and with the ambient types retained. |
+| Induced types | `orderedAlgS_canonical`, `algS_inducedClosed`, `algS_reachable_subtype` | Reindexes vertices and edges, retaining the original arc order, restricted first-open ranks, sample budget, and ambient fuel; preserves the full output law, including zero-budget cases. |
+| Explicit parents | `ParentState.flags_discover`, `parentDfs_initial_law`, `parentAlgS_law`, `parentAlgS_inducedClosed` | Updates actual parent pointers and tests their paths; equality of full output laws for probabilities in `[0,1]` and `M > 0`, using valid pools on supported choices. `parentExplore_done` and `parentDfs_initial_fuel` justify finishing the traversal. |
 | Fuel | `sDfs_initial_fuel`, `algS_round_fuel` | Extra fuel changes neither DFS from a valid snapshot nor the complete rounds program. |
 | Pools | `initial_poolInvariant`, `PoolInvariant.update`, `sIter_records`, `sGenerate_records`, `sRounds_nonneg` | The invariants hold initially, are preserved in every continuing round, and ensure valid snapshots contain their starting/recorded vertex. |
 | Uniform pool sampling | `poolDraw_expectation`, `poolDraw_perm` | Padded finite indices sample the list uniformly, respecting duplicates and invariant under permutation. |
@@ -172,8 +175,8 @@ change the law of the output:
   deletes the vertices unreachable from `s`, and returns 0 if `t` is deleted.
   The transcription returns 1 when `s = t` by itself, and the reduction only
   calls the oracle on instances of positive reliability, so `t` is never
-  deleted. The deletion of unreachable vertices is not transcribed; see the
-  next section.
+  deleted. `algS_reachable_subtype` proves equality with the induced graph
+  using its inherited order and the same sample budget and ambient fuel.
 
 Size bounds are proved for the estimates and the output. That each
 arithmetic operation on such numbers takes polynomial time is not formalised,
@@ -191,11 +194,10 @@ as there is no machine model.
    unreachable vertex, so its run on the unreduced graph is its run on the
    reduced graph with a larger `M`, and the proof of Theorem 9 only uses a
    lower bound on `M`: its last step is `Var <= (2 n^3 m / M) q_t^2`. This
-   larger-budget justification remains written. The closed-set and
-   unreachable-edge invariance parts are formalized, while actual
-   reindexing to induced vertex/edge subtypes with an inherited arc order
-   remains written; Lemma 5 in the
-   [research manuscript](../paper/directed-cycle-fpras.pdf) gives the restriction argument.
+   larger-budget justification remains written. Closed-set invariance and
+   actual reindexing to induced vertex/edge subtypes with inherited arc order
+   are formalized in `algS_reachable_subtype`; the restriction lemma in the
+   [research manuscript](../paper/directed-cycle-fpras.pdf) explains the transfer.
    `AlgSAccurate alpha` is false for `alpha <= 0`: at zero the sample budget
    is zero and a positive-reliability instance with distinct terminals
    returns zero; at negative accuracy the allowed absolute error is negative.
@@ -204,12 +206,13 @@ as there is no machine model.
    `AlgSAccurate` also includes `s = t` and `n = 1`, where the output is
    exactly 1.
 2. **Fidelity of the transcription** to the paper's pseudocode. The table
-   above records the checked supporting lemmas. There is not yet a single
-   equivalence theorem to an independently formalized paper algorithm:
-   subtype reindexing and the link to an explicit parent-pointer traversal
-   remain written. Code review and exact finite comparisons provide
-   additional evidence; they do not establish general equivalence or replace
-   independent expert review.
+   above records the checked laws. `parentAlgS_inducedClosed` combines the
+   full parent-pointer program with induced-subtype restriction. The parent
+   path is defined by reachability through the stored pointers; no Boolean
+   eligibility flags are stored by that program. Reviewing how this model
+   represents the published pseudocode remains necessary. Exact finite
+   comparisons provide additional evidence; they do not replace independent
+   expert review or the external accuracy proof.
 
    *Test.* `scripts/algs_transcription/` holds a Python port of the Lean
    definitions (`lean_port.py`) and a separately written port of the paper's

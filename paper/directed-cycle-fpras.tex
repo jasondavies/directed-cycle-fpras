@@ -29,8 +29,9 @@ this reduction with the theorem of Feng, Fu, and Guo and a finite-bit
 implementation of their simple algorithm gives an FPRAS for rational edge
 probabilities. We bound oracle calls, random bits, and rational operand sizes.
 A Lean development verifies the probabilistic reduction and composed resource
-bounds, conditional on the external accuracy guarantee; the remaining
-pseudocode correspondence and machine-level runtime argument are written proofs.
+bounds, as well as induced-subgraph and parent-pointer correspondence laws.
+Accuracy remains conditional on an external guarantee; its variance argument
+and the machine-level runtime argument are not formalized.
 \end{abstract}
 
 \section{Introduction}
@@ -402,9 +403,18 @@ and the first-open conditional product law. It also proves that stopping
 at the target pop preserves the law of a snapshot recorded before finishing
 DFS, and that the Boolean path fold expresses avoidance of resolved vertices.
 
-The remaining correspondence steps are reindexing to induced vertex and edge
-subtypes with an inherited arc order and connecting the flag to an explicit
-parent-pointer traversal. The external variance proof is not formalized.
+Two whole-program correspondence laws close the subtype and parent-pointer
+steps. The induced graph has actual vertex and edge subtypes and inherits
+the original arc list and first-open ranks, with the same $M$ and ambient
+fuel bounds. Its output law equals that of the transcription
+(\texttt{algS\_inducedClosed}). A separately defined program stores and updates
+parent pointers, tests the path when the target is popped, and finishes
+exploring after freezing the snapshot. For $M>0$ and probabilities in $[0,1]$,
+its full output law equals that of the flag-based transcription
+(\texttt{parentAlgS\_law}). The parent traversal also satisfies the fuel bound.
+These theorems concern mathematical program semantics; identifying that
+model with the published pseudocode still requires review. The external
+variance proof, including its larger-budget application, is not formalized.
 Accordingly, Lean assumes \texttt{AlgSAccurate} for every accuracy in $(0,1)$:
 the exact transcribed Algorithm S has relative error at most that accuracy
 with probability at least $7/8$. This is a hypothesis about real probabilities;
@@ -449,7 +459,7 @@ The operation charges are annotations; converting the resource bounds into
 a machine-level runtime remains the written argument of Section~\ref{sec:bits}.
 
 The development uses Lean 4.35.0 and a pinned mathlib dependency. Its
-audit of 81 declarations permits only \texttt{propext},
+audit of 100 declarations permits only \texttt{propext},
 \texttt{Classical.choice}, and \texttt{Quot.sound}; there are no admitted
 proofs in the audited development. From the repository root, reproduce the
 build and audit with:

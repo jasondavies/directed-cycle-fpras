@@ -82,7 +82,26 @@
     "DirectedCycleFPRAS.Digraph.sRounds_nonneg",
     "DirectedCycleFPRAS.Digraph.initial_poolInvariant",
     "DirectedCycleFPRAS.Digraph.sDfs_earlyStop",
-    "DirectedCycleFPRAS.Digraph.sExplore_fuel_add"
+    "DirectedCycleFPRAS.Digraph.sExplore_fuel_add",
+    "DirectedCycleFPRAS.normLaw_reindex",
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_canonical",
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_map",
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_nodup",
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_complete",
+    "DirectedCycleFPRAS.Digraph.sScan_subtype",
+    "DirectedCycleFPRAS.Digraph.oDfs_subtype",
+    "DirectedCycleFPRAS.Digraph.oIter_subtype",
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_subtype",
+    "DirectedCycleFPRAS.Digraph.algS_inducedClosed",
+    "DirectedCycleFPRAS.Digraph.algS_reachable_subtype",
+    "DirectedCycleFPRAS.Digraph.ParentState.flags_discover",
+    "DirectedCycleFPRAS.Digraph.parentExplore_done",
+    "DirectedCycleFPRAS.Digraph.parentExplore_fuel_add",
+    "DirectedCycleFPRAS.Digraph.parentDfs_initial_fuel",
+    "DirectedCycleFPRAS.Digraph.parentDfs_initial_law",
+    "DirectedCycleFPRAS.Digraph.parentIter_law",
+    "DirectedCycleFPRAS.Digraph.parentAlgS_law",
+    "DirectedCycleFPRAS.Digraph.parentAlgS_inducedClosed"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.cyclic_iff_exists_witness": [
@@ -489,8 +508,103 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.normLaw_reindex": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_canonical": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_map": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_nodup": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.subtypeOrder_complete": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.sScan_subtype": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.oDfs_subtype": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.oIter_subtype": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_subtype": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_inducedClosed": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.algS_reachable_subtype": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.ParentState.flags_discover": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentExplore_done": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentExplore_fuel_add": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentDfs_initial_fuel": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentDfs_initial_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentIter_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentAlgS_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.parentAlgS_inducedClosed": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, all amplified-oracle fair bits, and rational output height. Algorithm S support, fuel, pools, first-open conditional sampling, and early-stop lemmas are checked; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis."
+  "scope": "Probabilistic correctness of the oracle reduction, including the conditional sampler, adaptive good-oracle coupling, median amplification, random-bit rounding, and oracle-call, random-bit and charged local-operation counts, residual-instance queries and output bit-size bounds; the expanded cycleFPRAS program combines accuracy, all amplified-oracle fair bits, and rational output height. Algorithm S support, fuel, pools, first-open conditional sampling, and early-stop lemmas are checked, as are whole-program induced-subtype and explicit parent-pointer correspondences; no machine model, so polynomial running time is assembled from these counts by a written argument, local-operation charges are trusted annotations, and the accuracy of the cited paper's Algorithm S, as transcribed, is a hypothesis."
 }
