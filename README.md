@@ -42,6 +42,9 @@ The runnable counting and sampling programs are
 [`Digraph.checkedConditionalSampler`](DirectedCycleFPRAS/CheckedSampler.lean).
 The sampler returns `none` exactly when cyclicity has zero probability, without
 consuming random bits, and returns `some configuration` on positive inputs.
+These guarantees assume valid retention probabilities and a valid supplied
+feedback set; the frontends do not validate that set. Use all vertices when
+no smaller feedback set is available.
 Their correctness theorems concern execution on uniformly random finite bit
 tapes, with all parameters fixed and actual Algorithm S calls included.
 
@@ -56,6 +59,9 @@ correspondence, and the executable rational refinement are also checked.
 The paper distinguishes its indexed implementation's runtime bound from the
 larger polynomial overhead of the executable's generic weighted choices and
 lists. Both analyses are written; compiled Lean runtime is not formally bounded.
+The Palomar statements alone do not exclude exponential computation: Comparator
+checks the supplied executable definitions and their probability guarantees,
+not an FPRAS runtime bound.
 Independent-set inapproximability is cited. See the
 [formalization map](validation/FORMALIZATION.md) for declarations and scope,
 and the [discretization note](validation/DISCRETISATION.md) for the oracle's

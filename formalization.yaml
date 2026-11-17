@@ -10,9 +10,11 @@ project:
     1/r with failure at most 2^(-d) and returns exactly zero whenever cyclicity has
     probability zero. Conditional sampling has total variation error at most
     2^(-d); its checked frontend reports an undefined conditional law exactly
-    when cyclicity probability is zero. A supplied feedback vertex set controls
-    the witness family. Vertex splitting reduces cycle membership to two-terminal reliability, implemented
-    using a formalized Algorithm S and its accuracy theorem. The independent-set
+    when cyclicity probability is zero. Valid retention probabilities and a
+    valid supplied feedback vertex set are preconditions; the frontends do not
+    validate the set. Vertex splitting reduces cycle membership to two-terminal
+    reliability, implemented using a formalized Algorithm S and its accuracy
+    theorem. The independent-set
     gadget gives an exact identity for acyclicity probability. Explicit fair-bit
     budgets and arithmetic-size bounds are verified; polynomial machine runtime
     is treated by separate written bounds for an indexed implementation and the
@@ -47,7 +49,8 @@ sources:
       Algorithm S, its accuracy proof, induced-subtype restriction, and
       parent-pointer correspondence are checked in Lean. Rational arithmetic
       and bounded fair-bit choices implement the required oracle. The faster
-      algorithm elsewhere in the source is not part of this development.
+      algorithm elsewhere in the source is used only for the paper's separate
+      unit-cost corollary; it is not formalized here.
     author_endorsement: not-contacted
   - title: "Monte-Carlo approximation algorithms for enumeration problems"
     authors: ["Richard M. Karp", "Michael Luby", "Neal Madras"]
@@ -80,9 +83,9 @@ sources:
     author_endorsement: not-contacted
   - title: "On counting independent sets in sparse graphs"
     authors: ["Martin Dyer", "Alan Frieze", "Mark Jerrum"]
-    id: "https://publish.lfcs.inf.ed.ac.uk/reports/98/ECS-LFCS-98-391/"
+    id: "doi:10.1137/S0097539701383844"
     type: paper
-    location: "Technical report ECS-LFCS-98-391 (1998)"
+    location: "SIAM Journal on Computing 31(5), 1527–1541 (2002)"
     relationship: background
     note: >-
       External independent-set inapproximability result used in the written
@@ -104,7 +107,10 @@ status:
     without an oracle-accuracy assumption, adaptive coupling, amplification,
     resource bounds, and rational arithmetic heights. Polynomial machine runtime,
     independent-set inapproximability, and Python-to-Lean refinement are outside
-    the formal guarantees. The stated conditional law requires positive cyclicity
+    the formal guarantees. Probability and tape-length bounds alone do not
+    exclude exponential computation; Comparator checks the supplied definitions
+    and their laws, not an FPRAS runtime bound.
+    The stated conditional law requires positive cyclicity
     probability; the compared sampling theorem does not separately assert
     validity of every output on failed-oracle histories.
   sorry_count: 0

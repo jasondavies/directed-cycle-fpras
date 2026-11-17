@@ -15,7 +15,7 @@
 \newcommand{\Prb}{\mathbb{P}}
 \newcommand{\bits}{\operatorname{bits}}
 \title{An FPRAS for directed-cycle probability}
-\author{}
+\author{Jason Davies}
 \date{Research draft --- November 17, 2026}
 
 \begin{document}
@@ -26,7 +26,8 @@ a cycle admits an FPRAS, even when that probability is exponentially small.
 Splitting a vertex expresses its cycle-membership event as two-terminal
 reliability; a supplied feedback vertex set gives a cover by $k$ such events.
 Classical union estimation and counting-to-sampling methods then give an
-unbiased rejection estimator and a sampler conditioned on cyclicity. Counting uses $O(k\varepsilon^{-2})$ proposals per
+unbiased rejection estimator and a sampler conditioned on cyclicity.
+Counting uses $O(k\varepsilon^{-2})$ proposals per
 constant-confidence run, with reliability accuracy independent of
 $\varepsilon$. A finite-bit implementation of the reliability oracle gives
 worst-case polynomial bit complexity. In contrast, approximating acyclicity
@@ -71,6 +72,10 @@ $O(k\varepsilon^{-2})$ proposals per constant-confidence run and at most
 $k+2mN$ reliability queries for $N$ proposals. Crucially, their relative
 accuracy is $\Theta(1/m)$, independent of $\varepsilon$.
 Median amplification gives confidence $1-\delta$.
+In the unit-cost model, substituting the faster reliability algorithm of
+\cite[Theorem 1]{ffg} gives counting time
+$\widetilde O(k(n+1)m^4\varepsilon^{-2}\log(1/\delta))$ when $Z>0$;
+Section~\ref{sec:bits} explains this separate consequence.
 
 The witness identity is the organizing idea. Suppose $Z>0$, let $t(X)$
 count the witness events containing $X$, and let $W$ be their total
@@ -204,10 +209,15 @@ oracle decision tree, at most $m$ exposures therefore give
 It follows that $2h\leq\rho^m/((1-a_0)t(x))<2$:
 indeed $\log\rho\leq3a_0$ and $-\log(1-a_0)\leq2a_0$, giving an upper
 bound $\exp((3m+2)a_0)\leq e^{1/4}<2$.
+The factor two in~\eqref{eq:accept} is a convenient rational envelope.
 
 To handle randomized answers, condition on the initial weight estimates
 and pre-sample independent oracle seeds at every node of the finite
-sampling decision tree. Each fixed tree still has the correct support.
+sampling decision tree. A query at a node depends only on its prefix and
+earlier answers, so assigning fresh seeds recursively gives the same law
+as drawing them during execution. Conditional on a chosen witness $i$ and
+the fixed tree, the probability of an edge-choice path is its recorded
+product $g_i$. Each fixed tree still has the correct support.
 For every compatible witness its contribution to the accepted mass of $x$ is
 \[
  \frac{\widehat w_i}{\widehat W}\,g_i(x;\omega)\,
@@ -220,10 +230,11 @@ $\widehat W\leq(1+a_0)W\leq2kZ$ gives the acceptance bound.
 \end{proof}
 
 \paragraph{Counting algorithm (one run).}
-Set $N=\lceil64k\varepsilon^{-2}\rceil$.
+Given a valid feedback set $S$ of the positive support (use $S=V$ if none
+is supplied), set $N=\lceil64k\varepsilon^{-2}\rceil$.
+Validity is an input precondition, as in the executable's correctness theorem.
 \begin{enumerate}
 \item Test the support for a cycle; return zero if it is acyclic.
-      Validate the supplied feedback set, or use all vertices.
 \item Estimate all positive witness weights and their sum $\widehat W$.
 \item Repeat $N$ times: choose witness $i$ with probability
       $\widehat w_i/\widehat W$; expose a conditional proposal while recording
@@ -307,12 +318,27 @@ $\beta=\eta/3$ for each coupling. A single fixed-bit width per run suffices.
 \paragraph{Rational arithmetic.}
 Let $L_{\rm in}$ bound input numerator and denominator bit lengths and
 $H_{\rm rel}$ bound those of oracle answers. Every nominal branch probability
-has $O(L_{\rm in}+H_{\rm rel})$ bits. Products $g_i$ and $\mu(X)$, the sum
-$\widehat W$, and the acceptance ratio therefore have polynomial bit length.
+has $O(L_{\rm in}+H_{\rm rel})$ bits. Multiplication adds operand bit lengths,
+so $g_i$ and $\mu(X)$ use $O(m(L_{\rm in}+H_{\rm rel}))$ bits.
+The $k$ initial estimates can be summed over their product denominator,
+using $O(kH_{\rm rel}+\log(k+1))$ bits. Division by the recorded factors
+and by $2t(X)$ therefore leaves the acceptance ratio polynomial in size.
 The estimate is $2\widehat W$ times an integer divided by $N$; no sum of
 unrelated importance-weight denominators is required. Median amplification
 returns an existing answer and preserves its size. Appendix~\ref{app:cost}
 gives explicit conservative bounds.
+
+\paragraph{A faster unit-cost consequence.}
+With exact choices and unit-cost arithmetic, use the capped FPRAS
+of~\cite[Theorem 1]{ffg} in place of Algorithm S. At accuracy $a_0$ each
+base call costs $\widetilde O((n+1)m^3)$. There are
+$O(km\varepsilon^{-2}\log(1/\delta))$ queries; amplifying each call to
+inverse-polynomial failure in the total query budget gives
+$\widetilde O(k(n+1)m^4\varepsilon^{-2}\log(1/\delta))$ counting time.
+Here $Z>0$ ensures $m,k\geq1$, and the tilde hides factors polylogarithmic
+in $n+m$, $\varepsilon^{-1}$, and $\delta^{-1}$. This consequence uses
+the cited unit-cost model, including uniform real draws. The finite-bit
+implementation and Lean development below use Algorithm S instead.
 
 \paragraph{The concrete reliability oracle.}
 Preprocess an instance by returning one for equal terminals, deleting
@@ -444,7 +470,7 @@ open cut edge. Allowing padded alternatives, $n'+1$ DFS scans, and $n'$
 rounds gives the conservative bound used in Lean:
 \[
  \begin{aligned}
- A_S&=n'M\bigl((n'+1)+(M+1)+(m'+1)+2m'(n'+1)\bigr),\
+ A_S&=n'M\bigl((n'+1)+(M+1)+(m'+1)+2m'(n'+1)\bigr),\\
  b_S&=\left\lceil\log_2\max\{1,8A_S\}\right\rceil.
  \end{aligned}
 \]
@@ -528,6 +554,8 @@ bound
  O(P^{12}H^3).
 \]
 The cubic arithmetic allowance includes fraction reduction by schoolbook gcd.
+Since $P$ includes the full alternative budget $A$, this is a high-degree
+polynomial bound establishing feasibility, not a practical runtime estimate.
 This bound counts direct evaluation with explicit finite representations;
 it is not a theorem about the Lean compiler or runtime. It establishes
 polynomial overhead for the supplied definitions, without assigning them
@@ -641,7 +669,8 @@ Logical Methods in Computer Science, 21(4:30), 2025.
 Weiming Feng, Yucheng Fu, and Heng Guo.
 \emph{Approximating two-terminal network reliability}.
 \href{https://arxiv.org/abs/2608.02523v2}{arXiv:2608.02523v2}, November 3, 2026.
-We use Algorithm S and Theorem 9, with the computational model in Section 2.1.
+The finite-bit construction uses Algorithm S and Theorem 9; the separate
+unit-cost consequence uses Theorem 1. The computational model is in Section 2.1.
 
 \bibitem{klm}
 Richard M. Karp, Michael Luby, and Neal Madras.
@@ -659,12 +688,13 @@ Theoretical Computer Science, 43:169--188, 1986.
 Karl Bringmann and Tobias Friedrich.
 \emph{Approximating the volume of unions and intersections of
 high-dimensional geometric objects}.
-2010. \href{https://www.mpi-inf.mpg.de/~kbringma/paper/J2010CGTA.pdf}{Author manuscript}.
+Computational Geometry, 43(6--7):601--610, 2010.
+\href{https://doi.org/10.1016/j.comgeo.2010.03.004}{doi:10.1016/j.comgeo.2010.03.004}.
 
 \bibitem{dfj}
 Martin Dyer, Alan Frieze, and Mark Jerrum.
 \emph{On counting independent sets in sparse graphs}.
-Technical report ECS-LFCS-98-391, 1998.
-\href{https://publish.lfcs.inf.ed.ac.uk/reports/98/ECS-LFCS-98-391/}{Report and full text}.
+SIAM Journal on Computing, 31(5):1527--1541, 2002.
+\href{https://doi.org/10.1137/S0097539701383844}{doi:10.1137/S0097539701383844}.
 \end{thebibliography}
 \end{document}

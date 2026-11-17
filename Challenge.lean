@@ -11,8 +11,10 @@ This is the independent statement surface for Palomar. Graphs allow loops and
 parallel arcs. Edge retention is independent with rational probabilities.
 The compared algorithms return a relative estimate and a sample conditioned
 on cyclicity, using the explicit finite fair-bit budgets below. A supplied
-feedback vertex set controls overlap. The vertex-splitting identity and the
-independent-set/acyclicity reduction are also compared.
+valid feedback vertex set controls overlap; validity is a theorem precondition,
+not checked by these frontends. All vertices always give a valid set.
+The vertex-splitting identity and the independent-set/acyclicity reduction
+are also compared.
 
 Only `count` and `sample` are definition holes: the Solution supplies the
 executable algorithms and proves their stated laws. All graph notions,
@@ -21,8 +23,11 @@ uses numbered finite vertices and edges; arbitrary finite graphs can be
 numbered, and the library theorems accept arbitrary finite types and orders.
 
 Polynomial machine runtime is justified in the paper, not asserted by this
-interface. The Algorithm S accuracy proof is a dependency of the counting and
-sampling proofs. Independent-set inapproximability is cited, not assumed as an
+interface. Probability and tape-length bounds alone do not exclude exponential
+computation. Comparator checks the supplied executable definitions and their
+laws, but does not certify an FPRAS runtime bound. The Algorithm S accuracy
+proof is a dependency of the counting and sampling proofs.
+Independent-set inapproximability is cited, not assumed as an
 axiom or proved here. See formalization.yaml and validation/FORMALIZATION.md.
 -/
 
