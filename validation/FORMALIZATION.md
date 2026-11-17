@@ -152,7 +152,7 @@ The proof of Theorem 9 follows this chain:
 `algS_inducedClosed`, `algS_reachable_subtype`, `parentAlgS_law`, and
 `parentAlgS_inducedClosed` additionally check the structural correspondence
 with reachable-set restriction and explicit parent pointers. The
-[oracle note](../research/DISCRETISATION.md) explains the bit implementation
+[oracle note](DISCRETISATION.md) explains the bit implementation
 and its relation to the published pseudocode.
 
 ## Executable rational programs

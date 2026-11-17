@@ -7,11 +7,11 @@ retention, including loops and parallel edges. A supplied feedback vertex set
 controls the number of witnesses. Approximating acyclicity probability is hard
 unless RP = NP.
 
-Read the [paper](paper/directed-cycle-fpras.pdf), or its
-[LaTeX source](paper/directed-cycle-fpras.tex). The
-[formalization map](validation/FORMALIZATION.md) connects the paper to Lean.
-The [Palomar statement](Challenge.lean) gives a short independent interface;
-[Solution.lean](Solution.lean) connects it to the proved implementation.
+Start with the [paper](paper/directed-cycle-fpras.pdf)
+([LaTeX source](paper/directed-cycle-fpras.tex)). The
+[formalization map](validation/FORMALIZATION.md) connects it to Lean;
+[Challenge.lean](Challenge.lean) gives the independent Palomar statements and
+[Solution.lean](Solution.lean) their proved implementations.
 
 ## The idea
 
@@ -36,63 +36,41 @@ error.
 
 ## Lean results
 
-The entry point is [DirectedCycleFPRAS.lean](DirectedCycleFPRAS.lean).
-The development checks the vertex cover, adaptive rejection identity, counting
-and conditional-sampling guarantees, oracle-call and fair-bit budgets, rational
-counting-output size, and the acyclicity/independent-set reduction.
+The library entry point is [DirectedCycleFPRAS.lean](DirectedCycleFPRAS.lean).
+The runnable counting and sampling programs are
+[`Digraph.executableFPRAS` and `Digraph.executableConditionalSampler`](DirectedCycleFPRAS/ExecutableFPRAS.lean).
+Their correctness theorems concern execution on uniformly random finite bit
+tapes, with all parameters fixed and actual Algorithm S calls included.
 
-The runnable entry points are
-[`Digraph.executableFPRAS`](DirectedCycleFPRAS/ExecutableFPRAS.lean) and
-`Digraph.executableConditionalSampler`. Their correctness theorems concern
-execution on uniformly random finite bit tapes, with all parameters fixed.
+Lean checks the witness reduction, corrected rejection, counting and sampling
+accuracy, exact zero detection, random-bit budgets, arithmetic-size bounds, and
+the independent-set/acyclicity gadget. The counting and sampling proofs have no
+oracle-accuracy assumption:
+[`Digraph.algS_accuracy`](DirectedCycleFPRAS/AlgorithmSAccuracy.lean) proves
+Feng–Fu–Guo's Theorem 9 for Algorithm S. Subtype restriction, parent-pointer
+correspondence, and the executable rational refinement are also checked.
 
-- [`Digraph.cycleFPRAS_correct`](DirectedCycleFPRAS/Parameters.lean): the counting
-  program with its budgets fixed and Algorithm S calls expanded.
-- [`Digraph.cycleSampler_cyclic_correct`](DirectedCycleFPRAS/Parameters.lean): the
-  bounded conditional sampler, in the bounded-test formulation of total variation.
-- [`Digraph.concreteVertex_bitCost`](DirectedCycleFPRAS/ConcreteVertex.lean) and
-  [`Digraph.concreteVertex_height`](DirectedCycleFPRAS/RejectionHeight.lean):
-  resource bounds for the same counting program.
-- [`AcyclicityReduction.edge_retention_probability`](DirectedCycleFPRAS/AcyclicityReduction.lean):
-  the exact probability identity used by the complement-hardness proposition.
-
-Algorithm S and its accuracy theorem are proved in Lean:
-[`Digraph.algS_accuracy`](DirectedCycleFPRAS/AlgorithmSAccuracy.lean) establishes
-Feng–Fu–Guo's Theorem 9 for the concrete program, and `algSEstimator_correct`
-transfers it to the finite-bit estimator. The counting and sampling theorems
-have no oracle-accuracy assumption. The proof includes deferred edge exposure,
-DFS snapshot splitting, conditional moments, and the complete stopped round
-process. Induced-subtype and parent-pointer correspondences are also checked.
-The executable layer uses rational arithmetic, explicit graph searches, and
-finite fair-bit tapes. Its nominal-law refinement and rounding bounds connect
-it to the probability proofs; counting and sampling include actual Algorithm S
-calls. Natural-number parameters specify reciprocal accuracy and dyadic
-confidence. `FinalGuarantees` and `ResourceBounds` package
-the fixed budgets and polynomial/logarithmic fair-bit bounds; `ArithmeticBounds`
-bounds intermediate values on every bounded-answer history.
-
-Finite choices use a bounded search with at most one threshold test per
-alternative. Lean verifies probability guarantees, finite-bit execution, and
-resource bounds; polynomial machine runtime is established by the paper's
-written bit-complexity analysis. Independent-set complexity hardness is cited
-in the paper.
+Polynomial machine runtime is established by the paper's written bit-complexity
+analysis; independent-set inapproximability is cited. See the
+[formalization map](validation/FORMALIZATION.md) for declarations and scope,
+and the [discretization note](validation/DISCRETISATION.md) for the oracle's
+finite-bit implementation.
 
 ## Repository layout
 
 | Path | Contents |
 | --- | --- |
 | `paper/` | Manuscript, PDF, and Makefile. |
-| `DirectedCycleFPRAS/` | Lean probability, reduction, resource, and Algorithm S proofs. |
-| `validation/` | Formalization map, principal-theorem axiom audit, and generated reports. |
-| `scripts/` | Exact finite checks and executable Python models. |
-| `research/` | Problem provenance, oracle discretization details, and unsent feedback drafts. |
-| `Challenge.lean`, `Solution.lean`, `comparator.json` | Independent Palomar statements and their proved counterparts. |
+| `DirectedCycleFPRAS/` | Lean proofs and executable algorithms. |
+| `validation/` | Proof map, discretization note, audits, checks, and generated reports. |
+| `scripts/` | Validation commands and finite Python models. |
+| `Challenge.lean`, `Solution.lean`, `comparator.json` | Palomar statements and proved counterparts. |
 | `formalization.yaml`, `LICENSE` | Provenance, verification scope, and Apache-2.0 licensing. |
 
 ## Reproduce
 
 Requires Lean **4.35.0** via [elan](https://github.com/leanprover/elan), pinned
-mathlib, and Python 3. The Python checks need no third-party packages.
+mathlib, and Python 3. The regression checks need no third-party Python packages.
 
 ```sh
 lake exe cache get              # first setup
@@ -101,33 +79,27 @@ make -C paper                  # requires LaTeX and latexmk
 ```
 
 The audit permits only `propext`, `Classical.choice`, and `Quot.sound` and rejects
-proof admissions and project-defined axioms in the proof development. The deliberate
-statement and definition holes in `Challenge.lean` are excluded; the proved
-`Solution.lean` counterparts are audited. Reports are written to `validation/`.
+proof admissions and project-defined axioms in the proof development. Deliberate
+Challenge holes are excluded; their Solution counterparts are audited.
 
-Python checks enumerate adaptive oracle transcripts, verify the counting and
-sampling identities, and check the hardness gadget on all simple undirected
-graphs with at most four vertices. Lean execution checks additionally run rational choices, graph searches, and
-Algorithm S on explicit tapes. The Python checks also compare two independently written
-Algorithm S ports at `M=1`; run `python3 scripts/algs_transcription/run.py 1,2,3`
-for the larger exact suite. These checks are finite evidence, not a refinement
-proof between Python and Lean or an implementation of the reliability FPRAS.
+Finite checks cover adaptive rejection, the hardness gadget, executable rational
+operations, and two independent Python ports of Algorithm S. Run
+`python3 scripts/algs_transcription/run.py 1,2,3` for larger exact comparisons,
+or `python3 scripts/algs_transcription/extended_checks.py` for pool and arc-order
+checks and Monte Carlo diagnostics. These are regression evidence; the Python
+models have no Lean refinement proof.
 
-## Palomar submission
+For Palomar metadata validation, Comparator checks, and submission instructions,
+see [validation/PALOMAR.md](validation/PALOMAR.md). The repository uses the default
+root layout at [Palomar's submission form](https://submit.palomar-registry.org/).
 
-See [the submission checklist](validation/PALOMAR.md) for metadata validation,
-Comparator checks, and the exact claims being submitted. The repository uses
-Palomar's default root layout. Submit the public repository and a full pushed
-commit SHA at [Palomar's submission form](https://submit.palomar-registry.org/).
-Preparing these files does not submit or register the result.
+## Provenance and review
 
-## Research status
+The motivating question is due to
+[Antoine Amarilli](https://cstheory.stackexchange.com/q/53359).
+Union estimation follows Karp–Luby–Madras; rejection correction and the
+accurate-oracle argument follow Jerrum–Valiant–Vazirani. The paper and
+[metadata](formalization.yaml) give the full sources and attribution.
 
-This is a research draft developed with AI assistance. Independent expert review
-and targeted novelty assessment remain pending; [feedback requests](research/feedback-drafts.txt)
-are drafted and unsent. The publication case rests on the directed-cycle
-consequence of the reliability cover. Union estimation follows Karp–Luby–Madras;
-rejection correction and the accurate-oracle argument follow
-[Jerrum–Valiant–Vazirani (1986)](https://ics.uci.edu/~vazirani/JVV.pdf).
-See the [problem note](research/PROBLEM.md) and
-[oracle discretization note](research/DISCRETISATION.md) for context.
+This research draft was developed with AI assistance. Independent expert review
+and targeted novelty assessment remain pending.

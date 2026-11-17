@@ -16,7 +16,7 @@ oracle calls. This file proves, about that transcription:
 
 * `algS_choiceBound`: every random action is a finite choice, and along every
   execution the numbers of alternatives sum to at most an explicit polynomial
-  (Step 1 of research/DISCRETISATION.md);
+  (Step 1 of validation/DISCRETISATION.md);
 * `algS_sat`: with rational input probabilities, the output is a fraction of
   explicitly bounded size, by a common-denominator invariant (Step 3);
 * `algS_discretised`: if the exact algorithm fails with probability at most

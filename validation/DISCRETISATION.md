@@ -10,7 +10,7 @@ round process connects the martingale estimate to the returned value.
 `Digraph.algS_accuracy` is the general relative-error theorem;
 `algSAccurate` supplies the constant-confidence budget used here. Whole-program
 subtype reindexing and explicit parent-pointer correspondence are checked too.
-The [formalization map](../validation/FORMALIZATION.md#algorithm-s) gives the
+The [formalization map](FORMALIZATION.md#algorithm-s) gives the
 proof dependencies.
 
 The counting and conditional-sampling programs use this oracle at accuracy
@@ -249,8 +249,9 @@ five vertices and eight arcs. The cases cover parallel arcs, self-loops, arcs
 into the source, unreachable vertices, probability one, equal terminals, and
 unreachable targets. The script checks equality of the two laws and equality
 of their means with brute-force reliability, writing
-`validation/algs-transcription-results.json`. `run2.py` additionally varies arc
-orders and performs a Monte Carlo check at `M = 40`.
+`validation/algs-transcription-results.json`. `python3 scripts/algs_transcription/extended_checks.py` additionally checks
+pool ordering and literal enumeration, varies arc orders, and performs
+Monte Carlo diagnostics at `M = 40`.
 
 These comparisons are regression evidence. They are not a Python-to-Lean
 refinement proof; Algorithm S's concentration guarantee comes from the Lean

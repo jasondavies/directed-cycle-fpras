@@ -15,7 +15,7 @@ generally the expectation of any `[0,1]`-valued function of the result,
 changes by at most `N / 2^b`. Choices may depend on the whole history; this is
 the sequential coupling argument.
 
-This is the generic half of the argument in research/DISCRETISATION.md that an
+This is the generic half of the argument in validation/DISCRETISATION.md that an
 algorithm stated with exact rational-probability choices can be run on fair
 random bits.
 -/

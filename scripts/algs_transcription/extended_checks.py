@@ -1,3 +1,6 @@
+"""Extended Algorithm S checks: pool ordering, literal enumeration, arc-order
+permutations, and Monte Carlo diagnostics. Run separately from the quick suite.
+"""
 import sys, random, math, time
 sys.setrecursionlimit(100000)
 from fractions import Fraction as F
