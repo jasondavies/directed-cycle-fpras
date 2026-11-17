@@ -219,6 +219,13 @@ arithmetic-size bounds.
 
 ## Audit and reproduction
 
+`Challenge.lean` states the publication interface independently using only
+Mathlib imports. `Solution.lean` supplies six proved counterparts and the two
+executable definitions, `Publication.count` and `Publication.sample`.
+`comparator.json` selects those declarations; the [Palomar checklist](PALOMAR.md)
+describes their scope and the independent-kernel check. The deliberate Challenge
+holes are not part of the proof development or its admission count.
+
 Run `bash scripts/check.sh` to build the library, execute the rational-code
 regressions in `ExecutableChecks.lean`, audit the declarations in
 [Axioms.lean](Axioms.lean), and regenerate the finite-check reports. The audit

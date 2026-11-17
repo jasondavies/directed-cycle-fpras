@@ -1,8 +1,15 @@
-import DirectedCycleFPRAS.RationalProgram
-import DirectedCycleFPRAS.RationalRejection
-import DirectedCycleFPRAS.RationalCounting
-import DirectedCycleFPRAS.ExecutableFPRAS
-import DirectedCycleFPRAS.RationalAlgorithmS
+module
+
+public meta import DirectedCycleFPRAS.RationalProgram
+public meta import DirectedCycleFPRAS.RationalRejection
+public meta import DirectedCycleFPRAS.RationalCounting
+public meta import DirectedCycleFPRAS.ExecutableFPRAS
+public meta import DirectedCycleFPRAS.RationalAlgorithmS
+
+public meta import DirectedCycleFPRAS.RationalExecution
+public meta import DirectedCycleFPRAS.ExecutableGraph
+
+meta section
 
 open DirectedCycleFPRAS
 

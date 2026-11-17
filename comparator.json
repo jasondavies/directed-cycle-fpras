@@ -1,0 +1,21 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "DirectedCycleFPRAS.Publication.vertex_reliability",
+    "DirectedCycleFPRAS.Publication.feedback_cover",
+    "DirectedCycleFPRAS.Publication.count_correct",
+    "DirectedCycleFPRAS.Publication.count_zero",
+    "DirectedCycleFPRAS.Publication.sample_correct",
+    "DirectedCycleFPRAS.Publication.acyclicity_probability"
+  ],
+  "definition_names": [
+    "DirectedCycleFPRAS.Publication.count",
+    "DirectedCycleFPRAS.Publication.sample"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

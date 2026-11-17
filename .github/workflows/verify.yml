@@ -1,0 +1,39 @@
+name: Verify publication and Palomar statements
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Check submission structure and metadata
+        run: |
+          python3 -m pip install -r validation/requirements.txt
+          python3 scripts/check_palomar.py
+      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          build: true
+      - name: Audit proofs and run finite regression checks
+        run: bash scripts/check.sh
+      - name: Prepare Comparator sandbox on the disposable runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq bubblewrap
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Compare statements and check with independent kernels
+        run: bash scripts/verify-comparator.sh

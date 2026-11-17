@@ -229,7 +229,15 @@
     "DirectedCycleFPRAS.Digraph.executableConditionalSampler_bits",
     "DirectedCycleFPRAS.RatLaw.searchUpper_calls",
     "DirectedCycleFPRAS.RatLaw.searchUpper_eq_find",
-    "DirectedCycleFPRAS.RatLaw.select_eq_find"
+    "DirectedCycleFPRAS.RatLaw.select_eq_find",
+    "DirectedCycleFPRAS.Publication.vertex_reliability",
+    "DirectedCycleFPRAS.Publication.feedback_cover",
+    "DirectedCycleFPRAS.Publication.count_correct",
+    "DirectedCycleFPRAS.Publication.count_zero",
+    "DirectedCycleFPRAS.Publication.sample_correct",
+    "DirectedCycleFPRAS.Publication.acyclicity_probability",
+    "DirectedCycleFPRAS.Publication.count",
+    "DirectedCycleFPRAS.Publication.sample"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split": [
@@ -1369,8 +1377,46 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.vertex_reliability": [
+      "propext"
+    ],
+    "DirectedCycleFPRAS.Publication.feedback_cover": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.count_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.count_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.sample_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.acyclicity_probability": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.count": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.sample": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Fixed-parameter bit budgets and intermediate arithmetic heights are checked. Executable rational programs, explicit graph searches, arbitrary-order Algorithm S refinement, bounded cumulative selection, fair-bit compilation and tape execution are checked. Polynomial machine runtime uses the written bit-complexity analysis. Independent-set complexity hardness is external. Python models have no Lean refinement proof."
+  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Fixed-parameter bit budgets and intermediate arithmetic heights are checked. Executable rational programs, explicit graph searches, arbitrary-order Algorithm S refinement, bounded cumulative selection, fair-bit compilation and tape execution are checked. Polynomial machine runtime uses the written bit-complexity analysis. Independent-set complexity hardness is external. The Palomar Solution wrappers are included in the axiom audit; deliberate Challenge placeholders are excluded. Python models have no Lean refinement proof."
 }

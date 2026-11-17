@@ -1,6 +1,7 @@
 module
 
 import DirectedCycleFPRAS
+import Solution
 
 #print axioms DirectedCycleFPRAS.Digraph.vertexWitness_iff_split
 #print axioms DirectedCycleFPRAS.Digraph.feedback_cover
@@ -238,3 +239,12 @@ import DirectedCycleFPRAS
 #print axioms DirectedCycleFPRAS.RatLaw.searchUpper_calls
 #print axioms DirectedCycleFPRAS.RatLaw.searchUpper_eq_find
 #print axioms DirectedCycleFPRAS.RatLaw.select_eq_find
+
+#print axioms DirectedCycleFPRAS.Publication.vertex_reliability
+#print axioms DirectedCycleFPRAS.Publication.feedback_cover
+#print axioms DirectedCycleFPRAS.Publication.count_correct
+#print axioms DirectedCycleFPRAS.Publication.count_zero
+#print axioms DirectedCycleFPRAS.Publication.sample_correct
+#print axioms DirectedCycleFPRAS.Publication.acyclicity_probability
+#print axioms DirectedCycleFPRAS.Publication.count
+#print axioms DirectedCycleFPRAS.Publication.sample

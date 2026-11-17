@@ -1,0 +1,195 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Directed-cycle probability: verified counting and conditional sampling"
+  description: >-
+    For finite directed multigraphs with independent rational edge retention,
+    executable counting and conditional-sampling algorithms have proved accuracy
+    guarantees on uniformly random finite bit tapes. Counting has relative error
+    1/r with failure at most 2^(-d) and returns exactly zero whenever cyclicity has
+    probability zero. Conditional sampling has total variation error at most
+    2^(-d). A supplied feedback vertex set controls the witness family. Vertex
+    splitting reduces cycle membership to two-terminal reliability, implemented
+    using a formalized Algorithm S and its accuracy theorem. The independent-set
+    gadget gives an exact identity for acyclicity probability. Explicit fair-bit
+    budgets and arithmetic-size bounds are verified; polynomial machine runtime
+    is established by the accompanying paper's written analysis.
+  authors: ["Jason Davies"]
+  license: "Apache-2.0"
+  responsible_maintainers: ["Jason Davies"]
+
+classification:
+  arxiv: ["cs.DS", "cs.LO"]
+  msc2020: ["68W20", "68R10", "68V15"]
+
+sources:
+  - title: "An FPRAS for directed-cycle probability"
+    authors: ["Jason Davies"]
+    type: paper
+    location: "paper/directed-cycle-fpras.tex in this repository snapshot"
+    relationship: formalizes
+    note: >-
+      Companion research draft presenting the cycle-reliability witness reduction,
+      corrected counting and conditional sampling, and the complement-hardness
+      gadget. Novelty and independent expert review remain pending. The formal
+      interface covers probability guarantees and finite-bit execution, not a
+      machine-runtime theorem.
+  - title: "Approximating two-terminal network reliability"
+    authors: ["Weiming Feng", "Yucheng Fu", "Heng Guo"]
+    id: "https://arxiv.org/abs/2608.02523v2"
+    type: paper
+    location: "Algorithm S and Theorem 9; computational model in Section 2.1"
+    relationship: formalizes
+    note: >-
+      Algorithm S, its accuracy proof, induced-subtype restriction, and
+      parent-pointer correspondence are checked in Lean. Rational arithmetic
+      and bounded fair-bit choices implement the required oracle. The faster
+      algorithm elsewhere in the source is not part of this development.
+    author_endorsement: not-contacted
+  - title: "Monte-Carlo approximation algorithms for enumeration problems"
+    authors: ["Richard M. Karp", "Michael Luby", "Neal Madras"]
+    id: "doi:10.1016/0196-6774(89)90038-2"
+    type: paper
+    location: "Journal of Algorithms 10(3), 429–448 (1989)"
+    relationship: adapts
+    note: "Classical union estimation applied to a polynomial reliability witness cover."
+    author_endorsement: not-contacted
+  - title: "Random generation of combinatorial structures from a uniform distribution"
+    authors: ["Mark R. Jerrum", "Leslie G. Valiant", "Vijay V. Vazirani"]
+    id: "doi:10.1016/0304-3975(86)90174-X"
+    type: paper
+    location: "Theoretical Computer Science 43, 169–188 (1986), proofs of Theorems 3.3 and 6.3"
+    relationship: adapts
+    note: >-
+      Inverse-proposal rejection and the hypothetical accurate-oracle argument
+      are classical methods, adapted here to weighted reliability witnesses and
+      adaptive rational edge exposure; they are not claimed as new techniques.
+    author_endorsement: not-contacted
+  - title: "FPRAS to estimate the probability to get a cyclic subgraph of a directed graph"
+    authors: ["Antoine Amarilli"]
+    id: "https://cstheory.stackexchange.com/q/53359"
+    type: web discussion
+    relationship: background
+    note: "The motivating question, posted September 26, 2023."
+    contributors:
+      - name: "Antoine Amarilli"
+        role: "problem proposer"
+    author_endorsement: not-contacted
+  - title: "On counting independent sets in sparse graphs"
+    authors: ["Martin Dyer", "Alan Frieze", "Mark Jerrum"]
+    id: "https://publish.lfcs.inf.ed.ac.uk/reports/98/ECS-LFCS-98-391/"
+    type: paper
+    location: "Technical report ECS-LFCS-98-391 (1998)"
+    relationship: background
+    note: >-
+      External independent-set inapproximability result used in the written
+      hardness corollary. Lean proves the exact reduction identity, not this
+      complexity theorem or RP versus NP.
+    author_endorsement: not-contacted
+
+related_formalizations: []
+
+status:
+  scope: >-
+    The compared results are vertex splitting, the feedback-set cover, executable
+    counting accuracy and exact zero, executable conditional-sampling accuracy,
+    and the independent-set/acyclicity probability identity. The two definition
+    holes in Challenge.lean are filled by executable algorithms in Solution.lean;
+    their graph notions, product probabilities and finite fair-bit budgets are
+    explicit in the Challenge. The proof library includes Algorithm S accuracy
+    without an oracle-accuracy assumption, adaptive coupling, amplification,
+    resource bounds, and rational arithmetic heights. Polynomial machine runtime,
+    independent-set inapproximability, and Python-to-Lean refinement are outside
+    the formal guarantees. The stated conditional law requires positive cyclicity
+    probability; the compared sampling theorem does not separately assert
+    validity of every output on failed-oracle histories.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+
+automation:
+  methods:
+    - method: agent
+      models: ["OpenAI GPT-6 family"]
+      framework: "Codex"
+      tool_setup: >-
+        Human-directed AI development and revision of the mathematical argument,
+        Lean proofs, executable definitions, manuscript, and submission packaging;
+        Lean builds, axiom audits, Comparator, and exact finite regression checks.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local development environment"
+      prompting_notes: >-
+        Iterative requests to review the reduction, align Lean with the revised
+        manuscript, formalize the required reliability algorithm, and prepare a
+        concise publication development.
+  spend_usd: "not tracked"
+  notes: >-
+    AI systems made substantive contributions under the direction of the human
+    maintainer. Exact historical model variants and expenditure were not recorded.
+    This metadata does not assert an independent human audit of the mathematics.
+    Proof acceptance and statement comparison are mechanical checks, not novelty
+    assessment or expert peer review.
+
+fidelity:
+  divergences: >-
+    The paper presents general epsilon and delta parameters; the executable
+    interface uses reciprocal accuracy 1/r for a positive natural r and dyadic
+    failure or variation target 2^(-d). Graphs in that interface have vertices
+    Fin n and edges Fin m; the library accepts arbitrary finite types with supplied
+    enumerations. Conditional variation is expressed using all [0,1]-valued test
+    functions on the finite configuration space. The witness cover and gadget are
+    also stated for arbitrary types where appropriate. Finite choices are rounded
+    with bounded fair-bit draws rather than ideal uniform real draws. Polynomial
+    time in the bit model is a written theorem, not a formal machine-step bound.
+    The library correspondence proofs cover Algorithm S, not all algorithms in
+    Feng–Fu–Guo.
+
+review:
+  status: "agent-reviewed; independent human expert review pending"
+  reviewers: ["OpenAI Codex: AI review and mechanical validation"]
+  notes: >-
+    The development has undergone iterative AI review, Lean kernel and axiom
+    checks, and finite exact regression tests. The Challenge/Solution interface
+    is checked by Comparator. No source-author endorsement, independent expert
+    review, or confirmed novelty claim is asserted.
+
+alignment:
+  namespace: "DirectedCycleFPRAS.Publication"
+  statements:
+    - source: "Paper: vertex-splitting reliability reduction"
+      lean: "DirectedCycleFPRAS.Publication.vertex_reliability"
+      module: "Solution"
+      status: proved
+      note: "A nonempty return walk is equivalent to reachability between split terminals."
+    - source: "Paper: feedback-set witness cover"
+      lean: "DirectedCycleFPRAS.Publication.feedback_cover"
+      module: "Solution"
+      status: proved
+      note: "Deleting the supplied vertices destroys every support cycle."
+    - source: "Paper: counting theorem, probability guarantee"
+      lean: "DirectedCycleFPRAS.Publication.count_correct"
+      module: "Solution"
+      status: proved
+      note: "Actual rational implementation on a uniform finite tape; runtime is written."
+    - source: "Paper: exact zero detection"
+      lean: "DirectedCycleFPRAS.Publication.count_zero"
+      module: "Solution"
+      status: proved
+      note: "Every tape returns zero when cyclicity probability is zero."
+    - source: "Paper: conditional-sampling theorem, total variation guarantee"
+      lean: "DirectedCycleFPRAS.Publication.sample_correct"
+      module: "Solution"
+      status: proved
+      note: "Positive cyclicity probability; dyadic error and explicit finite tape budget."
+    - source: "Paper: complement-hardness gadget"
+      lean: "DirectedCycleFPRAS.Publication.acyclicity_probability"
+      module: "Solution"
+      status: proved
+      note: "Exact probability identity; the complexity hardness consequence is external."
+
+acknowledgements: >-
+  Lean and mathlib provide the proof infrastructure. Mathematical dependencies
+  and classical approximation methods are credited in sources and in the paper.

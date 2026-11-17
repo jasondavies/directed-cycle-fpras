@@ -19,7 +19,7 @@ assert "sorryAx" not in result.stdout
 for name, axioms in entries:
     used = {s.strip() for s in axioms.split(",") if s.strip()}
     assert used <= allowed, (name, used - allowed)
-for source in (ROOT / "DirectedCycleFPRAS").glob("*.lean"):
+for source in [*(ROOT / "DirectedCycleFPRAS").glob("*.lean"), ROOT / "Solution.lean"]:
     # This catches accidental admissions in addition to the dependency audit.
     assert not re.search(r"^\s*(?:axiom\s|opaque\s)|\b(?:sorry|admit)\b",
                          source.read_text(), re.M), source
@@ -46,7 +46,8 @@ report = {
               "refinement, bounded cumulative selection, fair-bit compilation and tape execution "
               "are checked. Polynomial machine runtime uses the written bit-complexity "
               "analysis. Independent-set complexity hardness is external. "
-              "Python models have no Lean refinement proof."),
+              "The Palomar Solution wrappers are included in the axiom audit; deliberate "
+              "Challenge placeholders are excluded. Python models have no Lean refinement proof."),
 }
 (ROOT / "validation").mkdir(exist_ok=True)
 (ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")

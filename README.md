@@ -10,6 +10,8 @@ unless RP = NP.
 Read the [paper](paper/directed-cycle-fpras.pdf), or its
 [LaTeX source](paper/directed-cycle-fpras.tex). The
 [formalization map](validation/FORMALIZATION.md) connects the paper to Lean.
+The [Palomar statement](Challenge.lean) gives a short independent interface;
+[Solution.lean](Solution.lean) connects it to the proved implementation.
 
 ## The idea
 
@@ -84,6 +86,8 @@ in the paper.
 | `validation/` | Formalization map, principal-theorem axiom audit, and generated reports. |
 | `scripts/` | Exact finite checks and executable Python models. |
 | `research/` | Problem provenance, oracle discretization details, and unsent feedback drafts. |
+| `Challenge.lean`, `Solution.lean`, `comparator.json` | Independent Palomar statements and their proved counterparts. |
+| `formalization.yaml`, `LICENSE` | Provenance, verification scope, and Apache-2.0 licensing. |
 
 ## Reproduce
 
@@ -97,7 +101,9 @@ make -C paper                  # requires LaTeX and latexmk
 ```
 
 The audit permits only `propext`, `Classical.choice`, and `Quot.sound` and rejects
-proof admissions and project-defined axioms. Reports are written to `validation/`.
+proof admissions and project-defined axioms in the proof development. The deliberate
+statement and definition holes in `Challenge.lean` are excluded; the proved
+`Solution.lean` counterparts are audited. Reports are written to `validation/`.
 
 Python checks enumerate adaptive oracle transcripts, verify the counting and
 sampling identities, and check the hardness gadget on all simple undirected
@@ -106,6 +112,14 @@ Algorithm S on explicit tapes. The Python checks also compare two independently 
 Algorithm S ports at `M=1`; run `python3 scripts/algs_transcription/run.py 1,2,3`
 for the larger exact suite. These checks are finite evidence, not a refinement
 proof between Python and Lean or an implementation of the reliability FPRAS.
+
+## Palomar submission
+
+See [the submission checklist](validation/PALOMAR.md) for metadata validation,
+Comparator checks, and the exact claims being submitted. The repository uses
+Palomar's default root layout. Submit the public repository and a full pushed
+commit SHA at [Palomar's submission form](https://submit.palomar-registry.org/).
+Preparing these files does not submit or register the result.
 
 ## Research status
 
