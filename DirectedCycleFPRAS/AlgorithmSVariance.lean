@@ -25,7 +25,7 @@ theorem exp_square_sum_le (O : Oracle Q) (m : Prog Q S) {I : Type} [Fintype I] (
 end Prog
 
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 def totalPrediction (s : V) (R : Finset V) (qh : V → ℝ) (pools : V → List (Finset V)) : ℝ :=

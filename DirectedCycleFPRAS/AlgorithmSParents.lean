@@ -8,7 +8,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 
 /-- A parent-pointer path from the root whose nonroot vertices avoid R. -/
 def ParentAvoid (R : Finset V) (parent : V → Option V) (root v : V) : Prop :=

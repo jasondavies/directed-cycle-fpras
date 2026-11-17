@@ -16,7 +16,7 @@
 \newcommand{\bits}{\operatorname{bits}}
 \title{An FPRAS for directed-cycle probability}
 \author{}
-\date{Research draft --- November 16, 2026}
+\date{Research draft --- November 17, 2026}
 
 \begin{document}
 \maketitle
@@ -389,8 +389,10 @@ Algorithm S and its accuracy bound (FFG Theorem 9) are proved for the
 concrete program: deferred-edge DFS laws and snapshot splitting give the
 conditional moments, which yield the stopped-process variance bound.
 The counting and sampling guarantees therefore have no oracle-accuracy
-premise. Independent-set complexity hardness is cited; machine-level runtime
-is justified by the written arithmetic analysis.
+premise. An executable rational layer refines these probability semantics,
+with explicit finite enumerations, fair-bit tapes, and intermediate-size
+bounds. Independent-set complexity hardness is cited; whole-program
+machine runtime is justified by the written arithmetic analysis.
 Appendix~\ref{app:formal} records the Algorithm S correspondence;
 \texttt{validation/FORMALIZATION.md} maps the results to declarations.
 
@@ -555,8 +557,13 @@ queries expanded and the parameters fixed as in the main text.
 Their fair-bit and counting-output-size bounds hold on every execution,
 including inaccurate-oracle histories.
 The formalization map gives the exact expressions and the treatment of
-zero-budget and equal-terminal cases. Polynomial machine time follows by
-the written arithmetic analysis, rather than a formal machine semantics.
+zero-budget and equal-terminal cases. The executable rational refinement
+uses a supplied complete edge order; the accuracy proof is parameterized
+by that order. Its compiler has a checked adaptive rounding bound, and its
+bit-tape interpreter agrees with the probability semantics. Finite choices
+use a bounded search with at most one threshold test per alternative.
+Intermediate arithmetic sizes have checked bounds; polynomial running time
+follows from the written bit-complexity analysis.
 
 The development uses Lean 4.35.0 and pinned mathlib. Its principal-declaration
 audit permits only \texttt{propext}, \texttt{Classical.choice}, and

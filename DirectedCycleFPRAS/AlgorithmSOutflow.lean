@@ -11,7 +11,7 @@ open scoped BigOperators
 open Classical
 noncomputable section
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 omit [Fintype V] [DecidableEq V] in
@@ -84,7 +84,7 @@ theorem phiS_le_argmax (hp : Prob01 p) (R : Finset V) (qh : V → ℝ)
   intro j hj
   apply List.le_of_mem_argmax (f := fun j => qh (G.source j)*p j)
     (l := (arcOrder E).filter fun j => G.source j ∈ R ∧ G.target j ∉ R)
-    (by simpa [arcOrder] using hj)
+    (by simpa using hj)
   rw [he]
   simp
 

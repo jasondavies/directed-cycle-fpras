@@ -186,9 +186,10 @@ change the law of the output:
   deleted. `algS_reachable_subtype` proves equality with the induced graph
   using its inherited order and the same sample budget and ambient fuel.
 
-Size bounds are proved for the estimates and the output. That each
-arithmetic operation on such numbers takes polynomial time is not formalised,
-as there is no machine model.
+`ArithmeticBounds` also bounds the temporary branch weights, normalized
+probabilities, cumulative sums, recorded products, and rejection calculations.
+These bounds support the written polynomial-time analysis of rational
+arithmetic and graph operations.
 
 ## Accuracy and correspondence
 
@@ -216,6 +217,27 @@ stored pointers; that program stores no Boolean eligibility flags. These
 formal statements can be checked against the published pseudocode by reading
 the definitions. Polynomial machine cost for rational arithmetic is a written
 argument; the development has no machine-level time semantics.
+
+### Executable Lean refinement
+
+`RatProg` represents exact rational choices with explicit finite indices.
+`RatProg.compile` replaces each choice by a bounded fair-bit draw;
+`compile_error` proves a total error of at most `A/2^b`. The bit interpreter
+consumes only the selected continuation, and its consumption bound includes
+all inlined oracle calls. Rational and real choice orders need not coincide:
+the coupling theorem compares each implementation to the same exact law.
+
+The Algorithm S accuracy proof is parameterized by `ArcEnumeration`, a
+complete duplicate-free edge list. `RationalAlgorithmS` supplies executable
+rational DFS, pools, and rounds; `RationalAlgorithmSAccuracy` proves the
+nominal and compiled accuracy guarantees for an explicitly supplied order.
+The split-vertex callback retains zero-probability edges, since the accuracy
+theorem already covers probabilities in `[0,1]`.
+
+The executable graph searches and rejection arithmetic are connected to the
+relational and real-valued definitions by refinement theorems. Rational lower
+medians implement both amplification stages. The formalization map lists the
+entry points, resource bounds, and verification scope.
 
 ### Executable comparisons
 

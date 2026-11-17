@@ -5,5 +5,6 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 scripts/check_formalization.py
+lake env lean validation/ExecutableChecks.lean
 python3 scripts/check_corrected_rejection.py
 python3 scripts/algs_transcription/run.py 1

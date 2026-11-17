@@ -37,13 +37,38 @@ open Classical
 
 noncomputable section
 
+/-- A complete edge order used by Algorithm S. Accuracy holds for every
+such enumeration; executable programs supply their explicit input order. -/
+class ArcEnumeration (E : Type) where
+  order : List E
+  nodup : order.Nodup
+  complete : ∀ e, e ∈ order
+
+noncomputable instance (priority := low) defaultArcEnumeration (E : Type) [Fintype E] :
+    ArcEnumeration E where
+  order := Finset.univ.toList
+  nodup := Finset.nodup_toList _
+  complete := by simp
+
 namespace Digraph
 
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] {Q : Type}
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E] {Q : Type}
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- The fixed order in which arcs are examined. -/
-def arcOrder (E : Type) [Fintype E] : List E := Finset.univ.toList
+def arcOrder (E : Type) [Fintype E] [ArcEnumeration E] : List E := ArcEnumeration.order
+
+@[simp] theorem mem_arcOrder (e : E) : e ∈ arcOrder E := ArcEnumeration.complete e
+
+theorem arcOrder_nodup (E : Type) [Fintype E] [ArcEnumeration E] : (arcOrder E).Nodup :=
+  ArcEnumeration.nodup
+
+@[simp] theorem arcOrder_length (E : Type) [Fintype E] [ArcEnumeration E] :
+    (arcOrder E).length = Fintype.card E := by
+  have he : (arcOrder E).toFinset = Finset.univ := by ext e; simp
+  have hc := List.toFinset_card_of_nodup (arcOrder_nodup E)
+  rw [he, Finset.card_univ] at hc
+  exact hc.symm
 
 /-- `e'` precedes `e` in the fixed order. -/
 def arcBefore (e' e : E) : Prop := (arcOrder E).idxOf e' < (arcOrder E).idxOf e
@@ -170,7 +195,7 @@ end Prog
 
 namespace Digraph
 
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] {Q : Type}
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E] {Q : Type}
 variable (G : Digraph V E) (p : E → ℝ)
 
 omit [Fintype V] [Fintype E] in
@@ -215,7 +240,7 @@ theorem sDfs_choiceBound (R : Finset V) (pre : E → Option Bool) (v : V) (f : �
       · exact .ret _ _
       · exact .ret _ _
       · have hs := G.sScan_choiceBound (Q := Q) p R pre z flag (arcOrder E) D st
-        rw [arcOrder, Finset.length_toList, Finset.card_univ] at hs
+        rw [arcOrder_length] at hs
         exact (hs.bind fun r => ih r.1 r.2).mono (le_of_eq (by ring))
 
 /-- Bound on the alternatives of one iteration of Generate. -/
@@ -345,7 +370,7 @@ end Prog
 
 namespace Digraph
 
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] {Q : Type}
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E] {Q : Type}
 variable (G : Digraph V E) (p : E → ℝ)
 
 section Sizes

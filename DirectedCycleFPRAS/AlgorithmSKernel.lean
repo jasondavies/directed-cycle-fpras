@@ -30,7 +30,7 @@ theorem normLaw_weighted_expectation {I : Type} [Fintype I] (w : I → ℝ) (d :
     field_simp
 
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- First-open mixture of the DFS record score, before normalization. -/

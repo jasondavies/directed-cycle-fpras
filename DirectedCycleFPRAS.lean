@@ -1,8 +1,7 @@
 module
 
-public import DirectedCycleFPRAS.Parameters
 public import DirectedCycleFPRAS.AcyclicityReduction
-public import DirectedCycleFPRAS.AlgorithmSOracle
-public import DirectedCycleFPRAS.AlgorithmSPools
 public import DirectedCycleFPRAS.AlgorithmSParentProgram
-public import DirectedCycleFPRAS.AlgorithmSAccuracy
+public import DirectedCycleFPRAS.ResourceBounds
+public import DirectedCycleFPRAS.ArithmeticBounds
+public import DirectedCycleFPRAS.ExecutableFPRAS

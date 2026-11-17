@@ -11,7 +11,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 def bestArc (R : Finset V) (qh : V → ℝ) : Option E :=
@@ -31,7 +31,7 @@ theorem bestArc_max (R : Finset V) (qh : V → ℝ) {e : E} (he : G.bestArc p R 
   intro j hj
   apply List.le_of_mem_argmax (f := fun j => qh (G.source j)*p j)
     (l := (arcOrder E).filter fun j => G.source j∈R ∧ G.target j∉R)
-    (by simpa [arcOrder] using hj)
+    (by simpa using hj)
   rw [he]
   simp
 
@@ -70,7 +70,7 @@ theorem phiS_zero_of_no_arc (hp : Prob01 p) (R : Finset V) (qh : V → ℝ)
   have hc : ∀ e, ¬(G.source e∈R ∧ G.target e∉R) := by
     have hnil := List.argmax_eq_none.mp he
     intro e he
-    have hm : e∈(arcOrder E).filter (fun e => G.source e∈R ∧ G.target e∉R) := by simp [arcOrder,he]
+    have hm : e∈(arcOrder E).filter (fun e => G.source e∈R ∧ G.target e∉R) := by simp [he]
     rw [hnil] at hm
     exact List.not_mem_nil hm
   apply le_antisymm _ (G.phiS_nonneg p hp R qh hq)

@@ -13,7 +13,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E)
 
 def scanTree (R : Finset V) (z : V) (flag : Bool) :
@@ -166,7 +166,7 @@ theorem dfsTree_once (R : Finset V) (v : V) (fuel : ℕ) (S : Finset E) (D : Fin
           intro a ha hza
           have hnd := (List.nodup_cons.mp hr.distinct).1
           exact hnd (List.mem_map.mpr ⟨a,ha,hza.symm⟩)
-        apply (G.scanTree_once R z flag (arcOrder E) (Finset.nodup_toList _) S D st
+        apply (G.scanTree_once R z flag (arcOrder E) (arcOrder_nodup E) S D st
           (DFSReady.pop G hr) hz hzs (fun e _ he hmem => hr.used_off_stack e hmem (z,flag) (by simp) he)).bind _
         intro S' r hready
         exact ih S' r.1 r.2 hready
@@ -206,7 +206,7 @@ theorem dfsTree_once_snapshot (R : Finset V) (v : V) (fuel : ℕ) (S : Finset E)
         have hzs : ∀ a ∈ st, z ≠ a.1 := by
           intro a ha hza
           exact (List.nodup_cons.mp hr.distinct).1 (List.mem_map.mpr ⟨a,ha,hza.symm⟩)
-        apply (G.scanTree_once R z flag (arcOrder E) (Finset.nodup_toList _) S D st
+        apply (G.scanTree_once R z flag (arcOrder E) (arcOrder_nodup E) S D st
           (DFSReady.pop G hr) hz hzs
           (fun e _ he hmem => hr.used_off_stack e hmem (z,flag) (by simp) he)).bind _
         intro S' r hready

@@ -154,7 +154,82 @@
     "DirectedCycleFPRAS.Digraph.sRounds_steps_law",
     "DirectedCycleFPRAS.Digraph.algS_steps_law",
     "DirectedCycleFPRAS.Digraph.algS_accuracy",
-    "DirectedCycleFPRAS.algSAccurate"
+    "DirectedCycleFPRAS.algSAccurate",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_zero",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_height",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_bitCost",
+    "DirectedCycleFPRAS.Digraph.cycleSampler_bitCost",
+    "DirectedCycleFPRAS.oracleBitBudget_le",
+    "DirectedCycleFPRAS.countingBitBudget_le",
+    "DirectedCycleFPRAS.samplingBitBudget_le",
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_bitCost_cap",
+    "DirectedCycleFPRAS.Digraph.cycleSampler_bitCost_cap",
+    "DirectedCycleFPRAS.normLaw_height",
+    "DirectedCycleFPRAS.recordedExpose_height",
+    "DirectedCycleFPRAS.recordedExpose_bits",
+    "DirectedCycleFPRAS.rejectionProbability_height",
+    "DirectedCycleFPRAS.recordedExpose_acceptance_height",
+    "DirectedCycleFPRAS.choice_comparison_height",
+    "DirectedCycleFPRAS.Digraph.firstOpenWeight_height",
+    "DirectedCycleFPRAS.Digraph.gammaS_height",
+    "DirectedCycleFPRAS.Digraph.phiS_height",
+    "DirectedCycleFPRAS.Digraph.mem_reachableSet",
+    "DirectedCycleFPRAS.Digraph.reaches_eq_true",
+    "DirectedCycleFPRAS.Digraph.onCycle_eq_true",
+    "DirectedCycleFPRAS.Digraph.hasCycle_eq_true",
+    "DirectedCycleFPRAS.Digraph.reachable_edge_examinations",
+    "DirectedCycleFPRAS.rationalEdgeWeight_cast",
+    "DirectedCycleFPRAS.Digraph.rationalMultiplicity_cast",
+    "DirectedCycleFPRAS.Digraph.rationalFeasible_correct",
+    "DirectedCycleFPRAS.Digraph.rationalReject_cast",
+    "DirectedCycleFPRAS.RatLaw.norm_value_cast",
+    "DirectedCycleFPRAS.RatLaw.select_eq_decode",
+    "DirectedCycleFPRAS.RatLaw.select_error",
+    "DirectedCycleFPRAS.BitProg.readBlock_uniform",
+    "DirectedCycleFPRAS.BitProg.run_bits",
+    "DirectedCycleFPRAS.BitProg.run_congr",
+    "DirectedCycleFPRAS.BitProg.trace_result",
+    "DirectedCycleFPRAS.BitProg.result_law",
+    "DirectedCycleFPRAS.RatProg.compile_error",
+    "DirectedCycleFPRAS.RatProg.ChoiceBound.compile",
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_law",
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_choiceBound",
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_bits",
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_accuracy",
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_constant_accuracy",
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_nominal_accuracy",
+    "DirectedCycleFPRAS.Digraph.rationalVertexQuery_accuracy",
+    "DirectedCycleFPRAS.RatProg.rationalRecordedExpose_refines",
+    "DirectedCycleFPRAS.Digraph.rationalVertexProposal_refines",
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_refines",
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_refines",
+    "DirectedCycleFPRAS.rationalMedian_cast",
+    "DirectedCycleFPRAS.RatProg.Refines.medianOf",
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_bits",
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_bits",
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_compile_error",
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_compile_error",
+    "DirectedCycleFPRAS.BitProg.run_uniform",
+    "DirectedCycleFPRAS.liftRationalOracle_refines",
+    "DirectedCycleFPRAS.liftRationalOracle_failure",
+    "DirectedCycleFPRAS.Digraph.rationalCycleOracle_failure",
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_compiled_failure",
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_compiled_error",
+    "DirectedCycleFPRAS.execCountSamples_bound",
+    "DirectedCycleFPRAS.execCountInner_bound",
+    "DirectedCycleFPRAS.execCount_error",
+    "DirectedCycleFPRAS.execSample_error",
+    "DirectedCycleFPRAS.Digraph.executableCount_zero_run",
+    "DirectedCycleFPRAS.Digraph.executableCount_tape_failure",
+    "DirectedCycleFPRAS.Digraph.executableSample_tape_error",
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_correct",
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_bits",
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_zero",
+    "DirectedCycleFPRAS.Digraph.executableConditionalSampler_correct",
+    "DirectedCycleFPRAS.Digraph.executableConditionalSampler_bits",
+    "DirectedCycleFPRAS.RatLaw.searchUpper_calls",
+    "DirectedCycleFPRAS.RatLaw.searchUpper_eq_find",
+    "DirectedCycleFPRAS.RatLaw.select_eq_find"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split": [
@@ -919,8 +994,383 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_bitCost": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleSampler_bitCost": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.oracleBitBudget_le": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.countingBitBudget_le": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.samplingBitBudget_le": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleFPRAS_bitCost_cap": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.cycleSampler_bitCost_cap": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.normLaw_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedExpose_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedExpose_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.rejectionProbability_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.recordedExpose_acceptance_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.choice_comparison_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.firstOpenWeight_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.gammaS_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.phiS_height": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.mem_reachableSet": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reaches_eq_true": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.onCycle_eq_true": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.hasCycle_eq_true": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.reachable_edge_examinations": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.rationalEdgeWeight_cast": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalMultiplicity_cast": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalFeasible_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalReject_cast": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.norm_value_cast": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.select_eq_decode": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.select_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.readBlock_uniform": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.run_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.run_congr": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.trace_result": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.result_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatProg.compile_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatProg.ChoiceBound.compile": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_law": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_choiceBound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.orderedAlgS_accuracy": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_constant_accuracy": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalAlgS_nominal_accuracy": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexQuery_accuracy": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatProg.rationalRecordedExpose_refines": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexProposal_refines": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_refines": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_refines": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.rationalMedian_cast": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatProg.Refines.medianOf": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_compile_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_compile_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.BitProg.run_uniform": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.liftRationalOracle_refines": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.liftRationalOracle_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalCycleOracle_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexCount_compiled_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.rationalVertexSample_compiled_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.execCountSamples_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.execCountInner_bound": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.execCount_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.execSample_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableCount_zero_run": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableCount_tape_failure": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableSample_tape_error": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableFPRAS_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableConditionalSampler_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.executableConditionalSampler_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.searchUpper_calls": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.searchUpper_eq_find": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.RatLaw.select_eq_find": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Independent-set complexity hardness and machine-level runtime are external. Python models have no Lean refinement proof."
+  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Fixed-parameter bit budgets and intermediate arithmetic heights are checked. Executable rational programs, explicit graph searches, arbitrary-order Algorithm S refinement, bounded cumulative selection, fair-bit compilation and tape execution are checked. Polynomial machine runtime uses the written bit-complexity analysis. Independent-set complexity hardness is external. Python models have no Lean refinement proof."
 }

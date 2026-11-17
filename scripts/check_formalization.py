@@ -41,8 +41,12 @@ report = {
               "martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, "
               "concrete conditional moments and the absorbing round-process correspondence prove "
               "Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. "
-              "Independent-set complexity hardness and "
-              "machine-level runtime are external. Python models have no Lean refinement proof."),
+              "Fixed-parameter bit budgets and intermediate arithmetic heights are checked. "
+              "Executable rational programs, explicit graph searches, arbitrary-order Algorithm S "
+              "refinement, bounded cumulative selection, fair-bit compilation and tape execution "
+              "are checked. Polynomial machine runtime uses the written bit-complexity "
+              "analysis. Independent-set complexity hardness is external. "
+              "Python models have no Lean refinement proof."),
 }
 (ROOT / "validation").mkdir(exist_ok=True)
 (ROOT / "validation/lean-verification.json").write_text(json.dumps(report, indent=2) + "\n")

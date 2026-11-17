@@ -11,7 +11,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E)
 
 theorem scanTree_no_cut (ω : E → Bool) (R : Finset V) (x : V) (flag : Bool)

@@ -8,7 +8,7 @@ open scoped BigOperators
 open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
-variable {E : Type} [Fintype E] [DecidableEq E]
+variable {E : Type} [Fintype E] [ArcEnumeration E] [DecidableEq E]
 
 /-- A partial assignment of edge states. -/
 def Compatible (pre : E → Option Bool) (ω : E → Bool) : Prop :=
@@ -125,7 +125,7 @@ theorem firstOpen_unique (R : Finset V) (u : V) (ω : E → Bool)
     have hlt : arcBefore j e := lt_of_le_of_ne hle hne
     have := he.2.2 j hj'.1 hlt
     simp [hj'.2] at this
-  exact ((List.idxOf_inj (by simp [arcOrder] : j ∈ arcOrder E)).mp heq).symm
+  exact ((List.idxOf_inj (by simp : j ∈ arcOrder E)).mp heq).symm
 
 /-- Mixing forced-edge product laws with the first-open weights gives exactly
 the original product law restricted to the event that the cut has an open edge. -/

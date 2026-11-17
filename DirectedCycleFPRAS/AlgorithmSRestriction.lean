@@ -16,7 +16,7 @@ theorem normLaw_zero {ι : Type} [Fintype ι] (w : ι → ℝ) (d i : ι)
   split_ifs <;> simp [hw, hi]
 
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- Closure with a weaker stack invariant, also covering default empty pools. -/

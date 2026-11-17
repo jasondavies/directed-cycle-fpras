@@ -12,7 +12,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E)
 
 /-- Old discovered and pending vertices persist through a scan; any newly
@@ -139,7 +139,7 @@ theorem SearchInvariant.scan {ω : E → Bool} {s t z : V} {D : Finset V} {st : 
   · intro e heD heStack heOpen
     have heOld : G.source e ∈ D := (hg.2.2 _ heD).resolve_right heStack
     by_cases hez : G.source e = z
-    · exact G.scanTree_scanned ω {s} z true (arcOrder E) D st e (by simp [arcOrder]) hez heOpen
+    · exact G.scanTree_scanned ω {s} z true (arcOrder E) D st e (by simp) hez heOpen
     · apply hg.1
       apply h.processed e heOld _ heOpen
       simp only [List.map_cons, List.mem_cons, not_or]

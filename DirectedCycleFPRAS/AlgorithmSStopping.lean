@@ -8,7 +8,7 @@ set_option linter.unusedSectionVars false
 open Classical
 noncomputable section
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- Finish exploring the stack, without recording another target snapshot. -/

@@ -10,7 +10,7 @@ open scoped BigOperators
 open Classical
 noncomputable section
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- Scanning preserves discovered-cardinality minus stack length. This bounds

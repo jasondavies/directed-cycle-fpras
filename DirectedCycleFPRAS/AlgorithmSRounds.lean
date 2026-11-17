@@ -21,7 +21,7 @@ theorem steps_fixed (K : S → Prog Q S) (a : S) (ha : K a = .ret a) (n : ℕ) :
 end Prog
 
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 structure RoundData (V : Type) where

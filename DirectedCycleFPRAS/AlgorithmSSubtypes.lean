@@ -12,7 +12,7 @@ set_option linter.unusedSectionVars false
 set_option maxHeartbeats 800000
 set_option backward.isDefEq.respectTransparency false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E)
 
 /-- The induced graph on a closed set, with both vertices and edges genuinely
@@ -79,7 +79,7 @@ theorem mem_subtypeOrder (l : List E) (e : {e : E // G.source e ∈ U}) :
 theorem subtypeOrder_complete (e : {e : E // G.source e ∈ U}) :
     e ∈ G.subtypeOrder U (arcOrder E) := by
   rw [G.mem_subtypeOrder U]
-  simp [arcOrder]
+  simp
 
 @[simp] theorem induced_cut (R : Finset U) (u : U) (e : {e : E // G.source e ∈ U}) :
     (G.inducedClosed U hU).cutAt R u e ↔ G.cutAt (upSet R) u.val e.val := by

@@ -39,6 +39,11 @@ The development checks the vertex cover, adaptive rejection identity, counting
 and conditional-sampling guarantees, oracle-call and fair-bit budgets, rational
 counting-output size, and the acyclicity/independent-set reduction.
 
+The runnable entry points are
+[`Digraph.executableFPRAS`](DirectedCycleFPRAS/ExecutableFPRAS.lean) and
+`Digraph.executableConditionalSampler`. Their correctness theorems concern
+execution on uniformly random finite bit tapes, with all parameters fixed.
+
 - [`Digraph.cycleFPRAS_correct`](DirectedCycleFPRAS/Parameters.lean): the counting
   program with its budgets fixed and Algorithm S calls expanded.
 - [`Digraph.cycleSampler_cyclic_correct`](DirectedCycleFPRAS/Parameters.lean): the
@@ -56,8 +61,19 @@ transfers it to the finite-bit estimator. The counting and sampling theorems
 have no oracle-accuracy assumption. The proof includes deferred edge exposure,
 DFS snapshot splitting, conditional moments, and the complete stopped round
 process. Induced-subtype and parent-pointer correspondences are also checked.
-Independent-set complexity hardness is cited; machine-level running time is
-justified by the written bit analysis.
+The executable layer uses rational arithmetic, explicit graph searches, and
+finite fair-bit tapes. Its nominal-law refinement and rounding bounds connect
+it to the probability proofs; counting and sampling include actual Algorithm S
+calls. Natural-number parameters specify reciprocal accuracy and dyadic
+confidence. `FinalGuarantees` and `ResourceBounds` package
+the fixed budgets and polynomial/logarithmic fair-bit bounds; `ArithmeticBounds`
+bounds intermediate values on every bounded-answer history.
+
+Finite choices use a bounded search with at most one threshold test per
+alternative. Lean verifies probability guarantees, finite-bit execution, and
+resource bounds; polynomial machine runtime is established by the paper's
+written bit-complexity analysis. Independent-set complexity hardness is cited
+in the paper.
 
 ## Repository layout
 
@@ -85,7 +101,8 @@ proof admissions and project-defined axioms. Reports are written to `validation/
 
 Python checks enumerate adaptive oracle transcripts, verify the counting and
 sampling identities, and check the hardness gadget on all simple undirected
-graphs with at most four vertices. They also compare two independently written
+graphs with at most four vertices. Lean execution checks additionally run rational choices, graph searches, and
+Algorithm S on explicit tapes. The Python checks also compare two independently written
 Algorithm S ports at `M=1`; run `python3 scripts/algs_transcription/run.py 1,2,3`
 for the larger exact suite. These checks are finite evidence, not a refinement
 proof between Python and Lean or an implementation of the reliability FPRAS.

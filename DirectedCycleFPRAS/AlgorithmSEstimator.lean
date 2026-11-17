@@ -163,7 +163,7 @@ theorem algSEstimator_height (α : ℝ) {V E : Type} [Fintype V] [Fintype E] [De
 
 namespace Digraph
 
-variable {V E : Type} [Fintype V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 
 /-- With zero samples every update is zero, so rationality still holds. -/
 theorem sRounds_zero_sat (G : Digraph V E) (q : E → ℝ) (t : V) (f : ℕ)

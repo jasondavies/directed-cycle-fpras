@@ -12,7 +12,7 @@ open Classical
 noncomputable section
 set_option linter.unusedSectionVars false
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E)
 
 theorem maskStack_eq_self (v : V) (st : List (V × Bool)) (hv : v ∉ st.map Prod.fst) :
@@ -86,7 +86,7 @@ theorem dfsTree_split (ω : E → Bool) (R : Finset V) (v w : V) (fuel : ℕ)
           have hzs : ∀ a ∈ st, z ≠ a.1 := by
             intro a ha hza
             exact (List.nodup_cons.mp hr.distinct).1 (List.mem_map.mpr ⟨a,ha,hza.symm⟩)
-          obtain ⟨S',hr'⟩ := (G.scanTree_once R z flag (arcOrder E) (Finset.nodup_toList _) S D st
+          obtain ⟨S',hr'⟩ := (G.scanTree_once R z flag (arcOrder E) (arcOrder_nodup E) S D st
             (DFSReady.pop G hr) hzD hzs
             (fun e _ he hmem => hr.used_off_stack e hmem (z,flag) (by simp) he)).eval_post ω
           apply ih S' _ _ hr'

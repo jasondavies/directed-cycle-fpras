@@ -10,11 +10,13 @@ not asserted to be an efficient implementation.
 
 | Paper result | Lean declaration | Source |
 | --- | --- | --- |
+| Executable counting on fair-bit tapes | `Digraph.executableFPRAS_correct`, `Digraph.executableFPRAS_bits`, `Digraph.executableFPRAS_zero` | [ExecutableFPRAS](../DirectedCycleFPRAS/ExecutableFPRAS.lean) |
+| Executable conditional sampling on fair-bit tapes | `Digraph.executableConditionalSampler_correct`, `Digraph.executableConditionalSampler_bits` | [ExecutableFPRAS](../DirectedCycleFPRAS/ExecutableFPRAS.lean) |
 | Counting with all budgets fixed | `Digraph.cycleFPRAS_correct` | [Parameters](../DirectedCycleFPRAS/Parameters.lean) |
 | Sampling conditioned on cyclicity | `Digraph.cycleSampler_cyclic_correct` | [Parameters](../DirectedCycleFPRAS/Parameters.lean) |
-| Exact zero detection | `Digraph.vertexAlgorithm_zero` | [VertexAlgorithm](../DirectedCycleFPRAS/VertexAlgorithm.lean) |
-| Counting fair-bit budget | `Digraph.concreteVertex_bitCost` | [ConcreteVertex](../DirectedCycleFPRAS/ConcreteVertex.lean) |
-| Sampling fair-bit budget | `Digraph.concreteVertexSample_bitCost` | [VertexSampling](../DirectedCycleFPRAS/VertexSampling.lean) |
+| Exact zero detection of the expanded program | `Digraph.cycleFPRAS_zero` | [FinalGuarantees](../DirectedCycleFPRAS/FinalGuarantees.lean) |
+| Counting fair-bit budget | `Digraph.cycleFPRAS_bitCost`, `Digraph.cycleFPRAS_bitCost_cap` | [ResourceBounds](../DirectedCycleFPRAS/ResourceBounds.lean) |
+| Sampling fair-bit budget | `Digraph.cycleSampler_bitCost`, `Digraph.cycleSampler_bitCost_cap` | [ResourceBounds](../DirectedCycleFPRAS/ResourceBounds.lean) |
 | Counting output size and residual queries | `Digraph.concreteVertex_height`, `Digraph.vertexAlgorithm_sat` | [RejectionHeight](../DirectedCycleFPRAS/RejectionHeight.lean) |
 | Acyclicity/independent-set probability identity | `AcyclicityReduction.edge_retention_probability` | [AcyclicityReduction](../DirectedCycleFPRAS/AcyclicityReduction.lean) |
 
@@ -153,9 +155,72 @@ with reachable-set restriction and explicit parent pointers. The
 [oracle note](../research/DISCRETISATION.md) explains the bit implementation
 and its relation to the published pseudocode.
 
+## Executable rational programs
+
+The executable definitions use `ℚ`, natural numbers, finite containers, and
+explicit finite enumerations. Real numbers appear in their mathematical
+denotations and correctness statements. They evaluate only selected
+continuations, rather than materializing the full probability tree.
+
+| Modules | Checked content |
+| --- | --- |
+| `FinalGuarantees`, `ResourceBounds` | Fully substituted counting/sampling bit budgets, exact zero, output height, and polynomial-times-logarithmic caps. |
+| `ArithmeticBounds` | Cumulative weights, normalization, recorded proposal products, rejection arithmetic, and Algorithm S internal weights; all-history bounds without an oracle-accuracy premise. |
+| `ExecutableGraph` | Executable reachability, cycle membership, and cyclicity tests; equivalence to the relational definitions; at most `n*m` edge examinations per reachable-set computation. |
+| `RationalExecution`, `BitTapeLaw` | Bounded rational cumulative selection with at most one threshold test per alternative and invalid-weight fallback; executable bit-tape interpreter; exact law for a uniformly random fixed-length tape and bit-consumption bounds. |
+| `RationalProgram`, `RationalProgramBounds` | Exact rational program semantics, compilation to fair bits, compositional choice bounds, and total rounding error at most `A/2^b`. |
+| `RationalAlgorithmS`, `RationalAlgorithmSAccuracy`, `RationalVertexOracle` | Executable Algorithm S and split-vertex queries, nominal-law correspondence, and accuracy for any supplied complete edge order. |
+| `RationalRejection`, `RationalExposure`, `RationalCycle`, `RationalCounting` | Executable residual guards, recorded exposure, corrected proposals, counting, capped sampling, and lower medians, with nominal-law refinement. |
+| `RationalCycleResources` | Full callback-inclusive choice counts, compilation error, and fair-bit consumption for counting and sampling. |
+| `RationalOracle`, `RationalEndToEnd` | Composition with actual amplified rational Algorithm S callbacks; compiled counting and conditional-sampling accuracy without oracle-accuracy premises. |
+| `ExecutableCycle`, `ExecutableParameters`, `ExecutableFPRAS` | Computable zero guard, natural-number budgets for reciprocal accuracy and dyadic confidence, and guarantees for the actual finite-tape executions. |
+
+`ArcEnumeration` makes the Algorithm S order explicit throughout its accuracy
+proof. The default preserves the canonical mathematical model; executable
+programs supply a duplicate-free complete list. Rounding can depend on the
+order of alternatives, so the executable compiler uses its own proved
+coupling bound against the exact nominal law.
+
+For a rational callback using at most `C` alternatives, initialization with
+`k` witnesses followed by `D` proposals and `m` exposures uses at most
+
+```
+(k + 2*m*D)*C + D*(k + 2*m + 2)
+```
+
+alternatives. Counting multiplies this by the outer median count. Compiling
+with width `b` bounds actual bit consumption by `b` times this expression.
+The callback budget includes Algorithm S and its inner median repetitions.
+
+The executable interface accepts a reciprocal-accuracy integer `r > 0` and a
+confidence integer `d`. Counting targets relative error `1/r` with failure at
+most `2^-d`; sampling targets total variation at most `2^-d`. All budgets are
+computed in natural arithmetic, including logarithmic draw widths and median
+counts. The zero branch returns exactly zero before invoking the oracle and
+consumes no random bits.
+
+`BitProg.run_uniform` proves equality between the output law of a uniformly
+random `N`-bit tape and `Prog.exp` whenever `BitProg.Bits m N` holds. Thus the
+executable accuracy statements concern actual tape evaluation, including
+adaptive widths and unused trailing bits. `liftRationalOracle` is a proof-only
+extension to the real-query interface; its irrational-input fallback is never
+part of the rational implementation.
+
+Arithmetic sizes cover intermediate values as well as final answers. If the
+input and oracle-answer heights are at most `2^L` and `2^K`, the recorded
+proposal product after `m` exposures has height at most
+`2^((5+3*(L+K))*m)`. The rejection quotient, clipped bias, cumulative weights,
+and scaled comparisons have explicit bounds too.
+
+The polynomial running-time claim uses the paper's written bit-complexity
+analysis, including the costs of rational arithmetic and finite containers.
+The Lean guarantees cover correctness, random-bit consumption, and the stated
+arithmetic-size bounds.
+
 ## Audit and reproduction
 
-Run `bash scripts/check.sh` to build the library, audit the declarations in
+Run `bash scripts/check.sh` to build the library, execute the rational-code
+regressions in `ExecutableChecks.lean`, audit the declarations in
 [Axioms.lean](Axioms.lean), and regenerate the finite-check reports. The audit
 allows only `propext`, `Classical.choice`, and `Quot.sound`; it also rejects proof
 admissions and project-defined axioms throughout the source tree.

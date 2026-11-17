@@ -10,7 +10,7 @@ noncomputable section
 set_option linter.unusedSectionVars false
 set_option maxHeartbeats 800000
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- Generate's iteration using full DFS with explicit parent pointers. -/

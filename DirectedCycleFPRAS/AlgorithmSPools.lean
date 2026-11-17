@@ -59,7 +59,7 @@ theorem poolDraw_perm {α : Type} {l l' : List α} (hperm : l.Perm l') (d : α) 
     (hperm.map f).sum_eq, hperm.length_eq]
 
 namespace Digraph
-variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 theorem firstOpenWeight_nonneg (hp0 : ∀ e, 0 ≤ p e) (hp1 : ∀ e, p e ≤ 1)

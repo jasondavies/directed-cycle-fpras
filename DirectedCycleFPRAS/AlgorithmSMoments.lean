@@ -12,7 +12,7 @@ open scoped BigOperators
 open Classical
 noncomputable section
 namespace Digraph
-variable {V E Q : Type} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E]
+variable {V E Q : Type} [Fintype V] [DecidableEq V] [Fintype E] [ArcEnumeration E] [DecidableEq E]
 variable (G : Digraph V E) (p : E → ℝ)
 
 /-- Scoring the stored records is exactly a sum of independent iterations.
