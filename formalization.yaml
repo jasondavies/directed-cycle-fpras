@@ -9,12 +9,14 @@ project:
     guarantees on uniformly random finite bit tapes. Counting has relative error
     1/r with failure at most 2^(-d) and returns exactly zero whenever cyclicity has
     probability zero. Conditional sampling has total variation error at most
-    2^(-d). A supplied feedback vertex set controls the witness family. Vertex
-    splitting reduces cycle membership to two-terminal reliability, implemented
+    2^(-d); its checked frontend reports an undefined conditional law exactly
+    when cyclicity probability is zero. A supplied feedback vertex set controls
+    the witness family. Vertex splitting reduces cycle membership to two-terminal reliability, implemented
     using a formalized Algorithm S and its accuracy theorem. The independent-set
     gadget gives an exact identity for acyclicity probability. Explicit fair-bit
     budgets and arithmetic-size bounds are verified; polynomial machine runtime
-    is established by the accompanying paper's written analysis.
+    is treated by separate written bounds for an indexed implementation and the
+    supplied executable's generic weighted choices and lists.
   authors: ["Jason Davies"]
   license: "Apache-2.0"
   responsible_maintainers: ["Jason Davies"]
@@ -94,7 +96,8 @@ status:
   scope: >-
     The compared results are vertex splitting, the feedback-set cover, executable
     counting accuracy and exact zero, executable conditional-sampling accuracy,
-    and the independent-set/acyclicity probability identity. The two definition
+    the checked sampler's exact undefined-case interface, and the
+    independent-set/acyclicity probability identity. The two definition
     holes in Challenge.lean are filled by executable algorithms in Solution.lean;
     their graph notions, product probabilities and finite fair-bit budgets are
     explicit in the Challenge. The proof library includes Algorithm S accuracy
@@ -144,6 +147,9 @@ fidelity:
     also stated for arbitrary types where appropriate. Finite choices are rounded
     with bounded fair-bit draws rather than ideal uniform real draws. Polynomial
     time in the bit model is a written theorem, not a formal machine-step bound.
+    The displayed optimized cost uses stored cumulative weights and indexed
+    pools; the supplied executable uses repeated cumulative scans and lists and
+    has a separate, much looser polynomial cost bound.
     The library correspondence proofs cover Algorithm S, not all algorithms in
     Feng–Fu–Guo.
 
@@ -184,6 +190,11 @@ alignment:
       module: "Solution"
       status: proved
       note: "Positive cyclicity probability; dyadic error and explicit finite tape budget."
+    - source: "Paper: conditional law undefined when cyclicity probability is zero"
+      lean: "DirectedCycleFPRAS.Publication.sample_none_iff"
+      module: "Solution"
+      status: proved
+      note: "For valid probabilities and feedback cover, none occurs exactly at zero mass on every tape."
     - source: "Paper: complement-hardness gadget"
       lean: "DirectedCycleFPRAS.Publication.acyclicity_probability"
       module: "Solution"

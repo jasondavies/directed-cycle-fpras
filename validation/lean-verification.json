@@ -237,7 +237,15 @@
     "DirectedCycleFPRAS.Publication.sample_correct",
     "DirectedCycleFPRAS.Publication.acyclicity_probability",
     "DirectedCycleFPRAS.Publication.count",
-    "DirectedCycleFPRAS.Publication.sample"
+    "DirectedCycleFPRAS.Publication.sample",
+    "DirectedCycleFPRAS.Digraph.supportCycle_iff_pos",
+    "DirectedCycleFPRAS.Digraph.positive_cover_card",
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_bits",
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_zero",
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_run_positive",
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_none_iff",
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_correct",
+    "DirectedCycleFPRAS.Publication.sample_none_iff"
   ],
   "axioms": {
     "DirectedCycleFPRAS.Digraph.vertexWitness_iff_split": [
@@ -1415,8 +1423,48 @@
       "propext",
       "Classical.choice",
       "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.supportCycle_iff_pos": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.positive_cover_card": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_bits": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_zero": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_run_positive": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_none_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Digraph.checkedConditionalSampler_correct": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "DirectedCycleFPRAS.Publication.sample_none_iff": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
     ]
   },
   "build_passed": true,
-  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Fixed-parameter bit budgets and intermediate arithmetic heights are checked. Executable rational programs, explicit graph searches, arbitrary-order Algorithm S refinement, bounded cumulative selection, fair-bit compilation and tape execution are checked. Polynomial machine runtime uses the written bit-complexity analysis. Independent-set complexity hardness is external. The Palomar Solution wrappers are included in the axiom audit; deliberate Challenge placeholders are excluded. Python models have no Lean refinement proof."
+  "scope": "Vertex/feedback-set witnesses; recorded adaptive rejection; concrete counting and conditional sampling programs; oracle repair, amplification and finite-bit coupling; oracle-call and composed fair-bit budgets; residual-instance queries and counting output height; the exact independent-set/acyclicity gadget. Algorithm S fuel, pools, first-open sampling, stopping, induced-subtype and parent-pointer correspondences are checked. Harris's inequality, concrete outflow and weighted proposal laws, empirical-pool moments, resolved predictions, and quantitative finite-program martingale bounds are checked. Deferred-edge DFS laws, snapshot splitting, concrete conditional moments and the absorbing round-process correspondence prove Theorem 9 for Algorithm S. Counting and sampling have no oracle-accuracy premise. Fixed-parameter bit budgets and intermediate arithmetic heights are checked. Executable rational programs, explicit graph searches, arbitrary-order Algorithm S refinement, bounded cumulative selection, fair-bit compilation and tape execution are checked. The checked sampler reports zero mass exactly and preserves the positive core's law. Written cost bounds distinguish the indexed implementation from the supplied executable's repeated scans; compiled Lean runtime is not proved. Independent-set complexity hardness is external. The Palomar Solution wrappers are included in the axiom audit; deliberate Challenge placeholders are excluded. Python models have no Lean refinement proof."
 }

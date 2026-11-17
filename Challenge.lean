@@ -126,12 +126,12 @@ noncomputable def count {n m k : ℕ} (G : Digraph (Fin n) (Fin m)) (U : Finset 
     (w : Fin k ≃ U) (p : Fin m → ℚ) (r d : ℕ)
     (tape : Fin (countBits n m k r d) → Bool) : ℚ := by sorry
 
-/-- The retained configuration returned by the conditional sampler on a finite tape.
-The Solution supplies the actual algorithm. Accuracy is asserted only when
-cyclicity has positive probability; `hk` supplies a nonempty witness family. -/
+/-- The checked sampler on a finite tape. `none` reports zero cyclicity
+probability; positive inputs return a retained configuration. The Solution
+supplies the algorithm, and the theorems below constrain both cases. -/
 noncomputable def sample {n m k : ℕ} (G : Digraph (Fin n) (Fin m)) (U : Finset (Fin n))
-    (w : Fin k ≃ U) (hk : 0<k) (p : Fin m → ℚ) (d : ℕ)
-    (tape : Fin (sampleBits n m k d) → Bool) : Fin m → Bool := by sorry
+    (w : Fin k ≃ U) (p : Fin m → ℚ) (d : ℕ)
+    (tape : Fin (sampleBits n m k d) → Bool) : Option (Fin m → Bool) := by sorry
 
 /-- Cycle membership of a vertex is a two-terminal reliability event on the
 split graph, without duplicating any random edge variable. -/
@@ -166,16 +166,25 @@ theorem count_zero {n m k : ℕ} (G : Digraph (Fin n) (Fin m)) (U : Finset (Fin 
 /-- Conditional sampling within total variation `2⁻ᵈ`, expressed by all tests
 with values in `[0,1]`, on the finite space of retained edge configurations. -/
 theorem sample_correct {n m k : ℕ} (G : Digraph (Fin n) (Fin m)) (U : Finset (Fin n))
-    (w : Fin k ≃ U) (hk : 0<k) (p : Fin m → ℚ)
+    (w : Fin k ≃ U) (p : Fin m → ℚ)
     (hp : ∀ e, 0 ≤ (p e : ℝ) ∧ (p e : ℝ) ≤ 1)
     (hU : G.Feedback U {e | 0<(p e : ℝ)})
     (hZ : 0<eventMass (fun e => (p e : ℝ)) (fun ω => G.Cyclic (Digraph.retained ω)))
     (d : ℕ) (f : (Fin m → Bool) → ℝ) (hf0 : ∀ x, 0≤f x) (hf1 : ∀ x, f x≤1) :
     let N := sampleBits n m k d
-    |(∑ tape : Fin N → Bool, (1/(2 : ℝ)^N)*f (sample G U w hk p d tape))-
+    |(∑ tape : Fin N → Bool, (1/(2 : ℝ)^N)*(sample G U w p d tape).elim 0 f)-
       (∑ ω, if G.Cyclic (Digraph.retained ω) then edgeWeight (fun e => (p e : ℝ)) ω*f ω else 0)/
         eventMass (fun e => (p e : ℝ)) (fun ω => G.Cyclic (Digraph.retained ω))| ≤
       (1/2 : ℝ)^d := by sorry
+
+/-- The checked sampler reports an undefined conditional law exactly when
+cyclicity has zero probability, for every finite tape. -/
+theorem sample_none_iff {n m k : ℕ} (G : Digraph (Fin n) (Fin m)) (U : Finset (Fin n))
+    (w : Fin k ≃ U) (p : Fin m → ℚ) (hp : ∀ e, 0 ≤ (p e : ℝ) ∧ (p e : ℝ) ≤ 1)
+    (hU : G.Feedback U {e | 0<(p e : ℝ)}) (d : ℕ)
+    (tape : Fin (sampleBits n m k d) → Bool) :
+    sample G U w p d tape = none ↔
+      eventMass (fun e => (p e : ℝ)) (fun ω => G.Cyclic (Digraph.retained ω)) = 0 := by sorry
 
 /-- The exact independent-set reduction: acyclicity probability in the gate
 construction equals the independent-set count divided by `2^|V|`. The complexity

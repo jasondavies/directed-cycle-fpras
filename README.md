@@ -38,7 +38,10 @@ error.
 
 The library entry point is [DirectedCycleFPRAS.lean](DirectedCycleFPRAS.lean).
 The runnable counting and sampling programs are
-[`Digraph.executableFPRAS` and `Digraph.executableConditionalSampler`](DirectedCycleFPRAS/ExecutableFPRAS.lean).
+[`Digraph.executableFPRAS`](DirectedCycleFPRAS/ExecutableFPRAS.lean) and
+[`Digraph.checkedConditionalSampler`](DirectedCycleFPRAS/CheckedSampler.lean).
+The sampler returns `none` exactly when cyclicity has zero probability, without
+consuming random bits, and returns `some configuration` on positive inputs.
 Their correctness theorems concern execution on uniformly random finite bit
 tapes, with all parameters fixed and actual Algorithm S calls included.
 
@@ -50,8 +53,10 @@ oracle-accuracy assumption:
 Feng–Fu–Guo's Theorem 9 for Algorithm S. Subtype restriction, parent-pointer
 correspondence, and the executable rational refinement are also checked.
 
-Polynomial machine runtime is established by the paper's written bit-complexity
-analysis; independent-set inapproximability is cited. See the
+The paper distinguishes its indexed implementation's runtime bound from the
+larger polynomial overhead of the executable's generic weighted choices and
+lists. Both analyses are written; compiled Lean runtime is not formally bounded.
+Independent-set inapproximability is cited. See the
 [formalization map](validation/FORMALIZATION.md) for declarations and scope,
 and the [discretization note](validation/DISCRETISATION.md) for the oracle's
 finite-bit implementation.
@@ -87,7 +92,8 @@ operations, and two independent Python ports of Algorithm S. Run
 `python3 scripts/algs_transcription/run.py 1,2,3` for larger exact comparisons,
 or `python3 scripts/algs_transcription/extended_checks.py` for pool and arc-order
 checks and Monte Carlo diagnostics. These are regression evidence; the Python
-models have no Lean refinement proof.
+models have no Lean refinement proof. The [positive execution example](validation/POSITIVE_EXAMPLE.md)
+uses explicit oracle parameters and offers opt-in production-budget benchmarks.
 
 For Palomar metadata validation, Comparator checks, and submission instructions,
 see [validation/PALOMAR.md](validation/PALOMAR.md). The repository uses the default

@@ -4,4 +4,4 @@ public import DirectedCycleFPRAS.AcyclicityReduction
 public import DirectedCycleFPRAS.AlgorithmSParentProgram
 public import DirectedCycleFPRAS.ResourceBounds
 public import DirectedCycleFPRAS.ArithmeticBounds
-public import DirectedCycleFPRAS.ExecutableFPRAS
+public import DirectedCycleFPRAS.CheckedSampler

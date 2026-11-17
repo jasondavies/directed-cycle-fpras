@@ -22,6 +22,8 @@ def executableFPRAS {n m k : ℕ} (vertices : Fin n ≃ V) (edges : Fin m ≃ E)
 def executableFPRASBits (n m k r d : ℕ) : ℕ :=
   execCountWidth n m k r d*execCountChoices n m k r d
 
+/-- Positive-probability sampling core. Use `checkedConditionalSampler` from
+`CheckedSampler` for a public interface that reports the undefined zero case. -/
 def executableConditionalSampler {n m k : ℕ} (vertices : Fin n ≃ V) (edges : Fin m ≃ E)
     (witnesses : Fin k ≃ U) (hk : 0<k) (p : E → ℚ) (d : ℕ) : BitProg (E → Bool) :=
   G.executableSample U vertices edges witnesses hk p (execSampleProposals k d)

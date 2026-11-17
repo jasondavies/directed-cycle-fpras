@@ -7,6 +7,7 @@
     "DirectedCycleFPRAS.Publication.count_correct",
     "DirectedCycleFPRAS.Publication.count_zero",
     "DirectedCycleFPRAS.Publication.sample_correct",
+    "DirectedCycleFPRAS.Publication.sample_none_iff",
     "DirectedCycleFPRAS.Publication.acyclicity_probability"
   ],
   "definition_names": [

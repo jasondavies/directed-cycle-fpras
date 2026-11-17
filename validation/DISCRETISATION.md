@@ -118,9 +118,10 @@ Step 2(a) is a comparison of such fractions.
 
 Consequently:
 
-- every arithmetic operation is on integers of polynomial length, so the
-  `O(n^4 m^2 / eps^2)` unit-cost operations of Theorem 9 cost polynomial time
-  in the bit model, on every execution;
+- arithmetic operands have polynomial length. With stored cumulative weights
+  and indexed pools, the written implementation has the polynomial bit bound
+  in the manuscript's appendix. The generic executable selector has additional
+  scans and is covered by the larger bound described below;
 - the output is a fraction with numerator and denominator at most
   `Ho = n^n (M B)^n`.
 
@@ -261,3 +262,23 @@ Not covered: the fast algorithm of Theorem 1. Its bit-model cost is not
 analysed here, so the resulting running time for the cycle FPRAS is a
 polynomial of higher degree than the unit-cost bounds suggest. That does not
 affect the existence of the FPRAS.
+
+## Operation counts of the executable
+
+The sharp displayed runtime bounds in the manuscript apply to stored cumulative
+weights and indexed pools, with a uniform pool index `floor(U*length/2^b)`.
+The Lean executable instead uses `RatLaw.norm`, `searchUpper`, and `List.getD`.
+Its pool choice has `M+1` alternatives. Each threshold recomputes a cumulative
+sum, and a normalized weight can recompute its total. A full pool therefore
+admits at least quadratic summand visits per draw. The threshold-count theorem
+is not a bound on the work performed inside a threshold.
+
+The appendix separately bounds direct evaluation of the supplied definitions
+by `O(P^12 H^3)`, using numbered finite inputs and table representations.
+Here `P` includes graph sizes, every loop budget, the global draw width, and
+`execCountChoices` or `execSampleChoices`; `H` includes the checked rational
+size bounds, draw width, and index lengths. Raw-weight scans, generic
+normalization and selection, list access, graph guards, median selection,
+and continuation overhead are all included. This deliberately loose bound is
+polynomial in input length and the accuracy parameters. It is not the sharper
+bound of the indexed implementation or a formal theorem about compiled Lean.

@@ -6,7 +6,8 @@ project, Comparator, and metadata path fields blank.
 
 The submission title is **Directed-cycle probability: verified counting and
 conditional sampling**. This names the formal guarantees precisely: polynomial
-machine runtime is justified in the paper's written analysis. The repository
+machine runtime is treated in the paper's written analysis, with separate
+bounds for the indexed implementation and the supplied executable. The repository
 and manuscript are licensed under Apache-2.0; cited sources and dependencies
 retain their own licenses.
 
@@ -21,11 +22,14 @@ All compared declarations are in `DirectedCycleFPRAS.Publication`.
 | `count_correct` | Relative error `1/r` with failure at most `2⁻ᵈ` on a uniform finite tape. |
 | `count_zero` | Every tape returns zero when the true cyclicity probability is zero. |
 | `sample_correct` | Conditional sampling within total variation `2⁻ᵈ` when cyclicity has positive probability. |
+| `sample_none_iff` | On every tape, the sampler returns `none` exactly when cyclicity probability is zero. |
 | `acyclicity_probability` | The independent-set count equals `2^|V|` times the gadget's acyclicity probability. |
 
 The two definition holes, `count` and `sample`, are filled by the actual rational
 implementations in the Solution. Graph notions, independent product probabilities,
-and tape lengths are explicit in the Challenge. The accuracy statements constrain
+and tape lengths are explicit in the Challenge. `sample` returns an `Option`:
+`none` reports an undefined conditional law, and `some` carries a configuration.
+The accuracy statements constrain
 the supplied implementations for every permitted input; no oracle-accuracy premise
 is assumed. Algorithm S accuracy is proved in their dependency closure.
 

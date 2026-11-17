@@ -11,7 +11,7 @@ not asserted to be an efficient implementation.
 | Paper result | Lean declaration | Source |
 | --- | --- | --- |
 | Executable counting on fair-bit tapes | `Digraph.executableFPRAS_correct`, `Digraph.executableFPRAS_bits`, `Digraph.executableFPRAS_zero` | [ExecutableFPRAS](../DirectedCycleFPRAS/ExecutableFPRAS.lean) |
-| Executable conditional sampling on fair-bit tapes | `Digraph.executableConditionalSampler_correct`, `Digraph.executableConditionalSampler_bits` | [ExecutableFPRAS](../DirectedCycleFPRAS/ExecutableFPRAS.lean) |
+| Checked conditional sampling on fair-bit tapes | `Digraph.checkedConditionalSampler_correct`, `Digraph.checkedConditionalSampler_bits`, `Digraph.checkedConditionalSampler_none_iff` | [CheckedSampler](../DirectedCycleFPRAS/CheckedSampler.lean) |
 | Counting with all budgets fixed | `Digraph.cycleFPRAS_correct` | [Parameters](../DirectedCycleFPRAS/Parameters.lean) |
 | Sampling conditioned on cyclicity | `Digraph.cycleSampler_cyclic_correct` | [Parameters](../DirectedCycleFPRAS/Parameters.lean) |
 | Exact zero detection of the expanded program | `Digraph.cycleFPRAS_zero` | [FinalGuarantees](../DirectedCycleFPRAS/FinalGuarantees.lean) |
@@ -104,8 +104,10 @@ answer bound `oracleHeight` and applies to the same expanded program as the
 accuracy and fair-bit theorems, including failed-oracle histories.
 
 The written bit analysis covers temporary rational arithmetic, graph operations,
-and their machine cost. Lean verifies the stated resource predicates and output
-size; it does not provide a machine-level running-time semantics.
+and their machine cost. The manuscript separates the indexed implementation
+from the supplied executable's repeated weighted scans and list access, giving
+that executable a larger conservative polynomial bound. Lean verifies the
+stated resource predicates and output size, without machine-level time semantics.
 
 ## Algorithm S
 
@@ -173,7 +175,7 @@ continuations, rather than materializing the full probability tree.
 | `RationalRejection`, `RationalExposure`, `RationalCycle`, `RationalCounting` | Executable residual guards, recorded exposure, corrected proposals, counting, capped sampling, and lower medians, with nominal-law refinement. |
 | `RationalCycleResources` | Full callback-inclusive choice counts, compilation error, and fair-bit consumption for counting and sampling. |
 | `RationalOracle`, `RationalEndToEnd` | Composition with actual amplified rational Algorithm S callbacks; compiled counting and conditional-sampling accuracy without oracle-accuracy premises. |
-| `ExecutableCycle`, `ExecutableParameters`, `ExecutableFPRAS` | Computable zero guard, natural-number budgets for reciprocal accuracy and dyadic confidence, and guarantees for the actual finite-tape executions. |
+| `ExecutableCycle`, `ExecutableParameters`, `ExecutableFPRAS`, `CheckedSampler` | Computable zero guard, natural-number budgets for reciprocal accuracy and dyadic confidence, and guarantees for the actual finite-tape executions. The checked sampler reports zero mass with `none` and preserves the positive core's law and bit consumption. |
 
 `ArcEnumeration` makes the Algorithm S order explicit throughout its accuracy
 proof. The default preserves the canonical mathematical model; executable
@@ -220,7 +222,7 @@ arithmetic-size bounds.
 ## Audit and reproduction
 
 `Challenge.lean` states the publication interface independently using only
-Mathlib imports. `Solution.lean` supplies six proved counterparts and the two
+Mathlib imports. `Solution.lean` supplies seven proved counterparts and the two
 executable definitions, `Publication.count` and `Publication.sample`.
 `comparator.json` selects those declarations; the [Palomar checklist](PALOMAR.md)
 describes their scope and the independent-kernel check. The deliberate Challenge
@@ -235,4 +237,4 @@ admissions and project-defined axioms throughout the source tree.
 Python models provide exact finite regression checks, including randomized
 oracle transcripts and two Algorithm S ports. There is no Python-to-Lean
 refinement proof. Algorithm S accuracy follows from the Lean proofs;
-machine-level runtime follows from the written arithmetic analysis.
+the written runtime analysis distinguishes the optimized and supplied implementations.

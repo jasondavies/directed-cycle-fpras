@@ -3,7 +3,7 @@ module
 public meta import DirectedCycleFPRAS.RationalProgram
 public meta import DirectedCycleFPRAS.RationalRejection
 public meta import DirectedCycleFPRAS.RationalCounting
-public meta import DirectedCycleFPRAS.ExecutableFPRAS
+public meta import DirectedCycleFPRAS.CheckedSampler
 public meta import DirectedCycleFPRAS.RationalAlgorithmS
 
 public meta import DirectedCycleFPRAS.RationalExecution
@@ -80,3 +80,21 @@ def loneOrder : Fin 1 ≃ (Finset.univ : Finset (Fin 1)) where
 
 #guard (loopGraph.executableFPRAS Finset.univ (Equiv.refl _) (Equiv.refl _)
   loneOrder (fun _ => 0) 2 4).run (fun _ => true) 5 = (0,5)
+
+-- The checked sampler reports undefined before consuming any tape bits.
+def noEdges : Digraph (Fin 1) (Fin 0) := ⟨Fin.elim0, Fin.elim0⟩
+#guard ((noEdges.checkedConditionalSampler Finset.univ (Equiv.refl _) (Equiv.refl _)
+  loneOrder (fun e => e.elim0) 4).run (fun _ => true) 7).1.isNone
+#guard ((noEdges.checkedConditionalSampler Finset.univ (Equiv.refl _) (Equiv.refl _)
+  loneOrder (fun e => e.elim0) 4).run (fun _ => true) 7).2 = 7
+#guard ((loopGraph.checkedConditionalSampler Finset.univ (Equiv.refl _) (Equiv.refl _)
+  loneOrder (fun _ => 0) 4).run (fun _ => false) 5).1.isNone
+#guard ((loopGraph.checkedConditionalSampler Finset.univ (Equiv.refl _) (Equiv.refl _)
+  loneOrder (fun _ => 0) 4).run (fun _ => false) 5).2 = 5
+
+-- A deterministic path fills an intermediate pool before sampling from it.
+-- The high tape selects the last positive pool interval, exercising repeated scans.
+def pathGraph : Digraph (Fin 3) (Fin 2) :=
+  ⟨fun e => ⟨e.val, by omega⟩, fun e => ⟨e.val+1, by omega⟩⟩
+#guard (((pathGraph.rationalAlgS (fun _ => 1) (Equiv.refl _) (Equiv.refl _)
+  [0,1] (fun e => e.val) 0 2 3).compile 5).run (fun _ => true) 0).1 = 1

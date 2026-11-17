@@ -248,3 +248,12 @@ import Solution
 #print axioms DirectedCycleFPRAS.Publication.acyclicity_probability
 #print axioms DirectedCycleFPRAS.Publication.count
 #print axioms DirectedCycleFPRAS.Publication.sample
+
+#print axioms DirectedCycleFPRAS.Digraph.supportCycle_iff_pos
+#print axioms DirectedCycleFPRAS.Digraph.positive_cover_card
+#print axioms DirectedCycleFPRAS.Digraph.checkedConditionalSampler_bits
+#print axioms DirectedCycleFPRAS.Digraph.checkedConditionalSampler_zero
+#print axioms DirectedCycleFPRAS.Digraph.checkedConditionalSampler_run_positive
+#print axioms DirectedCycleFPRAS.Digraph.checkedConditionalSampler_none_iff
+#print axioms DirectedCycleFPRAS.Digraph.checkedConditionalSampler_correct
+#print axioms DirectedCycleFPRAS.Publication.sample_none_iff

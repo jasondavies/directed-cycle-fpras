@@ -44,8 +44,10 @@ report = {
               "Fixed-parameter bit budgets and intermediate arithmetic heights are checked. "
               "Executable rational programs, explicit graph searches, arbitrary-order Algorithm S "
               "refinement, bounded cumulative selection, fair-bit compilation and tape execution "
-              "are checked. Polynomial machine runtime uses the written bit-complexity "
-              "analysis. Independent-set complexity hardness is external. "
+              "are checked. The checked sampler reports zero mass exactly and preserves the "
+              "positive core's law. Written cost bounds distinguish the indexed implementation "
+              "from the supplied executable's repeated scans; compiled Lean runtime is not proved. "
+              "Independent-set complexity hardness is external. "
               "The Palomar Solution wrappers are included in the axiom audit; deliberate "
               "Challenge placeholders are excluded. Python models have no Lean refinement proof."),
 }
